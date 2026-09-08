@@ -62,7 +62,15 @@ def _create_hybrid_qr_flyer_bytes(qr_payload: str, banner_text: str) -> bytes:
 
     # Render OCR text on left half
     font = None
-    for font_path in ("C:/Windows/Fonts/consola.ttf", "C:/Windows/Fonts/cour.ttf", "consola.ttf", "arial.ttf"):
+    for font_path in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "C:/Windows/Fonts/consola.ttf",
+        "C:/Windows/Fonts/cour.ttf",
+        "consola.ttf",
+        "arial.ttf",
+    ):
         try:
             font = ImageFont.truetype(font_path, 26)
             break

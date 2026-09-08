@@ -39,7 +39,15 @@ def _create_text_image_bytes(text: str, width: int = 1400, height: int = 200) ->
     img = Image.new("RGB", (width, height), color="white")
     draw = ImageDraw.Draw(img)
     font = None
-    for font_path in ("C:/Windows/Fonts/consola.ttf", "C:/Windows/Fonts/cour.ttf", "consola.ttf", "arial.ttf"):
+    for font_path in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "C:/Windows/Fonts/consola.ttf",
+        "C:/Windows/Fonts/cour.ttf",
+        "consola.ttf",
+        "arial.ttf",
+    ):
         try:
             font = ImageFont.truetype(font_path, 30)
             break

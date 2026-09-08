@@ -67,7 +67,8 @@ jobs:
             libglib2.0-0 \
             libgomp1 \
             ffmpeg \
-            libsndfile1
+            libsndfile1 \
+            fonts-dejavu-core
 
       - name: Install Python Dependencies (CPU-Optimized)
         run: |
@@ -85,7 +86,7 @@ jobs:
 
       - name: Run Test Suite (Pytest)
         run: |
-          pytest -v --maxfail=5
+          pytest -v --tb=short --maxfail=5
 
   web-ci:
     name: Web Frontend Lint & Build
