@@ -48,19 +48,19 @@ def _create_hybrid_qr_flyer_bytes(qr_payload: str, banner_text: str) -> bytes:
     - decode_qr finds the QR code -> schedules qr_agent
     - OCR extracts > 15 chars of text -> ALSO schedules image_agent
     """
-    qr = qrcode.QRCode(box_size=6, border=2)
+    qr = qrcode.QRCode(box_size=10, border=4)
     qr.add_data(qr_payload)
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
 
-    canvas_w, canvas_h = 1000, 450
+    canvas_w, canvas_h = 800, 700
     img = Image.new("RGB", (canvas_w, canvas_h), color="white")
     draw = ImageDraw.Draw(img)
 
-    # Paste QR on right half
-    img.paste(qr_img, (580, 50))
+    # Paste QR centered at top
+    img.paste(qr_img, (215, 30))
 
-    # Render OCR text on left half
+    # Render OCR text at bottom with multi-line wrap
     font = None
     for font_path in (
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
@@ -72,17 +72,36 @@ def _create_hybrid_qr_flyer_bytes(qr_payload: str, banner_text: str) -> bytes:
         "arial.ttf",
     ):
         try:
-            font = ImageFont.truetype(font_path, 26)
+            font = ImageFont.truetype(font_path, 22)
             break
         except (OSError, TypeError, ValueError):
             pass
     if font is None:
         try:
-            font = ImageFont.load_default(size=24)
+            font = ImageFont.load_default(size=20)
         except (TypeError, ValueError):
             font = ImageFont.load_default()
 
-    draw.text((30, 80), banner_text, fill="black", font=font)
+    words = banner_text.split()
+    lines = []
+    curr = []
+    curr_len = 0
+    for w in words:
+        if curr_len + len(w) + 1 > 45:
+            lines.append(" ".join(curr))
+            curr = [w]
+            curr_len = len(w)
+        else:
+            curr.append(w)
+            curr_len += len(w) + 1
+    if curr:
+        lines.append(" ".join(curr))
+
+    y = 480
+    for line in lines:
+        draw.text((40, y), line, fill="black", font=font)
+        y += 35
+
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return buf.getvalue()

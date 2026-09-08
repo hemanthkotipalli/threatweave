@@ -21,6 +21,7 @@ import os
 import re
 import tempfile
 import wave
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -141,12 +142,14 @@ class TestSttEngine:
 
 
 class TestVoiceAgent:
-    def test_vishing_audio_fires_indicator_and_delegates_to_text_agent(self):
+    @patch("app.agents.voice_agent.transcribe_audio")
+    def test_vishing_audio_fires_indicator_and_delegates_to_text_agent(self, mock_transcribe):
         """
         Vishing script audio -> vishing_script_pattern fires, genuine text_agent
         delegation occurs, text_analysis is populated, severity is high/critical.
         """
         phrase = "This is an automated call from your bank. Your account has been compromised. Press 1 now to verify your PIN. Do not hang up."
+        mock_transcribe.return_value = (phrase, 0.95)
         audio_bytes = _create_synthetic_speech_wav(phrase)
 
         direct_text = analyze_text(phrase)
@@ -165,9 +168,11 @@ class TestVoiceAgent:
         # Indicators from text agent are merged
         assert any(ind in result.indicators for ind in direct_text.indicators)
 
-    def test_benign_audio_returns_low_severity(self):
+    @patch("app.agents.voice_agent.transcribe_audio")
+    def test_benign_audio_returns_low_severity(self, mock_transcribe):
         """Benign conversation audio -> low severity, text_analysis populated."""
         phrase = "Hey, are we still meeting for lunch tomorrow at twelve? Let me know."
+        mock_transcribe.return_value = (phrase, 0.95)
         audio_bytes = _create_synthetic_speech_wav(phrase)
 
         result = analyze_voice(audio_bytes)
@@ -207,13 +212,15 @@ class TestVoiceAgent:
         if "ai_voice_indicator_weak" in result.indicators and "vishing_script_pattern" not in result.indicators:
             assert result.confidence <= 0.40
 
-    def test_never_claims_proof_of_ai_or_deepfake_voice(self):
+    @patch("app.agents.voice_agent.transcribe_audio")
+    def test_never_claims_proof_of_ai_or_deepfake_voice(self, mock_transcribe):
         """
         AUTOMATED ANTI-PROOF SAFETY CHECK:
         The Voice Agent must NEVER claim to have proven or definitively detected
         AI-generated or deepfake voice in its findings or reasoning.
         """
         phrase = "This is an automated call from your bank. Your account has been compromised. Press 1 now to verify your PIN. Do not hang up."
+        mock_transcribe.return_value = (phrase, 0.95)
         audio_bytes = _create_synthetic_speech_wav(phrase)
         result = analyze_voice(audio_bytes)
 

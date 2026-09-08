@@ -31,7 +31,7 @@ jobs:
       DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
       CHROMA_PATH: "./test_chroma_ci"
       JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
-      GROQ_API_KEY: "gsk_ci_mocked_test_key_for_pipeline_execution"
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY || 'gsk_ci_mocked_test_key_for_pipeline_execution' }}
 
     services:
       postgres:
@@ -68,7 +68,8 @@ jobs:
             libgomp1 \
             ffmpeg \
             libsndfile1 \
-            fonts-dejavu-core
+            fonts-dejavu-core \
+            espeak
 
       - name: Install Python Dependencies (CPU-Optimized)
         run: |
