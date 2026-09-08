@@ -1,0 +1,22 @@
+﻿# Node modules — huge, always rebuilt from package-lock.json
+node_modules/
+
+# Next.js build output — rebuilt in builder stage
+.next/
+
+# Environment files — secrets injected at runtime
+.env.local
+.env*.local
+.env
+
+# Version control
+.git/
+.gitignore
+
+# Editor artifacts
+.idea/
+.vscode/
+*.swp
+
+# Type-check and lint artefacts
+*.tsbuildinfo

@@ -1,0 +1,89 @@
+{
+  "id": "9B0HqV1Y9m5KxL3T",
+  "name": "ThreatWeave High Severity Alert Dispatcher",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "threatweave-alert",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1c7e90db-6e69-450f-a396-857e1c8b3341",
+      "name": "ThreatWeave Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ],
+      "webhookId": "threatweave-alert"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract incoming investigation summary from ThreatWeave\nconst input = $input.first().json;\nconst payload = input.body || input;\n\nconst formattedIncident = {\n  status: \"alert_dispatched\",\n  investigation_id: payload.investigation_id || \"unknown\",\n  title: payload.title || \"Untitled Incident\",\n  final_severity: (payload.final_severity || \"UNKNOWN\").toUpperCase(),\n  final_risk_score: payload.final_risk_score !== undefined ? payload.final_risk_score : null,\n  top_indicators: payload.top_indicators || [],\n  received_at: new Date().toISOString(),\n  alert_summary: `[THREATWEAVE ALERT] ${payload.title || 'Incident'} (${(payload.final_severity || 'UNKNOWN').toUpperCase()} - Score: ${payload.final_risk_score}) triggered. Detected indicators: ${(payload.top_indicators || []).join(', ') || 'None'}`\n};\n\nreturn [{ json: formattedIncident }];"
+      },
+      "id": "e47b3012-78d1-419b-b0b2-7d8487b32ef8",
+      "name": "Format Incident Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "893d92fb-19c6-4d0f-8c31-c4beec2cfda2",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ThreatWeave Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Incident Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Incident Alert": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true
+  },
+  "versionId": "2bf5a4fa-38f3-4d43-85b6-7917282cb412",
+  "meta": {
+    "instanceId": "threatweave-local-n8n"
+  },
+  "tags": []
+}

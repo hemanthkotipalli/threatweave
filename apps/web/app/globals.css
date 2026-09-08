@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  /* Design system colors matching tokens.ts */
+  --color-soc-base: #0B0E14;
+  --color-soc-surface: #111622;
+  --color-soc-elevated: #182030;
+  --color-soc-border: #1F293D;
+  --color-soc-text-primary: #E2E8F0;
+  --color-soc-text-secondary: #94A3B8;
+  --color-soc-text-muted: #64748B;
+
+  --color-accent-primary: #2A66FF;
+  --color-accent-hover: #1D4ED8;
+  --color-accent-outline: rgba(42, 102, 255, 0.4);
+
+  --color-severity-info: #38BDF8;
+  --color-severity-low: #34D399;
+  --color-severity-medium: #FBBF24;
+  --color-severity-high: #F97316;
+  --color-severity-critical: #EF4444;
+
+  --color-status-idle: #94A3B8;
+  --color-status-running: #3B82F6;
+  --color-status-done: #10B981;
+  --color-status-failed: #EF4444;
+
+  /* Design system font aliases mapped to next/font bindings in layout.tsx */
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+
+  /* Custom sharp border radii matching tokens.ts */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+}
+
+/* Base document defaults mapping back to the system background */
+:root {
+  --background: #0B0E14;
+  --foreground: #E2E8F0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* High contrast keyboard accessibility focus states */
+*:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+/* Respect user preferences for reduced motion animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

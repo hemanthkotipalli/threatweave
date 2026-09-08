@@ -1,0 +1,34 @@
+# Core API Framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+python-dotenv>=1.0.1
+python-multipart>=0.0.9
+bcrypt>=4.0.0
+pyjwt>=2.8.0
+email-validator>=2.1.0
+
+# Database and Storage
+sqlalchemy>=2.0.28
+alembic>=1.13.1
+psycopg2-binary>=2.9.9
+chromadb>=0.4.24
+sentence-transformers>=2.5.0
+
+# Agentic Multimodal AI Frameworks
+langchain>=0.1.11
+langgraph>=0.0.26
+groq>=0.9.0
+
+# Testing & Development Tools
+pytest>=8.1.1
+ruff>=0.3.2
+httpx2>=2.12.0
+
+# Multimodal Processing & Decoders
+opencv-python-headless>=4.9.0
+qrcode[pil]>=8.0
+easyocr>=1.7.0
+faster-whisper>=1.0.0
+pyttsx3>=2.90

@@ -1,0 +1,129 @@
+name: CD Deployment (Render + Vercel)
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: "Select target to deploy"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - "all"
+          - "api-only (Render)"
+          - "web-only (Vercel)"
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-api-render:
+    name: Deploy API Backend to Render
+    if: >-
+      ((github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+       github.event_name == 'workflow_dispatch') &&
+      (github.event_name != 'workflow_dispatch' || github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'api-only (Render)')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render Deploy Webhook
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "ERROR: RENDER_DEPLOY_HOOK_URL secret is not configured in repository settings."
+            echo "Please configure RENDER_DEPLOY_HOOK_URL under Repository Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          echo "Triggering automated build and deployment on Render..."
+          HTTP_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$RENDER_DEPLOY_HOOK")
+          HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed '$d')
+          HTTP_CODE=$(echo "$HTTP_RESPONSE" | tail -n 1)
+
+          echo "Render Webhook Response Code: $HTTP_CODE"
+          echo "Response Body: $HTTP_BODY"
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Render deployment triggered successfully at $(date -u '+%Y-%m-%d %H:%M:%SZ')."
+          else
+            echo "Failed to trigger Render deployment. HTTP Status: $HTTP_CODE"
+            exit 1
+          fi
+
+      - name: Post-Deploy Health Check Smoke Test (Render)
+        env:
+          RENDER_API_URL: ${{ secrets.RENDER_API_URL }}
+        run: |
+          if [ -z "$RENDER_API_URL" ]; then
+            echo "NOTE: RENDER_API_URL secret is not set. Skipping active polling smoke test."
+            echo "Set RENDER_API_URL (e.g., https://threatweave-api.onrender.com) to enable live post-deploy verification."
+            exit 0
+          fi
+
+          echo "Polling Render health check at $RENDER_API_URL/health..."
+          MAX_ATTEMPTS=40
+          DELAY_SECONDS=15
+          SUCCESS=false
+
+          for i in $(seq 1 $MAX_ATTEMPTS); do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$RENDER_API_URL/health" || true)
+            echo "Attempt $i/$MAX_ATTEMPTS: GET $RENDER_API_URL/health -> HTTP $HTTP_CODE"
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "Post-deploy smoke test PASSED: Render API is healthy and responding with HTTP 200."
+              SUCCESS=true
+              break
+            fi
+            sleep $DELAY_SECONDS
+          done
+
+          if [ "$SUCCESS" != "true" ]; then
+            echo "ERROR: Render deployment failed to report healthy status within $((MAX_ATTEMPTS * DELAY_SECONDS))s."
+            exit 1
+          fi
+
+  deploy-web-vercel:
+    name: Deploy Web Frontend to Vercel
+    if: >-
+      ((github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+       github.event_name == 'workflow_dispatch') &&
+      (github.event_name != 'workflow_dispatch' || github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'web-only (Vercel)')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./apps/web
+
+      - name: Post-Deploy Edge Verification (Vercel)
+        env:
+          VERCEL_APP_URL: ${{ secrets.VERCEL_APP_URL }}
+        run: |
+          TARGET_URL="${VERCEL_APP_URL:-https://threatweave.vercel.app}"
+          echo "Verifying Vercel edge deployment response at $TARGET_URL..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L "$TARGET_URL" || true)
+          echo "Vercel edge returned HTTP $HTTP_CODE"
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+            echo "Post-deploy smoke test PASSED: Vercel frontend is live at $TARGET_URL."
+          else
+            echo "WARNING: Vercel edge responded with HTTP $HTTP_CODE. Check DNS and deployment logs."
+          fi
+
+      - name: Log Deployment Success
+        run: |
+          echo "Vercel production frontend deployment completed at $(date -u '+%Y-%m-%d %H:%M:%SZ')."

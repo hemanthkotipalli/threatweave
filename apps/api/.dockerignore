@@ -1,0 +1,40 @@
+﻿# Python virtual environment — never include in image
+venv/
+.venv/
+
+# Python bytecode caches
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Test suite — not needed in production image
+tests/
+.pytest_cache/
+.ruff_cache/
+pytest.ini
+
+# Environment files — secrets must be injected at runtime, never baked in
+.env
+*.env.local
+
+# Version control
+.git/
+.gitignore
+
+# Development scratch files
+scratch/
+scratch_verify.py
+
+# Storage and local DB directories — mounted as volumes at runtime
+storage/
+chroma_db/
+
+# Editor artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node artefacts (should never be here, but exclude defensively)
+node_modules/
