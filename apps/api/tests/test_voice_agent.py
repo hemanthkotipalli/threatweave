@@ -51,7 +51,7 @@ def _create_synthetic_speech_wav(text: str) -> bytes:
 
         with open(temp_path, "rb") as f:
             return f.read()
-    except Exception:
+    except Exception:  # noqa: BLE001
         # Fallback to modulated tone WAV if SAPI5/espeak unavailable or fails
         return _create_synthetic_tone_wav(duration_sec=2.0)
     finally:
