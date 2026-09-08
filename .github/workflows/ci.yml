@@ -68,8 +68,7 @@ jobs:
             libgomp1 \
             ffmpeg \
             libsndfile1 \
-            fonts-dejavu-core \
-            espeak
+            fonts-dejavu-core
 
       - name: Install Python Dependencies (CPU-Optimized)
         run: |

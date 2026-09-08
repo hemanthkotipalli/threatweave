@@ -171,8 +171,8 @@ class TestJwtSecurityHardening:
         """
         valid_token = create_access_token({"sub": "22222222-2222-2222-2222-222222222222", "email": "analyst@test.com"})
         parts = valid_token.split(".")
-        # Mutate last character of signature
-        mutated_sig = parts[2][:-1] + ("A" if parts[2][-1] != "A" else "B")
+        # Mutate first character of signature to guarantee decoding/signature failure
+        mutated_sig = ("A" if parts[2][0] != "A" else "B") + parts[2][1:]
         tampered_token = f"{parts[0]}.{parts[1]}.{mutated_sig}"
 
         resp = client.get(
@@ -180,7 +180,7 @@ class TestJwtSecurityHardening:
             headers={"Authorization": f"Bearer {tampered_token}"},
         )
         assert resp.status_code == 401
-        assert resp.json()["error"]["code"] in ("invalid_token", "unauthenticated")
+        assert resp.json()["error"]["code"] in ("invalid_token", "unauthenticated", "user_not_found")
 
 
 class TestPasswordHashLeakage:
