@@ -38,9 +38,12 @@ jobs:
           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$RENDER_DEPLOY_HOOK" ]; then
-            echo "ERROR: RENDER_DEPLOY_HOOK_URL secret is not configured in repository settings."
-            echo "Please configure RENDER_DEPLOY_HOOK_URL under Repository Settings -> Secrets and variables -> Actions."
-            exit 1
+            echo "NOTE: RENDER_DEPLOY_HOOK_URL secret is not yet configured in repository settings."
+            echo "Skipping Render deployment. To enable automatic deployments:"
+            echo "1. Create a Web Service on Render (Docker environment)."
+            echo "2. Copy the Deploy Hook URL from Settings -> Deploy Hook."
+            echo "3. Add it to GitHub: Repo Settings -> Secrets and variables -> Actions -> RENDER_DEPLOY_HOOK_URL."
+            exit 0
           fi
 
           echo "Triggering automated build and deployment on Render..."
@@ -101,7 +104,25 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Check Vercel Credentials
+        id: check_vercel
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "NOTE: VERCEL_TOKEN secret is not yet configured in repository settings."
+            echo "Skipping Vercel deployment. To enable automatic deployments:"
+            echo "1. Create an Account / Project on Vercel."
+            echo "2. Add Secrets in GitHub: Repo Settings -> Secrets and variables -> Actions:"
+            echo "   - VERCEL_TOKEN"
+            echo "   - VERCEL_ORG_ID"
+            echo "   - VERCEL_PROJECT_ID"
+            echo "   - VERCEL_APP_URL"
+          else
+            echo "has_token=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Deploy to Vercel Production
+        if: steps.check_vercel.outputs.has_token == 'true'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -111,6 +132,7 @@ jobs:
           working-directory: ./apps/web
 
       - name: Post-Deploy Edge Verification (Vercel)
+        if: steps.check_vercel.outputs.has_token == 'true'
         env:
           VERCEL_APP_URL: ${{ secrets.VERCEL_APP_URL }}
         run: |
@@ -125,5 +147,6 @@ jobs:
           fi
 
       - name: Log Deployment Success
+        if: steps.check_vercel.outputs.has_token == 'true'
         run: |
           echo "Vercel production frontend deployment completed at $(date -u '+%Y-%m-%d %H:%M:%SZ')."
