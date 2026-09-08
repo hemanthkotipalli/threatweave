@@ -43,7 +43,9 @@ dist/
 downloads/
 eggs/
 .eggs/
+# Python build libraries
 lib/
+!apps/web/lib/
 lib64/
 parts/
 sdist/

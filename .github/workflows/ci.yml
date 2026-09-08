@@ -26,6 +26,13 @@ jobs:
       run:
         working-directory: apps/api
 
+    env:
+      ENVIRONMENT: "development"
+      DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
+      CHROMA_PATH: "./test_chroma_ci"
+      JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
+      GROQ_API_KEY: "gsk_ci_mocked_test_key_for_pipeline_execution"
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -73,18 +80,10 @@ jobs:
           ruff check .
 
       - name: Run Database Migrations (Alembic)
-        env:
-          DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
         run: |
           alembic upgrade head
 
       - name: Run Test Suite (Pytest)
-        env:
-          ENVIRONMENT: "development"
-          DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
-          CHROMA_PATH: "./test_chroma_ci"
-          JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
-          GROQ_API_KEY: "gsk_ci_mocked_test_key_for_pipeline_execution"
         run: |
           pytest -v --maxfail=5
 
