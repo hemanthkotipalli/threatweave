@@ -29,7 +29,8 @@ const TOKEN_KEY = "threatweave_access_token";
 const USER_KEY = "threatweave_user_profile";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/+$/, "") || "http://localhost:8000";
+  (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL)?.replace(/\/+$/, "") ||
+  "http://localhost:8000";
 
 /**
  * Retrieves the stored JWT access token from localStorage.
