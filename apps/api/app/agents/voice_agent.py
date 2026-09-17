@@ -19,7 +19,11 @@ from __future__ import annotations
 import io
 import json
 import logging
+import os
 import re
+import tempfile
+from collections.abc import Generator
+from contextlib import contextmanager
 from datetime import datetime, timezone
 
 import av
@@ -38,6 +42,30 @@ from app.schemas.evidence import EvidenceItem
 logger = logging.getLogger("threatweave-api.agents.voice_agent")
 
 _SEVERITY_ORDER: list[str] = ["info", "low", "medium", "high", "critical"]
+
+
+@contextmanager
+def temporary_audio_file(audio_bytes: bytes) -> Generator[str, None, None]:
+    """
+    Safely writes audio bytes to a temporary WAV file on disk and guarantees
+    immediate cleanup via try/finally upon exit or unexpected exception.
+
+    :param audio_bytes: Raw binary bytes of the audio file.
+    :yields: Absolute path to the temporary file on disk.
+    """
+    temp_path: str | None = None
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tf:
+            tf.write(audio_bytes)
+            temp_path = tf.name
+        yield temp_path
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.unlink(temp_path)
+                logger.debug("Cleaned up temporary audio file: %s", temp_path)
+            except OSError as err:
+                logger.warning("Failed to clean up temporary audio file %s: %s", temp_path, err)
 
 
 def _max_severity(severities: list[str]) -> str:
@@ -129,167 +157,168 @@ def analyze_voice(audio_bytes: bytes) -> EvidenceItem:
                 timestamp=timestamp,
             )
 
-        # Inspect format integrity via PyAV container verification
-        try:
-            container = av.open(io.BytesIO(audio_bytes))
-            audio_streams = [s for s in container.streams if s.type == "audio"]
-            if not audio_streams:
-                logger.warning("Uploaded file contains no audio streams")
+        with temporary_audio_file(audio_bytes) as _temp_audio_path:
+            # Inspect format integrity via PyAV container verification
+            try:
+                container = av.open(io.BytesIO(audio_bytes))
+                audio_streams = [s for s in container.streams if s.type == "audio"]
+                if not audio_streams:
+                    logger.warning("Uploaded file contains no audio streams")
+                    return EvidenceItem(
+                        agent="voice_agent",
+                        modality="voice",
+                        finding="Provided file does not contain valid audio data.",
+                        confidence=0.0,
+                        severity="info",
+                        indicators=[],
+                        evidence={"error": "no_audio_streams"},
+                        reasoning="The container could not identify any readable audio tracks.",
+                        status="failed",
+                        timestamp=timestamp,
+                    )
+            except Exception as probe_err:  # noqa: BLE001 - corrupted bytes return failed EvidenceItem
+                logger.warning("Corrupted or unreadable audio bytes: %s", probe_err)
                 return EvidenceItem(
                     agent="voice_agent",
                     modality="voice",
-                    finding="Provided file does not contain valid audio data.",
+                    finding="Corrupted or unreadable audio file.",
                     confidence=0.0,
                     severity="info",
                     indicators=[],
-                    evidence={"error": "no_audio_streams"},
-                    reasoning="The container could not identify any readable audio tracks.",
+                    evidence={"error": "corrupted_audio_bytes", "details": str(probe_err)},
+                    reasoning="File format could not be decoded by the audio parser.",
                     status="failed",
                     timestamp=timestamp,
                 )
-        except Exception as probe_err:  # noqa: BLE001 - corrupted bytes return failed EvidenceItem
-            logger.warning("Corrupted or unreadable audio bytes: %s", probe_err)
-            return EvidenceItem(
-                agent="voice_agent",
-                modality="voice",
-                finding="Corrupted or unreadable audio file.",
-                confidence=0.0,
-                severity="info",
-                indicators=[],
-                evidence={"error": "corrupted_audio_bytes", "details": str(probe_err)},
-                reasoning="File format could not be decoded by the audio parser.",
-                status="failed",
-                timestamp=timestamp,
-            )
 
-        # Step 2: Speech-to-Text Transcription
-        transcript, stt_conf = transcribe_audio(audio_bytes)
+            # Step 2: Speech-to-Text Transcription
+            transcript, stt_conf = transcribe_audio(audio_bytes)
 
-        # Step 3: Handle empty or silent audio
-        if not transcript:
-            return EvidenceItem(
-                agent="voice_agent",
-                modality="voice",
-                finding="No intelligible speech detected in audio recording.",
-                confidence=0.0,
-                severity="info",
-                indicators=["stt_failed"],
-                evidence={
-                    "transcript": "",
-                    "stt_confidence": 0.0,
-                    "heuristics": {
-                        "has_vishing_script": False,
-                        "acoustic_features": {},
+            # Step 3: Handle empty or silent audio
+            if not transcript:
+                return EvidenceItem(
+                    agent="voice_agent",
+                    modality="voice",
+                    finding="No intelligible speech detected in audio recording.",
+                    confidence=0.0,
+                    severity="info",
+                    indicators=["stt_failed"],
+                    evidence={
+                        "transcript": "",
+                        "stt_confidence": 0.0,
+                        "heuristics": {
+                            "has_vishing_script": False,
+                            "acoustic_features": {},
+                        },
+                        "text_analysis": {},
                     },
-                    "text_analysis": {},
-                },
-                reasoning="Transcription processing yielded no recognizable speech or audible words.",
-                status="ok",
-                timestamp=timestamp,
-            )
+                    reasoning="Transcription processing yielded no recognizable speech or audible words.",
+                    status="ok",
+                    timestamp=timestamp,
+                )
 
-        # Step 4: Voice-Specific Heuristic Checks
-        has_vishing = has_vishing_script_pattern(transcript)
-        acoustic_data = analyze_acoustic_features(audio_bytes)
+            # Step 4: Voice-Specific Heuristic Checks
+            has_vishing = has_vishing_script_pattern(transcript)
+            acoustic_data = analyze_acoustic_features(audio_bytes)
 
-        indicators: list[str] = []
-        candidate_severities: list[str] = []
+            indicators: list[str] = []
+            candidate_severities: list[str] = []
 
-        if has_vishing:
-            indicators.append("vishing_script_pattern")
-            candidate_severities.append("high")
+            if has_vishing:
+                indicators.append("vishing_script_pattern")
+                candidate_severities.append("high")
 
-        if stt_conf < 0.40:
-            indicators.append("stt_low_confidence")
+            if stt_conf < 0.40:
+                indicators.append("stt_low_confidence")
 
-        if acoustic_data.get("indicator") == "ai_voice_indicator_weak":
-            indicators.append("ai_voice_indicator_weak")
+            if acoustic_data.get("indicator") == "ai_voice_indicator_weak":
+                indicators.append("ai_voice_indicator_weak")
 
-        # Step 5: Delegate transcript to Text Agent
-        logger.info("Voice Agent delegating transcript to text_agent")
-        text_item = analyze_text(transcript)
-        candidate_severities.append(text_item.severity)
+            # Step 5: Delegate transcript to Text Agent
+            logger.info("Voice Agent delegating transcript to text_agent")
+            text_item = analyze_text(transcript)
+            candidate_severities.append(text_item.severity)
 
-        for ind in text_item.indicators:
-            if ind in VALID_INDICATORS and ind not in indicators:
-                indicators.append(ind)
+            for ind in text_item.indicators:
+                if ind in VALID_INDICATORS and ind not in indicators:
+                    indicators.append(ind)
 
-        # Step 6: Severity Reconciliation
-        final_severity = _max_severity(candidate_severities)
+            # Step 6: Severity Reconciliation
+            final_severity = _max_severity(candidate_severities)
 
-        # Blend confidence: taking highest confidence among components
-        confidence = max(stt_conf, text_item.confidence)
-        if acoustic_data.get("confidence_contribution"):
-            # Acoustic confidence contribution is strictly capped at 0.40
-            acoustic_conf = min(0.40, float(acoustic_data["confidence_contribution"]))
-            if not candidate_severities or final_severity in ("info", "low"):
-                confidence = min(0.40, max(confidence, acoustic_conf))
-        confidence = round(max(0.0, min(1.0, confidence)), 4)
+            # Blend confidence: taking highest confidence among components
+            confidence = max(stt_conf, text_item.confidence)
+            if acoustic_data.get("confidence_contribution"):
+                # Acoustic confidence contribution is strictly capped at 0.40
+                acoustic_conf = min(0.40, float(acoustic_data["confidence_contribution"]))
+                if not candidate_severities or final_severity in ("info", "low"):
+                    confidence = min(0.40, max(confidence, acoustic_conf))
+            confidence = round(max(0.0, min(1.0, confidence)), 4)
 
-        evidence = {
-            "transcript": transcript,
-            "stt_confidence": stt_conf,
-            "heuristics": {
-                "has_vishing_script": has_vishing,
-                "acoustic_features": acoustic_data,
-            },
-            "text_analysis": text_item.model_dump(mode="json") if hasattr(text_item, "model_dump") else {},
-        }
-
-        # Step 7: LLM Synthesis
-        finding: str
-        reasoning: str
-        status: str
-
-        try:
-            user_content = json.dumps({
+            evidence = {
                 "transcript": transcript,
                 "stt_confidence": stt_conf,
-                "indicators": indicators,
-                "suggested_severity": final_severity,
-                "has_vishing_script": has_vishing,
-                "acoustic_signal_present": bool(acoustic_data.get("indicator")),
-                "delegated_text_summary": {
-                    "severity": text_item.severity,
-                    "indicators": text_item.indicators,
-                    "finding": text_item.finding,
+                "heuristics": {
+                    "has_vishing_script": has_vishing,
+                    "acoustic_features": acoustic_data,
                 },
-            })
+                "text_analysis": text_item.model_dump(mode="json") if hasattr(text_item, "model_dump") else {},
+            }
 
-            logger.info("Invoking LLM synthesis for Voice Agent")
-            raw_response = call_llm(
-                system_prompt=VOICE_AGENT_SYSTEM_PROMPT,
-                user_content=user_content,
+            # Step 7: LLM Synthesis
+            finding: str
+            reasoning: str
+            status: str
+
+            try:
+                user_content = json.dumps({
+                    "transcript": transcript,
+                    "stt_confidence": stt_conf,
+                    "indicators": indicators,
+                    "suggested_severity": final_severity,
+                    "has_vishing_script": has_vishing,
+                    "acoustic_signal_present": bool(acoustic_data.get("indicator")),
+                    "delegated_text_summary": {
+                        "severity": text_item.severity,
+                        "indicators": text_item.indicators,
+                        "finding": text_item.finding,
+                    },
+                })
+
+                logger.info("Invoking LLM synthesis for Voice Agent")
+                raw_response = call_llm(
+                    system_prompt=VOICE_AGENT_SYSTEM_PROMPT,
+                    user_content=user_content,
+                )
+                cleaned = _clean_json(raw_response)
+                parsed = json.loads(cleaned)
+
+                finding = str(parsed.get("finding", "Voice threat intelligence assessment completed."))
+                reasoning = str(parsed.get("reasoning", "Analysis synthesized by LLM."))
+                llm_conf = parsed.get("confidence")
+                if llm_conf is not None:
+                    confidence = round(0.7 * confidence + 0.3 * float(llm_conf), 4)
+                confidence = max(0.0, min(1.0, confidence))
+                status = "ok"
+
+            except (ExternalServiceError, json.JSONDecodeError, TypeError, KeyError, ValueError, RuntimeError) as llm_err:
+                logger.warning("LLM synthesis failed for Voice Agent (%s) — using fallback template", llm_err)
+                finding, reasoning = _build_fallback_finding(indicators, final_severity, transcript)
+                status = "degraded_fallback"
+
+            # Step 8: Return unified EvidenceItem
+            return EvidenceItem(
+                agent="voice_agent",
+                modality="voice",
+                finding=finding,
+                confidence=confidence,
+                severity=final_severity,
+                indicators=indicators,
+                evidence=evidence,
+                reasoning=reasoning,
+                status=status,
+                timestamp=timestamp,
             )
-            cleaned = _clean_json(raw_response)
-            parsed = json.loads(cleaned)
-
-            finding = str(parsed.get("finding", "Voice threat intelligence assessment completed."))
-            reasoning = str(parsed.get("reasoning", "Analysis synthesized by LLM."))
-            llm_conf = parsed.get("confidence")
-            if llm_conf is not None:
-                confidence = round(0.7 * confidence + 0.3 * float(llm_conf), 4)
-            confidence = max(0.0, min(1.0, confidence))
-            status = "ok"
-
-        except (ExternalServiceError, json.JSONDecodeError, TypeError, KeyError, ValueError, RuntimeError) as llm_err:
-            logger.warning("LLM synthesis failed for Voice Agent (%s) — using fallback template", llm_err)
-            finding, reasoning = _build_fallback_finding(indicators, final_severity, transcript)
-            status = "degraded_fallback"
-
-        # Step 8: Return unified EvidenceItem
-        return EvidenceItem(
-            agent="voice_agent",
-            modality="voice",
-            finding=finding,
-            confidence=confidence,
-            severity=final_severity,
-            indicators=indicators,
-            evidence=evidence,
-            reasoning=reasoning,
-            status=status,
-            timestamp=timestamp,
-        )
 
     except Exception:
         logger.exception("Unexpected unhandled error inside Voice Agent")

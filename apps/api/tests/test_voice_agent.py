@@ -259,3 +259,57 @@ class TestDebugVoiceEndpoint:
         assert data["modality"] == "voice"
         assert "status" in data
         assert "text_analysis" in data["evidence"]
+
+
+class TestVoiceAgentTempfileCleanup:
+    """Regression tests verifying temporary file cleanup under normal and exception flows."""
+
+    def test_temp_audio_file_cleaned_up_on_exception(self):
+        """
+        Simulates an unhandled exception during audio processing (transcribe_audio).
+        Asserts that the temporary file created on disk is guaranteed to be deleted
+        by the try/finally cleanup block, and voice_agent safely returns failed status.
+        """
+        tone_bytes = _create_synthetic_tone_wav(duration_sec=1.0)
+        captured_temp_files: list[str] = []
+
+        def crashing_stt(audio_bytes: bytes):
+            # Inspect the temp directory for any .wav files created by temporary_audio_file
+            temp_dir = tempfile.gettempdir()
+            for fname in os.listdir(temp_dir):
+                if fname.endswith(".wav"):
+                    full_path = os.path.join(temp_dir, fname)
+                    if full_path not in captured_temp_files:
+                        captured_temp_files.append(full_path)
+            raise RuntimeError("Simulated STT worker crash mid-processing")
+
+        with patch("app.agents.voice_agent.transcribe_audio", side_effect=crashing_stt):
+            result = analyze_voice(tone_bytes)
+
+        assert result.status == "failed"
+        assert result.evidence.get("error") == "unhandled_internal_error"
+
+        # Assert that all captured temporary files have been deleted from disk
+        for temp_file in captured_temp_files:
+            assert not os.path.exists(temp_file), f"Temp file {temp_file} was leaked on disk!"
+
+    def test_temp_audio_file_context_manager_cleanup_direct(self):
+        """
+        Directly exercises temporary_audio_file context manager under exception
+        to guarantee try/finally unlink execution.
+        """
+        from app.agents.voice_agent import temporary_audio_file
+
+        test_bytes = b"RIFF" + b"\x00" * 60
+        leaked_path: str | None = None
+
+        with (
+            pytest.raises(ValueError, match="mid-stream failure"),
+            temporary_audio_file(test_bytes) as temp_path,
+        ):
+            leaked_path = temp_path
+            assert os.path.exists(temp_path)
+            raise ValueError("mid-stream failure")
+
+        assert leaked_path is not None
+        assert not os.path.exists(leaked_path), f"Temp file {leaked_path} was not cleaned up on exception!"
