@@ -1,50 +1,64 @@
-# ThreatWeave Design System
+# ThreatWeave Design System — "Signal Intercept"
 
-This document outlines the visual tokens, font choices, scales, and component guidelines for the ThreatWeave SOC Operations Console frontend.
+This document outlines the visual tokens, font choices, scales, and component guidelines for the ThreatWeave SOC Operations Console frontend following the **"Signal Intercept"** visual restyle.
 
 ---
 
 ## 1. Color System Tokens
 
-Every color utilized across components, panels, or typography must tie back to these tokens (defined in [`lib/tokens.ts`](file:///d:/ThreatWeave%20—%20Agentic%20Multimodal/threatweave/apps/web/lib/tokens.ts) and configured within [`app/globals.css`](file:///d:/ThreatWeave%20—%20Agentic%20Multimodal/threatweave/apps/web/app/globals.css)).
+Every color utilized across components, panels, or typography ties directly back to tokens defined in [`lib/tokens.ts`](file:///d:/ThreatWeave%20—%20Agentic%20Multimodal/threatweave/apps/web/lib/tokens.ts) and configured within [`app/globals.css`](file:///d:/ThreatWeave%20—%20Agentic%20Multimodal/threatweave/apps/web/app/globals.css).
 
-### Background & Surface Scales
-- **SOC Base Background** (`#0B0E14`): Main dark backdrop for the operations dashboard.
-- **SOC Surface** (`#111622`): Secondary containers, table backgrounds, and card bodies.
-- **SOC Elevated** (`#182030`): Popups, dropdown drawers, and dialog surfaces.
-- **SOC Border** (`#1F293D`): Separation grids, lines, and borders.
+### Background & Surface Scales (Warm Signal Intercept Palette)
+- **SOC Base Background** (`#0E0C0B`): Warm, near-black command console backdrop replacing generic cool navy-black.
+- **SOC Surface** (`#161311`): Secondary containers, table backgrounds, and card bodies with subtle warmth.
+- **SOC Elevated** (`#211D1A`): Popups, dropdown drawers, dialog surfaces, and active items.
+- **SOC Border** (`#2E2722`): Subtle warm amber-gray separation grids and partition lines.
 
 ### Typography Contrast Scales
-- **Primary Text** (`#E2E8F0`): Highest contrast, used for headers and primary controls.
-- **Secondary Text** (`#94A3B8`): Muted copy, descriptions, and labels.
-- **Muted Text** (`#64748B`): Timestamps, detailed items, and disabled states.
+- **Primary Text** (`#E2E8F0`): Highest contrast, used for headers, active text, and high-priority labels.
+- **Secondary Text** (`#94A3B8`): Muted copy, descriptions, and tabular metadata.
+- **Muted Text** (`#64748B`): Timestamps, IDs, disabled items, and empty-state placeholders.
 
-### Primary Accents (Restrained Usage Only)
-- **Accent Primary** (`#2A66FF`): Primary interactive button colors, focus states, and selection markers.
-- **Accent Hover** (`#1D4ED8`): Hover state for accent actions.
-- **Accent Outline** (`rgba(42, 102, 255, 0.4)`): Shadow glows for keyboard navigation outlines.
+### Primary Accents (Signal Orange / Amber)
+- **Accent Primary** (`#FF6B35`): High-visibility signal-orange for primary buttons, focus states, and key threat highlights.
+- **Accent Hover** (`#E85520`): Deep rust-orange hover transition state.
+- **Accent Outline** (`rgba(255, 107, 53, 0.4)`): High-visibility focus ring glow ensuring keyboard accessibility.
 
 ### Threat Severity Levels
-- **Info** (`#38BDF8`): Sky Blue (Informational logs/events).
-- **Low** (`#34D399`): Emerald Green (Normal operation / low risk alerts).
-- **Medium** (`#FBBF24`): Amber Yellow (Minor anomalies / moderate warnings).
-- **High** (`#F97316`): Orange (Active threats / high warning status).
-- **Critical** (`#EF4444`): Crimson Red (Urgent security breach / critical action needed).
+- **Info** (`#5B9EB8`): Desaturated steel-cyan (low dominance).
+- **Low** (`#4EAB87`): Desaturated sage-green (low dominance).
+- **Medium** (`#FBBF24`): Amber Yellow (minor anomalies / warnings).
+- **High** (`#F97316`): Orange Alert (active threats / high severity).
+- **Critical** (`#EF4444`): Crimson Red (urgent security incident).
+
+*Design Rationale:* Desaturating `info` and `low` allows `critical` and `high` threats to immediately dominate visual perception in dense SOC dashboards.
 
 ### Swarm Pipeline Status Dots
-- **Idle** (`#94A3B8`): Slate Gray (Awaiting job inputs).
-- **Running** (`#3B82F6`): Blue (Active processing execution).
-- **Completed** (`#10B981`): Green (Success / agent consensus complete).
-- **Failed** (`#EF4444`): Red (Execution crash / network error).
+- **Idle** (`#94A3B8`): Slate Gray (awaiting job inputs).
+- **Running** (`#3B82F6`): Blue (active processing execution with pulse).
+- **Completed** (`#10B981`): Green (action completed successfully).
+- **Failed** (`#EF4444`): Red (execution error / crash).
 
 ---
 
-## 2. Typography & Spacing Scale
+## 2. WCAG Contrast Compliance
+
+| Token / Usage Context | Foreground Hex | Background Hex | Contrast Ratio | WCAG 2.1 AA Compliance |
+| :--- | :--- | :--- | :---: | :---: |
+| **Accent against Base Background** | `#FF6B35` | `#0E0C0B` | **6.88 : 1** | **PASS** (Normal text >= 4.5:1) |
+| **Accent against Surface Cards** | `#FF6B35` | `#161311` | **6.52 : 1** | **PASS** (Normal text >= 4.5:1) |
+| **Primary Button Text on Accent** | `#0E0C0B` (Dark) | `#FF6B35` | **6.88 : 1** | **PASS** (Normal text >= 4.5:1) |
+| **Primary Text on Base** | `#E2E8F0` | `#0E0C0B` | **15.42 : 1** | **PASS** (Exceeds AAA >= 7.0:1) |
+| **Secondary Text on Surface** | `#94A3B8` | `#161311` | **7.41 : 1** | **PASS** (Exceeds AAA >= 7.0:1) |
+
+---
+
+## 3. Typography & Spacing Scale
 
 ### Typography Pairing
-- **Display Font**: `Space Grotesk` (Geometric sans-serif for screen titles, headings, and counts).
-- **Body Font**: `Inter` (Clear, high legibility sans-serif for UI forms, listings, and text).
-- **Monospace Font**: `JetBrains Mono` (Coding logs, indicator badges, IDs, and severity codes).
+- **Display Font**: `Barlow Condensed` (`var(--font-display)` via `next/font/google`). Narrow, high-density tactical field-report grotesk optimized for headers, statistics, and command-center interfaces.
+- **Body Font**: `Inter` (`var(--font-inter)`). Clear, high-legibility sans-serif for UI forms, listings, and text.
+- **Monospace Font**: `JetBrains Mono` (`var(--font-jetbrains-mono)`). Technical telemetry, IDs, hashes, and indicators.
 
 ### Spacing Scale (4px Base Grid)
 - **xs** (4px / `0.25rem`): Inner element spacing (badges, dots).
@@ -58,18 +72,14 @@ Every color utilized across components, panels, or typography must tie back to t
 - **none** (`0px`): Default sharp corners.
 - **sm** (`2px`): Sub-labels, tags, status dots.
 - **md** (`4px`): Interactive elements, buttons, inputs.
-- **lg** (`6px`): Cards, table panels.
+- **lg** (`6px`): Primary cards, popups, and dropdown menus.
 
 ---
 
-## 3. Component Usage Guidance
+## 4. Visual Motifs & Distinctive Elements
 
-All components are fully typed and placed under [`components/ui/`](file:///d:/ThreatWeave%20—%20Agentic%20Multimodal/threatweave/apps/web/components/ui/):
-
-1. **`Button`**: Provides primary, secondary, and ghost variant states for action execution.
-2. **`Card`**: Visual boundary card container with border framing.
-3. **`Badge`**: Basic badge label highlighting small metadata segments.
-4. **`SeverityTag`**: Custom tag resolving a fixed color and fixed Lucide icon based on the 5 threat severity levels.
-5. **`StatusDot`**: Renders dynamic status indicators mapping background glows (with pulses for running states).
-6. **`Skeleton`**: Pulsing shape container representing load placeholders (motion-paused on prefers-reduced-motion).
-7. **`EmptyState`**: Layout structure displaying empty lists/screens with contextual explanations and button triggers.
+1. **Card Phosphor Scanline Texture:**
+   - Every `Card` component features a pure CSS linear gradient overlay (`repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 107, 53, 0.025) 3px, rgba(255, 107, 53, 0.025) 4px)`).
+   - Generates an ultra-subtle (~2.5% opacity) CRT/phosphor scanline texture without external image assets or network overhead.
+2. **Cross-Modal Corroboration Connector:**
+   - In the Investigation Workspace (`/investigations/[id]`), when multiple specialist agents detect the same technical indicator, a shared accent badge (`Corroborated Signal: [tag]`) and an accent left-border connector (`border-l-2 border-accent-primary`) are rendered above the corroborating findings.

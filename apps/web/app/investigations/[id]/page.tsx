@@ -526,13 +526,55 @@ export default function InvestigationWorkspacePage() {
                   </Card>
                 ) : (
                   <div className="space-y-4">
-                    {allFindings.map((item, idx) => (
-                      <EvidenceCard
-                        key={item.finding.id || idx}
-                        finding={item.finding}
-                        agentName={item.agentName}
-                      />
-                    ))}
+                    {(() => {
+                      // Precompute indicator frequencies for cross-modal corroboration
+                      const indicatorFreq = new Map<string, number>();
+                      for (const fItem of allFindings) {
+                        const rawInd = fItem.finding.indicators;
+                        const indList = Array.isArray(rawInd)
+                          ? rawInd.filter((x): x is string => typeof x === "string")
+                          : rawInd && typeof rawInd === "object"
+                          ? Object.keys(rawInd)
+                          : [];
+                        for (const ind of indList) {
+                          indicatorFreq.set(ind, (indicatorFreq.get(ind) || 0) + 1);
+                        }
+                      }
+
+                      return allFindings.map((item, idx) => {
+                        const rawInd = item.finding.indicators;
+                        const indList = Array.isArray(rawInd)
+                          ? rawInd.filter((x): x is string => typeof x === "string")
+                          : rawInd && typeof rawInd === "object"
+                          ? Object.keys(rawInd)
+                          : [];
+                        const corroborated = indList.filter((ind) => (indicatorFreq.get(ind) || 0) > 1);
+
+                        return (
+                          <div key={item.finding.id || idx} className="relative">
+                            {corroborated.length > 0 && (
+                              <div className="flex items-center gap-2 mb-1.5 px-3 py-1 rounded-sm bg-accent-primary/10 border-l-2 border-accent-primary text-xs font-mono text-accent-primary">
+                                <Sparkles className="h-3 w-3 shrink-0" />
+                                <span className="font-semibold uppercase tracking-wider text-[10px]">
+                                  Corroborated Signal:
+                                </span>
+                                <div className="flex flex-wrap gap-1">
+                                  {corroborated.map((tag) => (
+                                    <Badge key={tag} variant="accent" className="text-[10px] py-0 px-1.5 font-mono">
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <EvidenceCard
+                              finding={item.finding}
+                              agentName={item.agentName}
+                            />
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
                 )}
               </section>

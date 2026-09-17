@@ -1,5 +1,5 @@
 /**
- * ThreatWeave Design System Tokens
+ * ThreatWeave Design System Tokens — "Signal Intercept"
  * 
  * This file serves as the single source of truth for the visual token system of the frontend.
  * Every styling attribute (colors, font pairing, spacing, and radii scales) must refer to
@@ -7,38 +7,38 @@
  */
 
 export const COLORS = {
-  // Theme Background Scales (Professional dark-first SOC console theme)
+  // Theme Background Scales (Warm Signal Intercept near-black theme)
   bg: {
-    base: "#0B0E14",        // Main background for the dashboard console
-    surface: "#111622",     // Cards, table frames, panel divisions
-    elevated: "#182030",    // Modals, popovers, dropdown drawers
-    border: "#1F293D",      // Subtle borders and grid partitions
+    base: "#0E0C0B",        // Main warm near-black background for the operations console
+    surface: "#161311",     // Cards, table frames, panel divisions
+    elevated: "#211D1A",    // Modals, popovers, dropdown drawers, active items
+    border: "#2E2722",      // Subtle warm amber-gray structural borders and dividers
   },
 
   // Typography Contrast Scales
   text: {
-    primary: "#E2E8F0",     // Default bright UI labels and text
-    secondary: "#94A3B8",   // Muted descriptive descriptions
+    primary: "#E2E8F0",     // Default bright UI labels and text (slate-100)
+    secondary: "#94A3B8",   // Muted descriptive copy and metadata (slate-400)
     muted: "#64748B",       // Inactive items, detailed labels, or placeholder text
   },
 
-  // Primary Restrained Brand Accents
+  // Primary Restrained Brand Accents (Signal Orange / Amber)
   accent: {
-    primary: "#2A66FF",     // Highlights, focus outlines, primary buttons
-    hover: "#1D4ED8",       // Hover state transition color
-    outline: "rgba(42, 102, 255, 0.4)", // Focusing border outline shadow
+    primary: "#FF6B35",     // Signal-orange highlights, primary CTA, active navigation
+    hover: "#E85520",       // Deep rust-orange hover state
+    outline: "rgba(255, 107, 53, 0.4)", // Focusing border outline shadow
   },
 
-  // Strict 5-tier Threat Severity Color Coding
+  // Strict 5-tier Threat Severity Color Coding (Info/Low desaturated for dominance hierarchy)
   severity: {
-    info: "#38BDF8",        // Informational Alerts (Sky Blue)
-    low: "#34D399",         // Low Risk Alerts (Emerald Green)
+    info: "#5B9EB8",        // Informational Alerts (Desaturated steel-cyan)
+    low: "#4EAB87",         // Low Risk Alerts (Desaturated sage-green)
     medium: "#FBBF24",      // Moderate Risk Warnings (Amber Yellow)
-    high: "#F97316",        // High Risk Threats (Orange Warning)
+    high: "#F97316",        // High Risk Threats (Alert Orange)
     critical: "#EF4444",    // Critical Incident (Crimson Red)
   },
 
-  // 4-tier Action Pipeline Status Indicators
+  // 4-tier Action Pipeline Status Indicators (Unchanged - functionally load-bearing)
   status: {
     idle: "#94A3B8",        // Standard waiting state
     running: "#3B82F6",     // Processing active job state
@@ -60,9 +60,9 @@ export const SPACING = {
 // Typography Scale & Weight bindings
 export const TYPE = {
   fontFamily: {
-    display: "var(--font-space-grotesk)",
-    body: "var(--font-inter)",
-    mono: "var(--font-jetbrains-mono)",
+    display: "var(--font-display)",       // Barlow Condensed (tactical editorial field-report grotesk)
+    body: "var(--font-inter)",            // Inter (high-legibility UI body copy)
+    mono: "var(--font-jetbrains-mono)",   // JetBrains Mono (hashes, indicators, telemetry)
   },
   fontSize: {
     xs: "0.75rem",     // 12px - indicator details, table labels

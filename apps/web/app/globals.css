@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  /* Design system colors matching tokens.ts */
-  --color-soc-base: #0B0E14;
-  --color-soc-surface: #111622;
-  --color-soc-elevated: #182030;
-  --color-soc-border: #1F293D;
+  /* Design system colors matching tokens.ts — "Signal Intercept" */
+  --color-soc-base: #0E0C0B;
+  --color-soc-surface: #161311;
+  --color-soc-elevated: #211D1A;
+  --color-soc-border: #2E2722;
   --color-soc-text-primary: #E2E8F0;
   --color-soc-text-secondary: #94A3B8;
   --color-soc-text-muted: #64748B;
 
-  --color-accent-primary: #2A66FF;
-  --color-accent-hover: #1D4ED8;
-  --color-accent-outline: rgba(42, 102, 255, 0.4);
+  --color-accent-primary: #FF6B35;
+  --color-accent-hover: #E85520;
+  --color-accent-outline: rgba(255, 107, 53, 0.4);
 
-  --color-severity-info: #38BDF8;
-  --color-severity-low: #34D399;
+  --color-severity-info: #5B9EB8;
+  --color-severity-low: #4EAB87;
   --color-severity-medium: #FBBF24;
   --color-severity-high: #F97316;
   --color-severity-critical: #EF4444;
@@ -26,7 +26,7 @@
   --color-status-failed: #EF4444;
 
   /* Design system font aliases mapped to next/font bindings in layout.tsx */
-  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-display: var(--font-display), sans-serif;
   --font-body: var(--font-inter), sans-serif;
   --font-mono: var(--font-jetbrains-mono), monospace;
 
@@ -38,7 +38,7 @@
 
 /* Base document defaults mapping back to the system background */
 :root {
-  --background: #0B0E14;
+  --background: #0E0C0B;
   --foreground: #E2E8F0;
 }
 

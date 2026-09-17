@@ -12,8 +12,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center font-display font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-soc-base disabled:opacity-50 disabled:pointer-events-none rounded-md cursor-pointer";
 
     // Variant mapping using variables pointing to tokens.ts
+    // Primary uses text-soc-base (#0E0C0B) for 6.88:1 WCAG AA compliant contrast on #FF6B35
     const variantStyles = {
-      primary: "bg-accent-primary hover:bg-accent-hover text-soc-text-primary border border-transparent shadow-sm",
+      primary: "bg-accent-primary hover:bg-accent-hover text-soc-base font-semibold border border-transparent shadow-sm",
       secondary: "bg-soc-surface hover:bg-soc-elevated text-soc-text-primary border border-soc-border",
       ghost: "hover:bg-soc-surface text-soc-text-secondary hover:text-soc-text-primary border border-transparent",
     };
