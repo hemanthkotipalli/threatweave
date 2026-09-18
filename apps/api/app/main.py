@@ -9,6 +9,7 @@ from app.core.logging import setup_logging
 # Initialize JSON logging format first
 setup_logging()
 
+import asyncio
 import logging
 
 from app.api.v1.router import api_router
@@ -24,6 +25,7 @@ from app.core.security import validate_security_configuration
 
 # Import database models to ensure ORM metadata registry is fully loaded
 from app.db.base import Base  # noqa: F401
+from app.rag.chroma_client import warmup_rag
 
 logger = logging.getLogger("threatweave-api")
 
@@ -32,9 +34,13 @@ logger = logging.getLogger("threatweave-api")
 async def lifespan(app: FastAPI):
     """
     FastAPI lifespan context manager for startup checks and graceful shutdown.
+    Schedules ChromaDB collection warmup as a non-blocking background task
+    so that /health is immediately reachable without waiting for vector store initialization.
     """
     logger.info("ThreatWeave API starting up. Validating security configuration...")
     validate_security_configuration()
+    # Schedule RAG warmup in background thread pool without awaiting before yield
+    asyncio.create_task(asyncio.to_thread(warmup_rag))
     yield
     logger.info("ThreatWeave API shutting down...")
 

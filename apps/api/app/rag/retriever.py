@@ -14,7 +14,7 @@ import logging
 from typing import Any
 
 from app.core.config import settings
-from app.rag.chroma_client import get_or_create_advisory_collection
+from app.rag.chroma_client import get_or_create_advisory_collection, is_rag_warming_up
 from app.rag.embeddings import embed_text
 
 logger = logging.getLogger("threatweave-api.rag.retriever")
@@ -69,6 +69,11 @@ def search_advisories(
 
     effective_k = top_k if top_k is not None else settings.RAG_TOP_K
     effective_threshold = threshold if threshold is not None else settings.RAG_SIMILARITY_THRESHOLD
+
+    # Graceful degradation during initial collection warmup window
+    if is_rag_warming_up():
+        logger.info("Advisories search requested during RAG warmup window; returning empty citations gracefully")
+        return []
 
     try:
         collection = get_or_create_advisory_collection()

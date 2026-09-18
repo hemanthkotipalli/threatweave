@@ -20,6 +20,41 @@ logger = logging.getLogger("threatweave-api.rag.chroma_client")
 
 COLLECTION_NAME = "advisories"
 _CLIENT_INSTANCE: ClientAPI | None = None
+_WARMUP_IN_PROGRESS: bool = False
+_RAG_READY: bool = False
+
+
+def is_rag_ready() -> bool:
+    """Returns True if the advisory collection in ChromaDB is initialized and confirmed ready."""
+    return _RAG_READY
+
+
+def is_rag_warming_up() -> bool:
+    """Returns True if background collection warmup is currently in progress."""
+    return _WARMUP_IN_PROGRESS
+
+
+def warmup_rag() -> bool:
+    """
+    Pre-initializes ChromaDB connection and warms the advisory collection.
+    Executed in a background thread during application startup to avoid blocking
+    the FastAPI lifespan, ensuring /health is immediately responsive.
+
+    :return: True if collection is ready, False if warmup encountered an error.
+    """
+    global _WARMUP_IN_PROGRESS, _RAG_READY
+    _WARMUP_IN_PROGRESS = True
+    try:
+        col = get_or_create_advisory_collection()
+        _ = col.count()
+        _RAG_READY = True
+        logger.info("ChromaDB background warmup complete: 'advisories' collection ready")
+        return True
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("ChromaDB background warmup encountered an error (will retry on demand): %s", exc)
+        return False
+    finally:
+        _WARMUP_IN_PROGRESS = False
 
 
 def get_chroma_client() -> ClientAPI:

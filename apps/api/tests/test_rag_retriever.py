@@ -7,7 +7,10 @@ and zero low-relevance fabrication.
 """
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from app.core.config import settings
+from app.rag.chroma_client import is_rag_warming_up, warmup_rag
 from app.rag.retriever import retrieve_relevant_advisories, search_advisories
 
 
@@ -93,3 +96,51 @@ class TestRagRetriever:
                     f"Result leaked below threshold {settings.RAG_SIMILARITY_THRESHOLD}: "
                     f"score={r['similarity_score']} title='{r['source_title']}'"
                 )
+
+
+class TestRagWarmupAndColdDegradation:
+    """
+    Regression tests verifying non-blocking RAG startup behavior.
+    Asserts queries arriving during the collection warmup window or under cold
+    initialization exceptions return a clean empty list rather than crashing.
+    """
+
+    def test_query_during_warmup_window_returns_clean_empty_result(self):
+        """
+        Simulates an incoming query while background warmup is actively running.
+        Asserts retriever returns [] without raising any exception.
+        """
+        with patch("app.rag.retriever.is_rag_warming_up", return_value=True):
+            results = search_advisories("critical banking security advisory")
+            assert results == [], "Expected empty citation list during active warmup window"
+
+            delegated = retrieve_relevant_advisories(
+                indicators=["credential_request"],
+                finding_texts=["suspicious login"],
+            )
+            assert delegated == [], "Expected empty citation list from retrieve_relevant_advisories during warmup"
+
+    def test_query_with_uninitialized_collection_returns_clean_empty_result(self):
+        """
+        Simulates collection access failure (e.g. ChromaDB container offline).
+        Asserts search_advisories catches exception and returns [] gracefully.
+        """
+        with patch(
+            "app.rag.retriever.get_or_create_advisory_collection",
+            side_effect=RuntimeError("ChromaDB connection refused / cold initialization"),
+        ):
+            results = search_advisories("emergency threat update")
+            assert results == [], "Expected graceful empty list on collection retrieval error"
+
+    def test_warmup_rag_catches_exception_safely(self):
+        """
+        Simulates an unexpected error during background warmup_rag execution.
+        Asserts function logs, returns False, and resets warmup flag without raising.
+        """
+        with patch(
+            "app.rag.chroma_client.get_or_create_advisory_collection",
+            side_effect=ConnectionError("Failed to reach Chroma service"),
+        ):
+            success = warmup_rag()
+            assert success is False
+            assert not is_rag_warming_up()

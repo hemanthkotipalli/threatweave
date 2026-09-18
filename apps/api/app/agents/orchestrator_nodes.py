@@ -1,10 +1,22 @@
 """
 app/agents/orchestrator_nodes.py
 --------------------------------
-Node execution functions for the ThreatWeave LangGraph Orchestrator (Phase 10).
-Handles modal classification, dynamic QR-vs-image routing, database persistence
-of AgentRun and AgentFinding records with independent session scoping, and
-defensive execution of specialist agents.
+ARCHITECTURE & CANONICAL RUNTIME NOTE:
+This module is the node implementation library for the ThreatWeave swarm pipeline.
+It defines the individual node execution functions, DB session wrappers, and data
+extraction logic for each step in the investigation lifecycle.
+
+CANONICAL RUNTIME ORCHESTRATION PATH:
+This module is NOT invoked directly by services or API routes. The single canonical
+runtime orchestration engine is `app.agents.graph.investigation_graph` (compiled
+LangGraph StateGraph), which is invoked by `app.services.orchestration_service.run_orchestrator`.
+`graph.py` imports these node functions to construct and wire the state machine:
+  - classify_node
+  - plan_node
+  - text_agent_node, url_agent_node, qr_agent_node, image_agent_node, voice_agent_node
+  - collect_node, correlate_node, conflict_resolution_node, rag_node, risk_engine_node
+
+Do NOT bypass graph.py to call these nodes directly in application services.
 """
 from __future__ import annotations
 
