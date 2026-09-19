@@ -159,6 +159,13 @@ export async function getInvestigationReport(id: string): Promise<InvestigationR
   });
 }
 
+/**
+ * Returns the direct URL for downloading an official server-generated PDF report.
+ */
+export function getInvestigationReportPdfUrl(id: string): string {
+  return `${API_BASE_URL}/api/v1/investigations/${id}/report/pdf`;
+}
+
 
 /**
  * Queries ChromaDB threat advisory knowledge base with strict threshold filtering.

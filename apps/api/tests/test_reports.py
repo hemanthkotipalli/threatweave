@@ -405,3 +405,101 @@ class TestReportGeneration:
         assert "error" in data or "detail" in data
         err_msg = data.get("error", {}).get("message", "") or data.get("detail", "")
         assert str(missing_id) in err_msg or "not found" in err_msg.lower()
+
+    def test_generate_pdf_report_endpoint_returns_valid_pdf(self, test_user_id: uuid.UUID):
+        """
+        Asserts that GET /api/v1/investigations/{id}/report/pdf:
+        - Returns HTTP 200 with media_type 'application/pdf'.
+        - Returns a valid binary PDF document starting with '%PDF-'.
+        - Writes an InvestigationReport audit record with format='pdf'.
+        """
+        inv_id = uuid.uuid4()
+        run_id = uuid.uuid4()
+
+        with SessionLocal() as db:
+            inv = Investigation(
+                id=inv_id,
+                user_id=test_user_id,
+                title="Phase D PDF Report Verification Test",
+                status="completed",
+                final_risk_score=0.8141,
+                final_severity=Severity.CRITICAL,
+                final_confidence=0.8865,
+                created_at=datetime.now(timezone.utc),
+                completed_at=datetime.now(timezone.utc),
+            )
+            evidence = EvidenceInput(
+                id=uuid.uuid4(),
+                investigation_id=inv_id,
+                modality="text",
+                raw_content_ref="Urgent: Your account credentials have expired. Verify immediately.",
+            )
+            agent_run = AgentRun(
+                id=run_id,
+                investigation_id=inv_id,
+                agent_name="text_agent",
+                status=AgentStatus.DONE,
+                latency_ms=110,
+            )
+            finding = AgentFinding(
+                id=uuid.uuid4(),
+                agent_run_id=run_id,
+                finding="Coercive urgency credential lure detected.",
+                confidence=0.90,
+                severity=Severity.CRITICAL,
+                indicators=["credential_request", "urgency_language"],
+                evidence={"matched_pattern": "account credentials have expired"},
+                reasoning="Classic banking credential harvesting attempt.",
+                external_refs=[],
+                status=FindingStatus.OK,
+            )
+            rb = RiskBreakdown(
+                id=uuid.uuid4(),
+                investigation_id=inv_id,
+                component="base_score",
+                value=0.6641,
+                weight=1.0,
+                contribution=0.6641,
+            )
+            citation = RagCitation(
+                id=uuid.uuid4(),
+                investigation_id=inv_id,
+                source_title="CERT-In Advisory on Banking Phishing",
+                source_type="CERT-In",
+                chunk_text="Alert regarding fake KYC portals and urgent SMS lures.",
+                similarity_score=0.685,
+                url="https://cert-in.org.in/advisory/phishing",
+            )
+            db.add_all([inv, evidence, agent_run, finding, rb, citation])
+            db.commit()
+
+        try:
+            resp = client.get(f"/api/v1/investigations/{inv_id}/report/pdf")
+            assert resp.status_code == 200
+            assert "application/pdf" in resp.headers.get("content-type", "")
+            assert "Content-Disposition" in resp.headers
+            assert f"threatweave-investigation-{inv_id}.pdf" in resp.headers["Content-Disposition"]
+
+            # Validate PDF magic bytes signature
+            pdf_bytes = resp.content
+            assert pdf_bytes.startswith(b"%PDF-")
+            assert len(pdf_bytes) > 1000
+
+            # Verify that an InvestigationReport audit row was written to DB with format='pdf'
+            with SessionLocal() as db:
+                audit_records = (
+                    db.query(InvestigationReport)
+                    .filter(InvestigationReport.investigation_id == inv_id)
+                    .all()
+                )
+                assert len(audit_records) >= 1
+                pdf_record = next(
+                    (r for r in audit_records if r.format == "pdf"), None
+                )
+                assert pdf_record is not None
+                assert pdf_record.file_path == "on-demand:audit"
+
+        finally:
+            with SessionLocal() as db:
+                db.query(Investigation).filter(Investigation.id == inv_id).delete()
+                db.commit()

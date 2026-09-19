@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Printer,
+  Download,
   Shield,
   AlertTriangle,
   FileText,
@@ -23,7 +24,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { SeverityTag, SeverityType } from "@/components/ui/SeverityTag";
-import { getInvestigationReport, ApiError } from "@/lib/api";
+import { getInvestigationReport, getInvestigationReportPdfUrl, ApiError } from "@/lib/api";
 import { InvestigationReportData } from "@/lib/types";
 
 export default function InvestigationReportPage() {
@@ -70,6 +71,12 @@ export default function InvestigationReportPage() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadPdf = () => {
+    if (!id) return;
+    const url = getInvestigationReportPdfUrl(id);
+    window.open(url, "_blank");
   };
 
   const getModalityIcon = (mod: string) => {
@@ -171,6 +178,15 @@ export default function InvestigationReportPage() {
             onClick={() => router.push(`/investigations/${id}`)}
           >
             Open Interactive Workspace
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleDownloadPdf}
+            className="shadow-sm"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download PDF
           </Button>
           <Button
             variant="primary"

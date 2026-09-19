@@ -32,3 +32,6 @@ qrcode[pil]>=8.0
 easyocr>=1.7.0
 faster-whisper>=1.0.0
 pyttsx3>=2.90
+
+# Report Generation
+reportlab>=5.0.0
