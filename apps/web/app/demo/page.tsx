@@ -126,7 +126,7 @@ export default function DemoPage() {
               </Badge>
             </div>
             <p className="text-sm text-soc-text-secondary max-w-3xl leading-relaxed">
-              Curated, production-grade attack scenarios executed live through the genuine
+              Curated benchmark attack scenarios executed live through the genuine
               multimodal ingestion service, LangGraph agent swarm, and deterministic risk engine.
             </p>
           </div>

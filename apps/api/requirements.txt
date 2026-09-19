@@ -24,7 +24,7 @@ groq>=0.9.0
 # Testing & Development Tools
 pytest>=8.1.1
 ruff>=0.3.2
-httpx2>=2.12.0
+httpx>=0.28.0
 
 # Multimodal Processing & Decoders
 opencv-python-headless>=4.9.0

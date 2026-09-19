@@ -27,6 +27,7 @@ import { RiskBreakdownPanel } from "@/components/investigation/RiskBreakdownPane
 import { EvidenceCard } from "@/components/investigation/EvidenceCard";
 import { ConflictBanner } from "@/components/investigation/ConflictBanner";
 import { RagCitationPanel } from "@/components/investigation/RagCitationPanel";
+import { EvidenceFlowGraph } from "@/components/investigation/EvidenceFlowGraph";
 import { getInvestigation, analyzeInvestigation, ApiError } from "@/lib/api";
 import { InvestigationDetail, AgentFindingDetail } from "@/lib/types";
 
@@ -170,7 +171,7 @@ export default function InvestigationWorkspacePage() {
     }
   };
 
-  // Flatten all findings across runs
+  // Flatten all findings across runs and sort severity-first (Critical -> High -> Medium -> Low -> Info)
   const allFindings: { finding: AgentFindingDetail; agentName: string }[] = [];
   if (investigation?.agent_runs) {
     for (const run of investigation.agent_runs) {
@@ -181,6 +182,22 @@ export default function InvestigationWorkspacePage() {
       }
     }
   }
+
+  // Severity-first triage ordering
+  const SEVERITY_RANK: Record<string, number> = {
+    critical: 0,
+    high: 1,
+    medium: 2,
+    low: 3,
+    info: 4,
+  };
+
+  allFindings.sort((a, b) => {
+    const sevA = SEVERITY_RANK[a.finding.severity?.toLowerCase() || "info"] ?? 5;
+    const sevB = SEVERITY_RANK[b.finding.severity?.toLowerCase() || "info"] ?? 5;
+    if (sevA !== sevB) return sevA - sevB;
+    return (b.finding.confidence || 0) - (a.finding.confidence || 0);
+  });
 
   // Check if findings are benign / all info
   const isAllBenign =
@@ -480,6 +497,11 @@ export default function InvestigationWorkspacePage() {
                 </div>
               </section>
 
+              {/* 2.1 Narrative Evidence Flow Graph (Visual Relationship Topology) */}
+              <section aria-label="Evidence Narrative Flow Topology">
+                <EvidenceFlowGraph investigation={investigation} />
+              </section>
+
               {/* 3. Conflict Banner (if any conflicts logged) */}
               {investigation.risk?.conflicts && investigation.risk.conflicts.length > 0 && (
                 <section aria-label="Agent Conflict Arbitration">
@@ -592,7 +614,7 @@ export default function InvestigationWorkspacePage() {
       <footer className="mt-12 border-t border-soc-border pt-4 text-center">
         <p className="text-xs font-mono text-soc-text-muted flex items-center justify-center gap-1.5">
           <Sparkles className="h-3 w-3 text-accent-primary" />
-          ThreatWeave Phase 13 — Multimodal SOC Investigation Workspace
+          ThreatWeave — Multimodal Cyber Threat Intelligence &amp; Incident Response Swarm
         </p>
       </footer>
     </div>

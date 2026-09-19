@@ -1,6 +1,6 @@
 # ThreatWeave — Agentic Multimodal Cyber Threat Intelligence & Response
 
-ThreatWeave is an advanced, end-to-end framework designed to process and coordinate threat response workflows by leveraging agentic multimodal intelligence. The platform aggregates, parses, and acts upon complex, multi-format cyber threat data—ranging from raw textual logs and network URLs to binary payloads, image screenshots, QR codes, and voice briefings. By routing inputs through an orchestrator-directed swarm of specialized AI agents, ThreatWeave provides real-time detection, contextualized mapping to attack matrices, and automated response playbooks, establishing a state-of-the-art model for modern, multimodal threat operations.
+ThreatWeave is an end-to-end research framework designed to evaluate and coordinate threat response workflows by leveraging agentic multimodal intelligence. The platform aggregates, parses, and correlates complex, multi-format cyber threat data—ranging from raw textual logs and network URLs to image screenshots, QR codes, and voice briefings. By routing inputs through an orchestrator-directed swarm of specialized AI agents, ThreatWeave provides multimodal threat correlation, contextualized intelligence grounding, and automated incident response dossiers, establishing a reproducible framework for multimodal threat operations.
 
 ## Architecture
 

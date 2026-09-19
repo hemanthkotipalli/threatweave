@@ -87,7 +87,7 @@ export default function Dashboard() {
             <h1 className="font-display font-bold text-xxl tracking-tight text-soc-text-primary">
               ThreatWeave
             </h1>
-            <Badge variant="accent">PHASE 17</Badge>
+            <Badge variant="accent">SWARM ACTIVE</Badge>
           </div>
           <p className="text-soc-text-secondary text-sm">
             Agentic Multimodal Cyber Threat Intelligence &amp; Response Swarm
@@ -357,7 +357,7 @@ export default function Dashboard() {
       {/* 4. Footer */}
       <footer className="mt-8 border-t border-soc-border pt-4 text-center">
         <p className="text-xs font-mono text-soc-text-muted">
-          ThreatWeave Phase 13 — Multimodal SOC Investigation Workspace
+          ThreatWeave — Multimodal Cyber Threat Intelligence &amp; Incident Response Swarm
         </p>
       </footer>
     </div>

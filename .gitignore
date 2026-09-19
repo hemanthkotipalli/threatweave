@@ -89,3 +89,7 @@ scratch_verify*.py
 *.sln
 *.swp
 *.swo
+
+# Playwright Test Artifacts
+test-results/
+playwright-report/
