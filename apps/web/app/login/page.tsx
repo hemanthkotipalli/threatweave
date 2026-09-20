@@ -3,7 +3,7 @@
 /**
  * apps/web/app/login/page.tsx
  * ---------------------------
- * Analyst login page utilizing Phase 1 design system components.
+ * Analyst login page utilizing SOC design system components.
  * Authenticates against POST /api/v1/auth/login and stores JWT in localStorage.
  */
 
@@ -47,7 +47,7 @@ function LoginForm() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-primary/10 border border-accent-primary/30 text-accent-primary text-xs font-mono mb-4">
             <span className="w-2 h-2 rounded-full bg-accent-primary animate-pulse" />
-            PHASE 17 SECURITY
+            ENTERPRISE SECURITY
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-soc-text-primary font-display">
             ThreatWeave SOC

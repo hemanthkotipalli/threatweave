@@ -103,8 +103,22 @@ export default function InvestigationWorkspacePage() {
           setIsAnalyzing(false);
           setPollTimeoutReached(true);
         }
-      } catch {
-        // Continue polling unless hard error
+      } catch (err) {
+        // Hard failure short-circuit: immediately abort polling on 404, 403, or 500+
+        if (
+          err instanceof ApiError &&
+          (err.status === 404 || err.status === 403 || err.status >= 500)
+        ) {
+          stopPolling();
+          setIsAnalyzing(false);
+          setError(
+            err.message ||
+              `Investigation polling stopped due to server error (${err.status}).`
+          );
+          return;
+        }
+
+        // Continue polling for transient network/processing errors until hard cap
         if (pollCountRef.current >= 30) {
           stopPolling();
           setIsAnalyzing(false);
@@ -326,6 +340,16 @@ export default function InvestigationWorkspacePage() {
                       Automation Triggered
                     </Badge>
                   )}
+                {(investigation.title?.startsWith("INC-2024-") ||
+                  investigation.title?.includes("Curated")) && (
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-[11px] text-accent-primary border-accent-primary/30 bg-accent-primary/10 flex items-center gap-1.5 uppercase"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent-primary" />
+                    Curated Reference Incident
+                  </Badge>
+                )}
               </div>
 
               <div className="flex items-center gap-4 text-xs font-mono text-soc-text-secondary flex-wrap">
@@ -376,15 +400,28 @@ export default function InvestigationWorkspacePage() {
                 <AlertCircle className="h-4 w-4 shrink-0 text-severity-critical" />
                 <span>{error}</span>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleRunAnalysis}
-                className="shrink-0 text-xs border-severity-critical/40 text-severity-critical hover:bg-severity-critical/20"
-              >
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                Retry Analysis
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => fetchInvestigation(true)}
+                  className="shrink-0 text-xs border-severity-critical/40 text-severity-critical hover:bg-severity-critical/20 cursor-pointer"
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                  Retry Fetch
+                </Button>
+                {investigation.status === "pending" && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleRunAnalysis}
+                    className="shrink-0 text-xs border-severity-critical/40 text-severity-critical hover:bg-severity-critical/20 cursor-pointer"
+                  >
+                    <Play className="h-3.5 w-3.5 mr-1.5" />
+                    Retry Analysis
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 

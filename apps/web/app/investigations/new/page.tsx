@@ -47,7 +47,7 @@ export default function NewInvestigationPage() {
         {/* Footer */}
         <footer className="mt-12 border-t border-soc-border pt-4 text-center">
           <p className="text-xs font-mono text-soc-text-muted">
-            ThreatWeave Phase 17 — Multimodal SOC Investigation Workspace
+            ThreatWeave — Multimodal SOC Investigation Workspace
           </p>
         </footer>
       </div>

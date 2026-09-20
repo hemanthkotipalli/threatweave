@@ -84,7 +84,7 @@ export function ComparisonView() {
             <div className="flex items-center gap-2 mb-1.5">
               <Layers className="h-5 w-5 text-accent-primary" />
               <h2 className="font-display font-bold text-lg text-soc-text-primary">
-                Cross-Modal Correlation Benchmark: Phase 11 Thesis Proof
+                Cross-Modal Correlation Benchmark: Multi-Agent Thesis Proof
               </h2>
               <Badge variant="accent" className="font-mono text-[10px] uppercase">
                 Visual Proof

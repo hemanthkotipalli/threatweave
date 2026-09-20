@@ -91,17 +91,25 @@ export function InvestigationRow({ item }: InvestigationRowProps) {
     }
   };
 
+  const isCurated = Boolean(item.title && (item.title.startsWith("INC-2024-") || item.title.includes("Curated")));
+
   return (
     <div className="grid grid-cols-12 items-center px-5 py-4 hover:bg-soc-elevated/40 transition-colors group text-sm gap-2">
       {/* Title, ID & Modalities */}
       <div className="col-span-12 md:col-span-5 pr-2">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
           <Link
             href={`/investigations/${item.id}`}
             className="font-display font-medium text-soc-text-primary group-hover:text-accent-primary transition-colors truncate"
           >
             {item.title || "Untitled Threat Investigation"}
           </Link>
+          {isCurated && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-accent-primary/10 border border-accent-primary/30 text-accent-primary shrink-0 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-primary" />
+              Curated
+            </span>
+          )}
           <Link
             href={`/investigations/${item.id}`}
             aria-label="Open Workspace"

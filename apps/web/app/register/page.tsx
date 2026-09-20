@@ -3,7 +3,7 @@
 /**
  * apps/web/app/register/page.tsx
  * ------------------------------
- * Analyst registration page utilizing Phase 1 design system components.
+ * Analyst registration page utilizing SOC design system components.
  * Registers user with POST /api/v1/auth/register, logs in, and redirects to dashboard.
  */
 

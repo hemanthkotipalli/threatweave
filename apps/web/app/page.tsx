@@ -107,7 +107,7 @@ export default function Dashboard() {
             New Investigation
           </Button>
 
-          {/* Auth State (Phase 17) */}
+          {/* Auth State */}
           <div className="h-6 w-px bg-soc-border mx-1 hidden sm:block" />
           {isAuth && currentUser ? (
             <div className="flex items-center gap-2">

@@ -9,8 +9,20 @@ Allows `test_auth.py` to test unauthenticated and malformed token requests witho
 """
 from __future__ import annotations
 
+import os
+
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
 import pytest
 from starlette.testclient import TestClient
+
+try:
+    import torch
+    torch.set_num_threads(1)
+except ImportError:
+    pass
 
 from app.core.security import create_access_token, hash_password
 from app.db.session import SessionLocal

@@ -220,7 +220,7 @@ export default function DemoPage() {
       {/* Footer */}
       <footer className="mt-16 border-t border-soc-border pt-4 text-center">
         <p className="text-xs font-mono text-soc-text-muted">
-          ThreatWeave Phase 15 — Live Multimodal Demonstration & Benchmarking Suite
+          ThreatWeave — Live Multimodal Demonstration & Benchmarking Suite
         </p>
       </footer>
     </div>

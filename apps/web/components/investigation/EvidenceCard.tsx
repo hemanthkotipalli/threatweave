@@ -32,7 +32,7 @@ const AGENT_ICONS: Record<string, LucideIcon> = {
 };
 
 export function EvidenceCard({ finding, agentName }: EvidenceCardProps) {
-  const [showDetails, setShowDetails] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const displayAgent = agentName || "specialist_agent";
   const IconComponent = AGENT_ICONS[displayAgent.toLowerCase()] || Bot;
@@ -54,6 +54,14 @@ export function EvidenceCard({ finding, agentName }: EvidenceCardProps) {
     finding.severity === "low"
       ? finding.severity
       : "info";
+
+  const hasExtraIndicators = indicatorList.length > 3;
+  const visibleIndicators = isExpanded ? indicatorList : indicatorList.slice(0, 3);
+  const hasDetails = Boolean(
+    finding.reasoning ||
+    (finding.evidence && Object.keys(finding.evidence).length > 0) ||
+    hasExtraIndicators
+  );
 
   return (
     <Card hoverable className="p-5 border-soc-border bg-soc-surface transition-all">
@@ -84,56 +92,67 @@ export function EvidenceCard({ finding, agentName }: EvidenceCardProps) {
         </div>
       </div>
 
-      {/* Main Finding Text */}
-      <div className="mb-4">
-        <p className="text-sm text-soc-text-primary leading-relaxed font-sans font-normal">
+      {/* Main Finding Text: 1-line summary when collapsed for 2-second scan, full text when expanded */}
+      <div className="mb-3">
+        <p
+          className={`text-sm text-soc-text-primary font-sans leading-relaxed ${
+            !isExpanded ? "line-clamp-1" : ""
+          }`}
+          title={!isExpanded ? finding.finding : undefined}
+        >
           {finding.finding}
         </p>
       </div>
 
-      {/* Indicator Badges */}
+      {/* Scannable Indicator Badges (Top 3 scannable when collapsed, all when expanded) */}
       {indicatorList.length > 0 && (
-        <div className="mb-4">
-          <div className="text-[11px] font-mono text-soc-text-muted uppercase tracking-wider mb-2">
-            Extracted Indicators ({indicatorList.length})
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {indicatorList.map((indicator, idx) => (
+        <div className="mb-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {visibleIndicators.map((indicator, idx) => (
               <Badge key={idx} variant="outline" className="text-[11px] font-mono py-0.5 px-2">
                 {indicator}
               </Badge>
             ))}
+            {!isExpanded && hasExtraIndicators && (
+              <button
+                type="button"
+                onClick={() => setIsExpanded(true)}
+                className="text-[11px] font-mono text-soc-text-muted hover:text-accent-primary bg-soc-base/80 px-2 py-0.5 rounded border border-soc-border/70 transition-colors cursor-pointer"
+              >
+                +{indicatorList.length - 3} more
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      {/* Expandable Reasoning & Raw Evidence Toggle */}
-      {(finding.reasoning || (finding.evidence && Object.keys(finding.evidence).length > 0)) && (
-        <div className="border-t border-soc-border/50 pt-3">
+      {/* Progressive Disclosure Expand / Collapse Affordance */}
+      {hasDetails && (
+        <div className="border-t border-soc-border/50 pt-3 mt-1">
           <button
             type="button"
-            onClick={() => setShowDetails(!showDetails)}
-            className="flex items-center gap-1.5 text-xs font-mono text-soc-text-secondary hover:text-soc-text-primary transition-colors cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-1.5 text-xs font-mono text-soc-text-secondary hover:text-soc-text-primary transition-colors cursor-pointer group"
           >
-            {showDetails ? (
+            {isExpanded ? (
               <>
-                <ChevronUp className="h-3.5 w-3.5" />
-                Hide Analysis Reasoning
+                <ChevronUp className="h-3.5 w-3.5 text-soc-text-muted group-hover:text-soc-text-primary" />
+                <span>Hide Analysis Reasoning &amp; Evidence</span>
               </>
             ) : (
               <>
-                <ChevronDown className="h-3.5 w-3.5" />
-                View Reasoning &amp; Evidence Details
+                <ChevronDown className="h-3.5 w-3.5 text-soc-text-muted group-hover:text-soc-text-primary" />
+                <span>View Full Evidence &amp; Reasoning</span>
               </>
             )}
           </button>
 
-          {showDetails && (
+          {isExpanded && (
             <div className="mt-3 space-y-3 pt-2 text-xs font-mono bg-soc-base/60 p-3.5 rounded border border-soc-border/60">
               {finding.reasoning && (
                 <div>
                   <span className="text-soc-text-muted font-semibold uppercase tracking-wider block mb-1 text-[10px]">
-                    Agent Reasoning Steps:
+                    Analysis &amp; Reasoning Steps:
                   </span>
                   <p className="text-soc-text-secondary leading-relaxed whitespace-pre-line font-sans text-xs">
                     {finding.reasoning}
@@ -143,10 +162,18 @@ export function EvidenceCard({ finding, agentName }: EvidenceCardProps) {
 
               {finding.evidence && Object.keys(finding.evidence).length > 0 && (
                 <div>
-                  <span className="text-soc-text-muted font-semibold uppercase tracking-wider block mb-1 text-[10px]">
-                    Supporting Payload Metadata:
-                  </span>
-                  <pre className="p-2.5 rounded bg-soc-base border border-soc-border overflow-x-auto text-[11px] text-soc-text-secondary leading-normal">
+                  <div className="flex items-center justify-between mb-1.5 flex-wrap gap-1">
+                    <span className="text-soc-text-muted font-semibold uppercase tracking-wider block text-[10px]">
+                      Raw Evidence &amp; Telemetry Payload:
+                    </span>
+                    {(finding.evidence.source === "seed_curated_data" || finding.evidence.verified === true) && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono text-accent-primary bg-accent-primary/10 px-2 py-0.5 rounded border border-accent-primary/30 uppercase tracking-wider font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent-primary" />
+                        Curated Benchmark Incident
+                      </span>
+                    )}
+                  </div>
+                  <pre className="p-2.5 rounded bg-soc-base border border-soc-border overflow-x-auto text-[11px] text-soc-text-secondary leading-normal max-h-64 overflow-y-auto">
                     {JSON.stringify(finding.evidence, null, 2)}
                   </pre>
                 </div>

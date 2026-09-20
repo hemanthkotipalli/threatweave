@@ -253,7 +253,7 @@ function InvestigationsListContent() {
       {/* Footer */}
       <footer className="mt-12 border-t border-soc-border pt-4 text-center">
         <p className="text-xs font-mono text-soc-text-muted">
-          ThreatWeave Phase 14 — Multimodal Threat Intelligence & Audit History
+          ThreatWeave — Multimodal Threat Intelligence & Audit History
         </p>
       </footer>
     </div>
