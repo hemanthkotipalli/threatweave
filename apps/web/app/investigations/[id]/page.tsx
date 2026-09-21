@@ -224,6 +224,31 @@ export default function InvestigationWorkspacePage() {
       investigation.final_risk_score === undefined ||
       investigation.final_risk_score < 0.25);
 
+  // Derive stage-appropriate copy tied to real backend state
+  const getAnalysisStageMessage = () => {
+    if (!investigation) return "Initializing specialist swarm...";
+    const runs = investigation.agent_runs || [];
+    const completedRuns = runs.filter((r) => r.status === "done" || r.status === "completed");
+    const activeRuns = runs.filter((r) => r.status === "running");
+
+    if (runs.length === 0) {
+      return "Routing ingested evidence modalities & initializing specialist swarm...";
+    }
+    if (activeRuns.length > 0 || completedRuns.length < runs.length) {
+      const activeNames = activeRuns.map((r) => r.agent_name.replace("_agent", "")).join(", ");
+      return activeNames
+        ? `Running specialist neural analysis (${activeNames})...`
+        : `Executing specialist swarm (${completedRuns.length}/${runs.length} modalities analyzed)...`;
+    }
+    if (!investigation.risk) {
+      return "Correlating cross-modal indicators, resolving conflicts & calculating risk...";
+    }
+    if (!investigation.rag_citations || investigation.rag_citations.length === 0) {
+      return "Retrieving grounded threat advisories & synthesizing incident dossier...";
+    }
+    return "Finalizing investigation record & telemetry...";
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-soc-base text-soc-text-primary px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
       {/* Top Navigation */}
@@ -434,10 +459,10 @@ export default function InvestigationWorkspacePage() {
               <div className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin shrink-0" />
                 <span>
-                  Executing specialist agent swarm across modalities (polling status every 2s)...
+                  {getAnalysisStageMessage()} (polling status every 2s)
                 </span>
               </div>
-              <span className="text-soc-text-secondary">
+              <span className="text-soc-text-secondary shrink-0 ml-2">
                 Attempt {pollCount}/30
               </span>
             </div>
