@@ -344,3 +344,25 @@ class TestAnalyzeUrl:
         assert "lookalike_domain" not in result.indicators, (
             "Real brand domain incorrectly flagged as lookalike"
         )
+
+    def test_ssrf_pattern_urls_safe_static_heuristics_only(self):
+        """
+        SSRF Defense Verification:
+        Asserts that submitting internal, cloud-metadata, loopback, and private IP URLs
+        completes safely via static heuristics with zero unhandled exceptions or hangs.
+        """
+        ssrf_targets = [
+            ("http://localhost:5432", "low"),
+            ("http://169.254.169.254/latest/meta-data/", "high"),
+            ("http://127.0.0.1:8000/api/v1/health", "high"),
+            ("http://10.0.0.1", "high"),
+        ]
+        for url, expected_min_severity in ssrf_targets:
+            result = analyze_url(url)
+            assert result.agent == "url_agent"
+            assert result.status in ("ok", "degraded_fallback")
+            assert "no_https" in result.indicators
+            assert result.severity in ("low", "medium", "high", "critical")
+            assert result.finding is not None
+            assert len(result.finding) > 10
+

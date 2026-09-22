@@ -39,7 +39,9 @@ client = TestClient(app, raise_server_exceptions=False)
 def test_user_id() -> uuid.UUID:
     """Provides a valid user ID for test investigations."""
     with SessionLocal() as db:
-        user = db.query(User).first()
+        user = db.query(User).filter(User.email == "legacy_test_analyst@threatweave.local").first()
+        if not user:
+            user = db.query(User).first()
         if not user:
             user = User(
                 id=uuid.uuid4(),

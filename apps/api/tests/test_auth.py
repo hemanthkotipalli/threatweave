@@ -311,3 +311,225 @@ class TestAuthenticationAndSecurity:
             patch.object(settings, "JWT_SECRET_KEY", "threatweave-dev-secret-key-change-in-prod"),
         ):
             validate_security_configuration()  # Should not raise
+
+
+class TestIdorAndOwnershipIsolation:
+    """
+    Comprehensive regression test suite for IDOR vulnerability prevention
+    and multi-tenant ownership isolation across all investigation endpoints.
+    """
+
+    @pytest.fixture
+    def two_users(self):
+        """Creates two distinct authenticated users with valid JWT tokens."""
+        uid_a = uuid.uuid4().hex[:6]
+        uid_b = uuid.uuid4().hex[:6]
+        email_a = f"owner_a_{uid_a}@threatweave.test"
+        email_b = f"intruder_b_{uid_b}@threatweave.test"
+        pwd = "SecurePassword123!"
+
+        client.post("/api/v1/auth/register", json={"email": email_a, "password": pwd})
+        client.post("/api/v1/auth/register", json={"email": email_b, "password": pwd})
+
+        login_a = client.post("/api/v1/auth/login", json={"email": email_a, "password": pwd})
+        login_b = client.post("/api/v1/auth/login", json={"email": email_b, "password": pwd})
+
+        token_a = login_a.json()["access_token"]
+        token_b = login_b.json()["access_token"]
+
+        return {
+            "token_a": token_a,
+            "headers_a": {"Authorization": f"Bearer {token_a}"},
+            "token_b": token_b,
+            "headers_b": {"Authorization": f"Bearer {token_b}"},
+        }
+
+    def test_owner_can_access_own_investigation(self, two_users):
+        """
+        Proof (a): The owner (User A) can access their own investigation normally:
+        - GET /api/v1/investigations/{id} -> 200 OK
+        - GET /api/v1/investigations/{id}/report -> 200 OK
+        - GET /api/v1/investigations/{id}/report/pdf -> 200 OK
+        - POST /api/v1/investigations/{id}/analyze -> 200 OK
+        """
+        create_res = client.post(
+            "/api/v1/investigations",
+            data={"title": "User A Private Case", "text": "Confidential internal investigation"},
+            headers=two_users["headers_a"],
+        )
+        assert create_res.status_code == 201
+        inv_id = create_res.json()["investigation"]["id"]
+
+        # 1. Detail endpoint
+        res_get = client.get(f"/api/v1/investigations/{inv_id}", headers=two_users["headers_a"])
+        assert res_get.status_code == 200
+        assert res_get.json()["title"] == "User A Private Case"
+
+        # 2. JSON Report endpoint
+        res_rep = client.get(f"/api/v1/investigations/{inv_id}/report", headers=two_users["headers_a"])
+        assert res_rep.status_code == 200
+        assert res_rep.json()["investigation"]["title"] == "User A Private Case"
+
+        # 3. PDF Report endpoint (header)
+        res_pdf = client.get(f"/api/v1/investigations/{inv_id}/report/pdf", headers=two_users["headers_a"])
+        assert res_pdf.status_code == 200
+        assert res_pdf.headers["content-type"] == "application/pdf"
+
+        # 3b. PDF Report endpoint via ?token= query param
+        res_pdf_param = client.get(f"/api/v1/investigations/{inv_id}/report/pdf?token={two_users['token_a']}")
+        assert res_pdf_param.status_code == 200
+        assert res_pdf_param.headers["content-type"] == "application/pdf"
+
+        # 4. Swarm analyze endpoint
+        with patch("app.api.v1.endpoints.orchestration.run_investigation_analysis") as mock_run:
+            mock_run.return_value = {
+                "investigation_id": inv_id,
+                "status": "completed",
+                "active_agents": [],
+                "agent_runs": [],
+                "findings_count": 0,
+            }
+            res_analyze = client.post(f"/api/v1/investigations/{inv_id}/analyze", headers=two_users["headers_a"])
+            assert res_analyze.status_code == 200
+
+    def test_different_authenticated_user_gets_404_idor_rejection(self, two_users):
+        """
+        Proof (b): A different authenticated user (User B) attempting to access
+        User A's investigation is rejected with HTTP 404 (not 403) across all endpoints:
+        - GET /api/v1/investigations/{id} -> 404 Not Found
+        - GET /api/v1/investigations/{id}/report -> 404 Not Found
+        - GET /api/v1/investigations/{id}/report/pdf -> 404 Not Found
+        - POST /api/v1/investigations/{id}/analyze -> 404 Not Found
+        """
+        create_res = client.post(
+            "/api/v1/investigations",
+            data={"title": "User A Private Case 2", "text": "Secret confidential payload"},
+            headers=two_users["headers_a"],
+        )
+        assert create_res.status_code == 201
+        inv_id = create_res.json()["investigation"]["id"]
+
+        # 1. Detail endpoint - User B gets 404
+        res_get = client.get(f"/api/v1/investigations/{inv_id}", headers=two_users["headers_b"])
+        assert res_get.status_code == 404, f"Expected 404, got {res_get.status_code}: {res_get.text}"
+        assert "not found" in res_get.json()["error"]["message"].lower()
+
+        # 2. JSON Report endpoint - User B gets 404
+        res_rep = client.get(f"/api/v1/investigations/{inv_id}/report", headers=two_users["headers_b"])
+        assert res_rep.status_code == 404, f"Expected 404, got {res_rep.status_code}: {res_rep.text}"
+        assert "not found" in res_rep.json()["error"]["message"].lower()
+
+        # 3. PDF Report endpoint - User B gets 404
+        res_pdf = client.get(f"/api/v1/investigations/{inv_id}/report/pdf", headers=two_users["headers_b"])
+        assert res_pdf.status_code == 404, f"Expected 404, got {res_pdf.status_code}: {res_pdf.text}"
+
+        # 4. Swarm analyze endpoint - User B gets 404
+        res_analyze = client.post(f"/api/v1/investigations/{inv_id}/analyze", headers=two_users["headers_b"])
+        assert res_analyze.status_code == 404, f"Expected 404, got {res_analyze.status_code}: {res_analyze.text}"
+
+    def test_unauthenticated_request_gets_401_on_private_investigation(self, two_users):
+        """
+        Proof (c): An unauthenticated request attempting to access a private investigation
+        is rejected with HTTP 401 across all endpoints:
+        - GET /api/v1/investigations/{id} -> 401 Unauthorized
+        - GET /api/v1/investigations/{id}/report -> 401 Unauthorized
+        - GET /api/v1/investigations/{id}/report/pdf -> 401 Unauthorized
+        - POST /api/v1/investigations/{id}/analyze -> 401 Unauthorized
+        """
+        create_res = client.post(
+            "/api/v1/investigations",
+            data={"title": "User A Private Case 3", "text": "Secret confidential payload"},
+            headers=two_users["headers_a"],
+        )
+        assert create_res.status_code == 201
+        inv_id = create_res.json()["investigation"]["id"]
+
+        # 1. Detail endpoint - unauthenticated gets 401
+        res_get = client.get(f"/api/v1/investigations/{inv_id}")
+        assert res_get.status_code == 401, f"Expected 401, got {res_get.status_code}: {res_get.text}"
+
+        # 2. JSON Report endpoint - unauthenticated gets 401
+        res_rep = client.get(f"/api/v1/investigations/{inv_id}/report")
+        assert res_rep.status_code == 401, f"Expected 401, got {res_rep.status_code}: {res_rep.text}"
+
+        # 3. PDF Report endpoint - unauthenticated gets 401
+        res_pdf = client.get(f"/api/v1/investigations/{inv_id}/report/pdf")
+        assert res_pdf.status_code == 401, f"Expected 401, got {res_pdf.status_code}: {res_pdf.text}"
+
+        # 4. Swarm analyze endpoint - unauthenticated gets 401
+        res_analyze = client.post(f"/api/v1/investigations/{inv_id}/analyze")
+        assert res_analyze.status_code == 401, f"Expected 401, got {res_analyze.status_code}: {res_analyze.text}"
+
+    def test_list_investigations_filters_to_own_investigations_only(self, two_users):
+        """
+        Proof that GET /api/v1/investigations filters strictly to the current user's
+        own investigations, preventing cross-tenant list exposure.
+        """
+        title_a = f"User A Specific Inv - {uuid.uuid4().hex[:6]}"
+        title_b = f"User B Specific Inv - {uuid.uuid4().hex[:6]}"
+
+        client.post(
+            "/api/v1/investigations",
+            data={"title": title_a, "text": "Evidence for A"},
+            headers=two_users["headers_a"],
+        )
+        client.post(
+            "/api/v1/investigations",
+            data={"title": title_b, "text": "Evidence for B"},
+            headers=two_users["headers_b"],
+        )
+
+        # User A lists investigations: sees title_a, does NOT see title_b
+        res_a = client.get("/api/v1/investigations", headers=two_users["headers_a"])
+        assert res_a.status_code == 200
+        titles_a = [item["title"] for item in res_a.json()["items"]]
+        assert title_a in titles_a
+        assert title_b not in titles_a
+
+        # User B lists investigations: sees title_b, does NOT see title_a
+        res_b = client.get("/api/v1/investigations", headers=two_users["headers_b"])
+        assert res_b.status_code == 200
+        titles_b = [item["title"] for item in res_b.json()["items"]]
+        assert title_b in titles_b
+        assert title_a not in titles_b
+
+        # Unauthenticated request lists investigations: does NOT see either private title
+        res_anon = client.get("/api/v1/investigations")
+        assert res_anon.status_code == 200
+        titles_anon = [item["title"] for item in res_anon.json()["items"]]
+        assert title_a not in titles_anon
+        assert title_b not in titles_anon
+
+    def test_demo_investigations_remain_publicly_viewable_without_auth(self, two_users):
+        """
+        Proof that Demo Mode investigations (attributed to system_analyst)
+        remain viewable without authentication across detail and report endpoints.
+        """
+        from app.services.ingestion_service import ingest_investigation
+        with SessionLocal() as db:
+            demo_inv = ingest_investigation(
+                db=db,
+                title="Demo Public Phishing Lure",
+                text="Demo sample phishing email",
+                is_demo=True,
+            )
+            demo_id = str(demo_inv.id)
+
+        # Unauthenticated can view demo investigation detail
+        res_get = client.get(f"/api/v1/investigations/{demo_id}")
+        assert res_get.status_code == 200
+        assert res_get.json()["id"] == demo_id
+
+        # Unauthenticated can view demo investigation report
+        res_rep = client.get(f"/api/v1/investigations/{demo_id}/report")
+        assert res_rep.status_code == 200
+
+        # Unauthenticated can download demo investigation PDF
+        res_pdf = client.get(f"/api/v1/investigations/{demo_id}/report/pdf")
+        assert res_pdf.status_code == 200
+        assert res_pdf.headers["content-type"] == "application/pdf"
+
+        # Authenticated User B can also view demo investigation
+        res_user_b = client.get(f"/api/v1/investigations/{demo_id}", headers=two_users["headers_b"])
+        assert res_user_b.status_code == 200
+

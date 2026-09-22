@@ -6,7 +6,12 @@ import uuid
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_db
+from app.api.deps import (
+    check_investigation_ownership,
+    get_current_user,
+    get_db,
+    get_optional_current_user,
+)
 from app.core.errors import NotFoundError
 from app.models.investigation import Investigation
 from app.models.user import User
@@ -105,18 +110,30 @@ async def list_investigations(
     severity: str | None = Query(None, description="Optional severity filter"),
     date_from: str | None = Query(None, description="Optional start datetime ISO filter"),
     date_to: str | None = Query(None, description="Optional end datetime ISO filter"),
-    db: Session = Depends(get_db)  # noqa: B008
+    db: Session = Depends(get_db),  # noqa: B008
+    current_user: User | None = Depends(get_optional_current_user),  # noqa: B008
 ) -> PaginatedResponse[InvestigationListItemResponse]:
     """
     Retrieves a paginated list of investigations ordered by creation time descending,
     supporting real filtering by status, severity, and creation date range.
-    Investigations with final_severity=None are gracefully excluded from severity filters.
+    Enforces multi-tenant isolation: authenticated users only receive their own investigations;
+    unauthenticated requests receive public Demo Mode investigations.
     """
     logger.info(
-        "Listing investigations: page=%d, page_size=%d, status=%s, severity=%s, date_from=%s, date_to=%s",
-        page, page_size, status, severity, date_from, date_to,
+        "Listing investigations: user=%s, page=%d, page_size=%d, status=%s, severity=%s, date_from=%s, date_to=%s",
+        current_user.id if current_user else "anonymous", page, page_size, status, severity, date_from, date_to,
     )
     query = db.query(Investigation)
+
+    # Multi-tenant isolation filter
+    if current_user:
+        query = query.filter(Investigation.user_id == current_user.id)
+    else:
+        demo_user = db.query(User).filter(User.email == "system_analyst@threatweave.local").first()
+        if demo_user:
+            query = query.filter(Investigation.user_id == demo_user.id)
+        else:
+            query = query.filter(false())
 
     if status:
         query = query.filter(Investigation.status == status.strip().lower())
@@ -189,13 +206,15 @@ async def list_investigations(
 )
 async def get_investigation(
     id: uuid.UUID,
-    db: Session = Depends(get_db)  # noqa: B008
+    db: Session = Depends(get_db),  # noqa: B008
+    current_user: User | None = Depends(get_optional_current_user),  # noqa: B008
 ) -> InvestigationDetailResponse:
     """
     Retrieves full details of a specific threat investigation task.
-    Returns 404 NotFoundError if the requested ID does not exist.
+    Enforces multi-tenant ownership isolation: rejects unauthorized cross-tenant requests with 404.
+    Returns 404 NotFoundError if the requested ID does not exist or belongs to another tenant.
     """
-    logger.info("Retrieving investigation %s", id)
+    logger.info("Retrieving investigation %s by user %s", id, current_user.id if current_user else "anonymous")
     from sqlalchemy.orm import selectinload
 
     from app.models.agent_run import AgentRun
@@ -221,6 +240,8 @@ async def get_investigation(
     if not investigation:
         logger.warning("Investigation %s not found", id)
         raise NotFoundError(message=f"Investigation with ID {id} was not found on this server")
+
+    check_investigation_ownership(investigation=investigation, current_user=current_user, db=db)
 
     # Assemble risk field if scoring was executed
     risk_obj: RiskDetailResponse | None = None

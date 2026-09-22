@@ -3,7 +3,7 @@
  * -------------------
  * Typed HTTP client functions for ThreatWeave API communication.
  */
-import { getAuthHeaders } from "./auth";
+import { getAuthHeaders, getToken } from "./auth";
 import {
   DemoRunResponse,
   DemoScenario,
@@ -109,6 +109,7 @@ export async function getInvestigation(id: string): Promise<InvestigationDetail>
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...getAuthHeaders(),
     },
   });
 }
@@ -143,6 +144,7 @@ export async function listInvestigations(
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...getAuthHeaders(),
     },
   });
 }
@@ -155,15 +157,19 @@ export async function getInvestigationReport(id: string): Promise<InvestigationR
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...getAuthHeaders(),
     },
   });
 }
 
 /**
  * Returns the direct URL for downloading an official server-generated PDF report.
+ * Appends authentication token query param if user is authenticated.
  */
 export function getInvestigationReportPdfUrl(id: string): string {
-  return `${API_BASE_URL}/api/v1/investigations/${id}/report/pdf`;
+  const token = getToken();
+  const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : "";
+  return `${API_BASE_URL}/api/v1/investigations/${id}/report/pdf${tokenQuery}`;
 }
 
 

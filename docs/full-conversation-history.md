@@ -40,20 +40,20 @@
 | [Turn 25](#turn-25) | 2026-08-19 | Docker Subsystem Verification | try now docker desktop is running |
 | [Turn 26](#turn-26) | 2026-08-19 | Phase 6: URL Analysis Agent & Heuristics | Good — the fallback path is exactly right: capped confidence, cor... |
 | [Turn 27](#turn-27) | 2026-08-19 | Phase 5: Text Threat Specialist Agent & Groq Client | ROLE  You are making a focused correction to the already-complete... |
-| [Turn 28](#turn-28) | 2026-08-19 | Groq API Key Configuration | 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  here is... |
+| [Turn 28](#turn-28) | 2026-08-19 | Groq API Key Configuration | gsk_REDACTED_FOR_SECURITY  here is... |
 | [Turn 29](#turn-29) | 2026-08-19 | Interactive Clarification / Progress Check | try again |
 | [Turn 30](#turn-30) | 2026-08-21 | Interactive Clarification / Progress Check | continue |
 | [Turn 31](#turn-31) | 2026-08-19 | Interactive Clarification / Progress Check | try again |
 | [Turn 32](#turn-32) | 2026-08-21 | Groq API Key Configuration | ROLE  You are diagnosing why the real /api/v1/debug/text-agent en... |
-| [Turn 33](#turn-33) | 2026-08-21 | Groq API Key Configuration | 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   here i... |
-| [Turn 34](#turn-34) | 2026-08-21 | Groq API Key Configuration | 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   here i... |
-| [Turn 35](#turn-35) | 2026-08-21 | Groq API Key Configuration | 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 |
+| [Turn 33](#turn-33) | 2026-08-21 | Groq API Key Configuration | gsk_REDACTED_FOR_SECURITY   here i... |
+| [Turn 34](#turn-34) | 2026-08-21 | Groq API Key Configuration | gsk_REDACTED_FOR_SECURITY   here i... |
+| [Turn 35](#turn-35) | 2026-08-21 | Groq API Key Configuration | gsk_REDACTED_FOR_SECURITY |
 | [Turn 36](#turn-36) | 2026-08-21 | Groq API Key Configuration | open where to upgrade groq api |
 | [Turn 37](#turn-37) | 2026-09-06 | Interactive Clarification / Progress Check | look is my project complete |
 | [Turn 38](#turn-38) | 2026-09-06 | Interactive Clarification / Progress Check | try again |
 | [Turn 39](#turn-39) | 2026-09-06 | Interactive Clarification / Progress Check | Continue |
 | [Turn 40](#turn-40) | 2026-09-06 | Phase 0: Skeleton, Layout & Base Config | Not yet — good time to zoom out. Here's the honest state of thing... |
-| [Turn 41](#turn-41) | 2026-09-06 | Groq API Key Configuration | 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 |
+| [Turn 41](#turn-41) | 2026-09-06 | Groq API Key Configuration | gsk_REDACTED_FOR_SECURITY |
 | [Turn 42](#turn-42) | 2026-09-06 | Phase 6: URL Analysis Agent & Heuristics | PHASE 6 — Antigravity Prompt ROLE You are implementing PHASE 6 of... |
 | [Turn 43](#turn-43) | 2026-09-06 | GitHub Repository & Workflow Setup | Thought for 4s  This is thorough work — 71/71 passing, the "not c... |
 | [Turn 44](#turn-44) | 2026-09-06 | Interactive Clarification / Progress Check | continue |
@@ -158,90 +158,174 @@
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 0 of a project called ThreatWeave — Agentic Multimodal
-Cyber Threat Intelligence & Response. This is a final-year academic project. This is
-the FIRST phase — there is no existing code yet, but still behave as if inspecting
-first: check the current working directory for any existing files before creating
-anything, and do not overwrite anything that already exists without reporting it to me.
-
-SCOPE OF THIS PHASE ONLY
-Set up the repository skeleton and tooling. DO NOT implement any agent logic,
-API endpoints, database models, or UI components yet — those are later phases.
-
-TASKS
-1. Create this exact folder structure (empty dirs get a `.gitkeep`):
-   threatweave/
-   ├── apps/web/                (Next.js app — do not scaffold yet, just the folder)
-   ├── apps/api/app/{core,api/v1,models,schemas,services,agents,rag,db}/
-   ├── apps/api/tests/
-   ├── infra/{docker,nginx,github-actions}/
-   ├── n8n/
-   ├── docs/
-   ├── .env.example
-   └── docker-compose.yml (placeholder services only: postgres, chromadb — no app
-       services yet, since apps/web and apps/api aren't built yet)
-
-2. Initialize apps/api as a Python project:
-   - pyproject.toml (or requirements.txt) listing: fastapi, uvicorn, sqlalchemy,
-     alembic, pydantic, python-dotenv, langchain, langgraph, chromadb,
-     psycopg2-binary, pytest
-   - A minimal apps/api/app/main.py with a FastAPI instance and a single
-     GET /health endpoint returning {"status": "ok", "service": "threatweave-api"}
-   - apps/api/app/core/config.py using pydantic-settings, reading all secrets
-     (DATABASE_URL, ANTHROPIC_API_KEY, CHROMA_PATH, etc.) from environment
-     variables only — NEVER hardcode any secret or default credential
-   - apps/api/app/core/logging.py with basic structured (JSON) logging setup
-
-3. Write .env.example listing every environment variable referenced in config.py,
-   with placeholder values only (no real keys).
-
-4. Write docker-compose.yml with `postgres:16` and `chromadb/chroma` services only,
-   using environment variables (not hardcoded passwords) sourced from .env.
-
-5. Write a root README.md explaining: project name, one-paragraph description
-   matching "Agentic Multimodal Cyber Threat Intelligence & Response," the
-   six-agent architecture (Orchestrator + Text + URL + QR + Image + Voice),
-   the tech stack, and how to run `docker-compose up` plus the API health check.
-
-6. Write a root .gitignore appropriate for a Python + Node monorepo
-   (venv, node_modules, .env, __pycache__, .next, etc.).
-
-7. Set up basic CI placeholder: infra/github-actions/ci.yml that on push runs
-   `pip install` and a lint check (ruff or flake8) for apps/api — do not add
-   deployment steps yet.
-
-QUALITY REQUIREMENTS
-- No hardcoded secrets anywhere, including docker-compose.yml.
-- Every created file must be syntactically valid (valid TOML/YAML/Python/Markdown).
-- Use clear inline comments in config.py explaining each setting.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pip install -r requirements.txt` (or poetry/uv equivalent) —
-   report success/failure.
-2. `cd apps/api && uvicorn app.main:app --reload --port 8000 &` then
-   `curl http://localhost:8000/health` — must return
-   `{"status":"ok","service":"threatweave-api"}`. Report the exact response.
-3. `docker-compose config` — must parse without error. Report the output.
-4. Run any configured lint command and report output.
-
-REPORT BACK TO ME, EXPLICITLY
-- The full final folder tree that was created.
-- Contents of .env.example.
-- Exact output of each verification step above (paste real terminal output,
-  do not summarize).
-- Any task from this prompt you could not complete, and why.
-- Any ambiguity you had to resolve on your own, and what you decided.
-- Do NOT silently skip any task above — if something fails, report the failure
-  instead of working around it silently.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No database models, no Alembic migrations beyond an empty `alembic init` if you
-  choose to set up the tool itself.
-- No agent code, no LangGraph graph definition.
-- No frontend scaffolding beyond the empty apps/web/ folder.
-- No authentication.
-- No RAG/ChromaDB ingestion logic — only the empty service container in
+ROLE
+
+You are implementing PHASE 0 of a project called ThreatWeave — Agentic Multimodal
+
+Cyber Threat Intelligence & Response. This is a final-year academic project. This is
+
+the FIRST phase — there is no existing code yet, but still behave as if inspecting
+
+first: check the current working directory for any existing files before creating
+
+anything, and do not overwrite anything that already exists without reporting it to me.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Set up the repository skeleton and tooling. DO NOT implement any agent logic,
+
+API endpoints, database models, or UI components yet — those are later phases.
+
+
+
+TASKS
+
+1. Create this exact folder structure (empty dirs get a `.gitkeep`):
+
+   threatweave/
+
+   ├── apps/web/                (Next.js app — do not scaffold yet, just the folder)
+
+   ├── apps/api/app/{core,api/v1,models,schemas,services,agents,rag,db}/
+
+   ├── apps/api/tests/
+
+   ├── infra/{docker,nginx,github-actions}/
+
+   ├── n8n/
+
+   ├── docs/
+
+   ├── .env.example
+
+   └── docker-compose.yml (placeholder services only: postgres, chromadb — no app
+
+       services yet, since apps/web and apps/api aren't built yet)
+
+
+
+2. Initialize apps/api as a Python project:
+
+   - pyproject.toml (or requirements.txt) listing: fastapi, uvicorn, sqlalchemy,
+
+     alembic, pydantic, python-dotenv, langchain, langgraph, chromadb,
+
+     psycopg2-binary, pytest
+
+   - A minimal apps/api/app/main.py with a FastAPI instance and a single
+
+     GET /health endpoint returning {"status": "ok", "service": "threatweave-api"}
+
+   - apps/api/app/core/config.py using pydantic-settings, reading all secrets
+
+     (DATABASE_URL, ANTHROPIC_API_KEY, CHROMA_PATH, etc.) from environment
+
+     variables only — NEVER hardcode any secret or default credential
+
+   - apps/api/app/core/logging.py with basic structured (JSON) logging setup
+
+
+
+3. Write .env.example listing every environment variable referenced in config.py,
+
+   with placeholder values only (no real keys).
+
+
+
+4. Write docker-compose.yml with `postgres:16` and `chromadb/chroma` services only,
+
+   using environment variables (not hardcoded passwords) sourced from .env.
+
+
+
+5. Write a root README.md explaining: project name, one-paragraph description
+
+   matching "Agentic Multimodal Cyber Threat Intelligence & Response," the
+
+   six-agent architecture (Orchestrator + Text + URL + QR + Image + Voice),
+
+   the tech stack, and how to run `docker-compose up` plus the API health check.
+
+
+
+6. Write a root .gitignore appropriate for a Python + Node monorepo
+
+   (venv, node_modules, .env, __pycache__, .next, etc.).
+
+
+
+7. Set up basic CI placeholder: infra/github-actions/ci.yml that on push runs
+
+   `pip install` and a lint check (ruff or flake8) for apps/api — do not add
+
+   deployment steps yet.
+
+
+
+QUALITY REQUIREMENTS
+
+- No hardcoded secrets anywhere, including docker-compose.yml.
+
+- Every created file must be syntactically valid (valid TOML/YAML/Python/Markdown).
+
+- Use clear inline comments in config.py explaining each setting.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pip install -r requirements.txt` (or poetry/uv equivalent) —
+
+   report success/failure.
+
+2. `cd apps/api && uvicorn app.main:app --reload --port 8000 &` then
+
+   `curl http://localhost:8000/health` — must return
+
+   `{"status":"ok","service":"threatweave-api"}`. Report the exact response.
+
+3. `docker-compose config` — must parse without error. Report the output.
+
+4. Run any configured lint command and report output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- The full final folder tree that was created.
+
+- Contents of .env.example.
+
+- Exact output of each verification step above (paste real terminal output,
+
+  do not summarize).
+
+- Any task from this prompt you could not complete, and why.
+
+- Any ambiguity you had to resolve on your own, and what you decided.
+
+- Do NOT silently skip any task above — if something fails, report the failure
+
+  instead of working around it silently.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No database models, no Alembic migrations beyond an empty `alembic init` if you
+
+  choose to set up the tool itself.
+
+- No agent code, no LangGraph graph definition.
+
+- No frontend scaffolding beyond the empty apps/web/ folder.
+
+- No authentication.
+
+- No RAG/ChromaDB ingestion logic — only the empty service container in
+
   docker-compose.
 ```
 
@@ -862,89 +946,172 @@ All checks passed!
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 1 of ThreatWeave (Agentic Multimodal Cyber Threat
-Intelligence & Response). Phase 0 already exists at the repo root (threatweave/) —
-inspect it first: read README.md and the existing folder structure before creating
-anything. Do not touch apps/api/ in this phase. Do not overwrite any Phase 0 file.
-
-SCOPE OF THIS PHASE ONLY
-Build the Next.js frontend foundation and a reusable design-system layer only.
-NO API integration, NO investigation workspace, NO upload UI, NO authentication.
-Those are later phases — if you're tempted to build them now, stop and leave a
-TODO comment instead.
-
-DESIGN DIRECTION
-Dark-first, professional SOC/threat-intelligence aesthetic — think a security
-operations console, not a marketing landing page. Avoid: gradients, neon glow,
-decorative accent stripes/borders, cream/beige backgrounds, generic AI-landing-page
-look. Use: a near-black base (~#0B0E14–#10141C range), one restrained accent color
-reserved only for primary actions/focus states, and a strict 5-tier severity system
-(info/low/medium/high/critical) — each tier gets ONE fixed color + ONE fixed icon,
-used identically everywhere it appears. Pick real hex values and a real type pairing
-(display + body + a monospace face for indicators/IDs) — commit to specific choices,
-don't leave defaults.
-
-TASKS
-1. Scaffold `apps/web` as a Next.js (App Router, TypeScript, Tailwind) app —
-   check if `apps/web` already has a `.gitkeep` only; if so it's empty, safe to
-   scaffold into it directly.
-2. Create `apps/web/lib/tokens.ts` exporting the full token system: colors
-   (background scale, accent, 5 severity colors), spacing scale, type scale,
-   radii. Every color used anywhere in the app must trace back to this file —
-   no ad hoc hex codes in components.
-3. Build these components in `apps/web/components/ui/`, each typed and reusable:
-   - `Button` (primary/secondary/ghost variants)
-   - `Card`
-   - `Badge`
-   - `SeverityTag` (props: severity: "info"|"low"|"medium"|"high"|"critical")
-   - `StatusDot` (props: status: "idle"|"running"|"done"|"failed")
-   - `Skeleton` (loading placeholder)
-   - `EmptyState` (props: title, description, optional action — written in the
-     interface's voice, e.g. "No investigations yet" + a clear next action,
-     not a vague "Nothing here")
-4. Build a placeholder dashboard at `apps/web/app/page.tsx` that composes these
-   primitives: a page header, an empty investigation history table using
-   `EmptyState`, and a small showcase row demonstrating all 5 `SeverityTag`
-   states and all 4 `StatusDot` states, so the token system is visibly
-   verifiable in this phase even with no real data.
-5. Add keyboard focus states (visible outline using the accent color) on every
-   interactive primitive. Respect `prefers-reduced-motion` for any transitions.
-6. Write `apps/web/docs/design-system.md` documenting every token (with hex
-   values) and one-line usage guidance for each component.
-7. Add a "Running the frontend" section to the root README.md
-   (`cd apps/web && npm install && npm run dev`).
-8. Add `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000` to a new
-   `apps/web/.env.example` (unused this phase, wired up in a later phase).
-
-QUALITY REQUIREMENTS
-- TypeScript strict mode. No `any` unless justified with a comment.
-- No hardcoded colors outside lib/tokens.ts.
-- Components must be responsive down to 375px width.
-- Run ESLint/Next lint and fix all reported issues before reporting done.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/web && npm install` — report success/failure.
-2. `npm run build` — must succeed. Paste the output.
-3. `npm run lint` — must report zero errors. Paste the output.
-4. Start `npm run dev`, confirm the dashboard renders, then stop it — describe
-   what you observed (or attach/describe a screenshot if your environment
-   supports it).
-
-REPORT BACK TO ME, EXPLICITLY
-- Final file tree under apps/web/.
-- The exact hex values and type choices you committed to in tokens.ts.
-- Exact output of build and lint commands.
-- Any task you could not complete, and why.
-- Any ambiguity you resolved yourself, and what you decided.
-- Do not silently skip anything — report failures instead of working around
-  them invisibly.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No calls to apps/api.
-- No investigation workspace, upload UI, evidence cards, risk gauge, or RAG panel.
-- No authentication/login screens.
-- No real/mock investigation data beyond the token-showcase row on the
+ROLE
+
+You are implementing PHASE 1 of ThreatWeave (Agentic Multimodal Cyber Threat
+
+Intelligence & Response). Phase 0 already exists at the repo root (threatweave/) —
+
+inspect it first: read README.md and the existing folder structure before creating
+
+anything. Do not touch apps/api/ in this phase. Do not overwrite any Phase 0 file.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the Next.js frontend foundation and a reusable design-system layer only.
+
+NO API integration, NO investigation workspace, NO upload UI, NO authentication.
+
+Those are later phases — if you're tempted to build them now, stop and leave a
+
+TODO comment instead.
+
+
+
+DESIGN DIRECTION
+
+Dark-first, professional SOC/threat-intelligence aesthetic — think a security
+
+operations console, not a marketing landing page. Avoid: gradients, neon glow,
+
+decorative accent stripes/borders, cream/beige backgrounds, generic AI-landing-page
+
+look. Use: a near-black base (~#0B0E14–#10141C range), one restrained accent color
+
+reserved only for primary actions/focus states, and a strict 5-tier severity system
+
+(info/low/medium/high/critical) — each tier gets ONE fixed color + ONE fixed icon,
+
+used identically everywhere it appears. Pick real hex values and a real type pairing
+
+(display + body + a monospace face for indicators/IDs) — commit to specific choices,
+
+don't leave defaults.
+
+
+
+TASKS
+
+1. Scaffold `apps/web` as a Next.js (App Router, TypeScript, Tailwind) app —
+
+   check if `apps/web` already has a `.gitkeep` only; if so it's empty, safe to
+
+   scaffold into it directly.
+
+2. Create `apps/web/lib/tokens.ts` exporting the full token system: colors
+
+   (background scale, accent, 5 severity colors), spacing scale, type scale,
+
+   radii. Every color used anywhere in the app must trace back to this file —
+
+   no ad hoc hex codes in components.
+
+3. Build these components in `apps/web/components/ui/`, each typed and reusable:
+
+   - `Button` (primary/secondary/ghost variants)
+
+   - `Card`
+
+   - `Badge`
+
+   - `SeverityTag` (props: severity: "info"|"low"|"medium"|"high"|"critical")
+
+   - `StatusDot` (props: status: "idle"|"running"|"done"|"failed")
+
+   - `Skeleton` (loading placeholder)
+
+   - `EmptyState` (props: title, description, optional action — written in the
+
+     interface's voice, e.g. "No investigations yet" + a clear next action,
+
+     not a vague "Nothing here")
+
+4. Build a placeholder dashboard at `apps/web/app/page.tsx` that composes these
+
+   primitives: a page header, an empty investigation history table using
+
+   `EmptyState`, and a small showcase row demonstrating all 5 `SeverityTag`
+
+   states and all 4 `StatusDot` states, so the token system is visibly
+
+   verifiable in this phase even with no real data.
+
+5. Add keyboard focus states (visible outline using the accent color) on every
+
+   interactive primitive. Respect `prefers-reduced-motion` for any transitions.
+
+6. Write `apps/web/docs/design-system.md` documenting every token (with hex
+
+   values) and one-line usage guidance for each component.
+
+7. Add a "Running the frontend" section to the root README.md
+
+   (`cd apps/web && npm install && npm run dev`).
+
+8. Add `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000` to a new
+
+   `apps/web/.env.example` (unused this phase, wired up in a later phase).
+
+
+
+QUALITY REQUIREMENTS
+
+- TypeScript strict mode. No `any` unless justified with a comment.
+
+- No hardcoded colors outside lib/tokens.ts.
+
+- Components must be responsive down to 375px width.
+
+- Run ESLint/Next lint and fix all reported issues before reporting done.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/web && npm install` — report success/failure.
+
+2. `npm run build` — must succeed. Paste the output.
+
+3. `npm run lint` — must report zero errors. Paste the output.
+
+4. Start `npm run dev`, confirm the dashboard renders, then stop it — describe
+
+   what you observed (or attach/describe a screenshot if your environment
+
+   supports it).
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Final file tree under apps/web/.
+
+- The exact hex values and type choices you committed to in tokens.ts.
+
+- Exact output of build and lint commands.
+
+- Any task you could not complete, and why.
+
+- Any ambiguity you resolved yourself, and what you decided.
+
+- Do not silently skip anything — report failures instead of working around
+
+  them invisibly.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No calls to apps/api.
+
+- No investigation workspace, upload UI, evidence cards, risk gauge, or RAG panel.
+
+- No authentication/login screens.
+
+- No real/mock investigation data beyond the token-showcase row on the
+
   placeholder dashboard.
 ```
 
@@ -1248,101 +1415,196 @@ The Next.js development server was run on `http://localhost:3000`. Visual verifi
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 2 of ThreatWeave. Phases 0 and 1 already exist —
-inspect apps/api/app/main.py, core/config.py, and core/logging.py before changing
-anything. Do not touch apps/web/ in this phase.
-
-SCOPE OF THIS PHASE ONLY
-Restructure the FastAPI backend into versioned routing with centralized error
-handling and middleware. NO database, NO file uploads, NO agent logic, NO auth —
-those are later phases.
-
-TASKS
-1. Create app/core/errors.py:
-   - Base `ThreatWeaveError(Exception)` with `code: str`, `message: str`,
-     `status_code: int`.
-   - Subclasses: `NotFoundError` (404), `ValidationError` (422),
-     `ExternalServiceError` (502) — this last one anticipates later phases
-     where an LLM/reputation/STT API call fails and must degrade gracefully
-     rather than crash.
-   - A FastAPI exception handler registered in main.py that catches
-     `ThreatWeaveError` and any unhandled `Exception`, returning a consistent
-     JSON envelope: {"error": {"code": str, "message": str, "details": any}}.
-     Unhandled exceptions must NEVER leak a raw Python traceback to the client —
-     log the full traceback server-side via the existing structured logger, but
-     return a generic "internal_error" code to the client.
-
-2. Create app/core/middleware.py:
-   - Request-ID middleware: generate a UUID per request, attach to
-     request.state, include it in the JSON logs for that request, and return
-     it in an `X-Request-ID` response header.
-   - Timing middleware: log request duration in ms.
-   - CORS middleware: allow only the origin from a new `CORS_ALLOWED_ORIGINS`
-     setting (default "http://localhost:3000") — do NOT use "*".
-
-3. Create app/api/v1/endpoints/health.py with a GET /health route returning
-   {"status": "ok", "service": "threatweave-api", "version": "v1"}.
-   Create app/api/v1/router.py that includes this endpoint and will later
-   include other v1 routers (leave a comment showing where Phase 3+ routers
-   will be added).
-
-4. Update app/main.py to:
-   - Register the error handlers and middleware from steps 1–2.
-   - Mount the v1 router under prefix "/api/v1".
-   - Keep the original unversioned GET /health from Phase 0 as a thin alias
-     that returns the same body (do not delete it — some tooling may already
-     depend on it).
-
-5. Create app/api/deps.py with placeholder dependency functions (e.g. a
-   `get_db` stub that currently raises NotImplementedError with a clear
-   message "DB layer not implemented until Phase 3") — this establishes the
-   pattern later phases will fill in, without implementing DB access now.
-
-6. Create app/schemas/common.py with a generic Pydantic `ResponseEnvelope`
-   and `PaginatedResponse` model (fields: items, total, page, page_size) for
-   later endpoints to reuse — do not use them anywhere yet except as defined
-   types.
-
-7. Add app/services/base.py with a minimal `BaseService` class docstring-only
-   convention (later services will extend it) — do not implement any concrete
-   service logic yet.
-
-8. Write apps/api/tests/test_health.py asserting both GET /health and
-   GET /api/v1/health return 200 with the expected JSON body.
-
-9. Add CORS_ALLOWED_ORIGINS to app/core/config.py (already exists from
-   Phase 0 — extend it, don't replace it) and to .env.example.
-
-QUALITY REQUIREMENTS
-- No wildcard CORS origins.
-- No raw tracebacks ever returned to the client.
-- All new code fully typed; docstrings on every public function/class.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — must pass, paste output.
-2. Start the server, then:
-   `curl -i http://localhost:8000/health`
-   `curl -i http://localhost:8000/api/v1/health`
-   `curl -i -H "Origin: http://localhost:3000" http://localhost:8000/api/v1/health`
-   Paste all three raw responses including headers.
-3. Trigger the error handler deliberately (e.g. a temporary test route raising
-   NotFoundError, or via an existing test) and paste the exact JSON error
-   envelope returned — then remove any temporary test route you added for this.
-4. Run ruff/lint and paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full diff/list of files created and modified.
-- The three curl outputs from step 2, including headers.
-- The error envelope JSON from step 3.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No SQLAlchemy models, no Alembic migrations, no real DB connection (Phase 3).
-- No file upload / ingestion endpoints (Phase 4).
-- No agent or LangGraph code.
+ROLE
+
+You are implementing PHASE 2 of ThreatWeave. Phases 0 and 1 already exist —
+
+inspect apps/api/app/main.py, core/config.py, and core/logging.py before changing
+
+anything. Do not touch apps/web/ in this phase.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Restructure the FastAPI backend into versioned routing with centralized error
+
+handling and middleware. NO database, NO file uploads, NO agent logic, NO auth —
+
+those are later phases.
+
+
+
+TASKS
+
+1. Create app/core/errors.py:
+
+   - Base `ThreatWeaveError(Exception)` with `code: str`, `message: str`,
+
+     `status_code: int`.
+
+   - Subclasses: `NotFoundError` (404), `ValidationError` (422),
+
+     `ExternalServiceError` (502) — this last one anticipates later phases
+
+     where an LLM/reputation/STT API call fails and must degrade gracefully
+
+     rather than crash.
+
+   - A FastAPI exception handler registered in main.py that catches
+
+     `ThreatWeaveError` and any unhandled `Exception`, returning a consistent
+
+     JSON envelope: {"error": {"code": str, "message": str, "details": any}}.
+
+     Unhandled exceptions must NEVER leak a raw Python traceback to the client —
+
+     log the full traceback server-side via the existing structured logger, but
+
+     return a generic "internal_error" code to the client.
+
+
+
+2. Create app/core/middleware.py:
+
+   - Request-ID middleware: generate a UUID per request, attach to
+
+     request.state, include it in the JSON logs for that request, and return
+
+     it in an `X-Request-ID` response header.
+
+   - Timing middleware: log request duration in ms.
+
+   - CORS middleware: allow only the origin from a new `CORS_ALLOWED_ORIGINS`
+
+     setting (default "http://localhost:3000") — do NOT use "*".
+
+
+
+3. Create app/api/v1/endpoints/health.py with a GET /health route returning
+
+   {"status": "ok", "service": "threatweave-api", "version": "v1"}.
+
+   Create app/api/v1/router.py that includes this endpoint and will later
+
+   include other v1 routers (leave a comment showing where Phase 3+ routers
+
+   will be added).
+
+
+
+4. Update app/main.py to:
+
+   - Register the error handlers and middleware from steps 1–2.
+
+   - Mount the v1 router under prefix "/api/v1".
+
+   - Keep the original unversioned GET /health from Phase 0 as a thin alias
+
+     that returns the same body (do not delete it — some tooling may already
+
+     depend on it).
+
+
+
+5. Create app/api/deps.py with placeholder dependency functions (e.g. a
+
+   `get_db` stub that currently raises NotImplementedError with a clear
+
+   message "DB layer not implemented until Phase 3") — this establishes the
+
+   pattern later phases will fill in, without implementing DB access now.
+
+
+
+6. Create app/schemas/common.py with a generic Pydantic `ResponseEnvelope`
+
+   and `PaginatedResponse` model (fields: items, total, page, page_size) for
+
+   later endpoints to reuse — do not use them anywhere yet except as defined
+
+   types.
+
+
+
+7. Add app/services/base.py with a minimal `BaseService` class docstring-only
+
+   convention (later services will extend it) — do not implement any concrete
+
+   service logic yet.
+
+
+
+8. Write apps/api/tests/test_health.py asserting both GET /health and
+
+   GET /api/v1/health return 200 with the expected JSON body.
+
+
+
+9. Add CORS_ALLOWED_ORIGINS to app/core/config.py (already exists from
+
+   Phase 0 — extend it, don't replace it) and to .env.example.
+
+
+
+QUALITY REQUIREMENTS
+
+- No wildcard CORS origins.
+
+- No raw tracebacks ever returned to the client.
+
+- All new code fully typed; docstrings on every public function/class.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — must pass, paste output.
+
+2. Start the server, then:
+
+   `curl -i http://localhost:8000/health`
+
+   `curl -i http://localhost:8000/api/v1/health`
+
+   `curl -i -H "Origin: http://localhost:3000" http://localhost:8000/api/v1/health`
+
+   Paste all three raw responses including headers.
+
+3. Trigger the error handler deliberately (e.g. a temporary test route raising
+
+   NotFoundError, or via an existing test) and paste the exact JSON error
+
+   envelope returned — then remove any temporary test route you added for this.
+
+4. Run ruff/lint and paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full diff/list of files created and modified.
+
+- The three curl outputs from step 2, including headers.
+
+- The error envelope JSON from step 3.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No SQLAlchemy models, no Alembic migrations, no real DB connection (Phase 3).
+
+- No file upload / ingestion endpoints (Phase 4).
+
+- No agent or LangGraph code.
+
 - No authentication/authorization.
 ```
 
@@ -1654,19 +1916,32 @@ connection: close
 #### User Request
 
 ```text
-Thought for 5s
-Thought for 5s
-Good work overall — the CORS scoping, request-ID propagation, and error envelope are all correct, and the ambiguity resolutions (TestClient exception propagation, middleware ordering, Pydantic v2 validator) show real understanding rather than guesswork.
-
-Two gaps before I can fully sign off Phase 2:
-
-Missing pytest -q output — you asked... I mean I asked for this in verification step 1, and the report jumps straight to curl outputs. I need to see the actual test run result (pass/fail count), not just confirmation that test_health.py exists.
-Missing lint output — verification step 4 (ruff/lint) also isn't in the report.
-Minor cosmetic note, not blocking: the 404 response shows HTTP/1.1 404 ERROR as the status line reason phrase instead of the conventional 404 Not Found. Harmless functionally (the JSON envelope and status code are both correct), but if it's easy, have Antigravity check whether a custom reason phrase was set on that response and revert it to the default — small thing, low priority.
-Can you have Antigravity run and paste:
-
-cd apps/api && pytest -q
-cd apps/api && ruff check .
+Thought for 5s
+
+Thought for 5s
+
+Good work overall — the CORS scoping, request-ID propagation, and error envelope are all correct, and the ambiguity resolutions (TestClient exception propagation, middleware ordering, Pydantic v2 validator) show real understanding rather than guesswork.
+
+
+
+Two gaps before I can fully sign off Phase 2:
+
+
+
+Missing pytest -q output — you asked... I mean I asked for this in verification step 1, and the report jumps straight to curl outputs. I need to see the actual test run result (pass/fail count), not just confirmation that test_health.py exists.
+
+Missing lint output — verification step 4 (ruff/lint) also isn't in the report.
+
+Minor cosmetic note, not blocking: the 404 response shows HTTP/1.1 404 ERROR as the status line reason phrase instead of the conventional 404 Not Found. Harmless functionally (the JSON envelope and status code are both correct), but if it's easy, have Antigravity check whether a custom reason phrase was set on that response and revert it to the default — small thing, low priority.
+
+Can you have Antigravity run and paste:
+
+
+
+cd apps/api && pytest -q
+
+cd apps/api && ruff check .
+
 Once I see those two outputs, I'll confirm Phase 2 as fully verified and move to Phase 3 (PostgreSQL schema & migrations).
 ```
 
@@ -1739,106 +2014,206 @@ The `HTTP/1.1 404 ERROR` status line you observed in the report was a client-sid
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 3 of ThreatWeave. Phases 0–2 already exist — inspect
-apps/api/app/core/config.py, app/api/deps.py, and docker-compose.yml before
-changing anything. Do not touch apps/web/ in this phase.
-
-SCOPE OF THIS PHASE ONLY
-Build the full PostgreSQL schema (SQLAlchemy models + Alembic migrations) and a
-real DB session dependency. NO upload endpoints, NO agent logic, NO auth logic
-beyond the users table shape — those are later phases.
-
-TASKS
-1. Create app/db/base.py: a SQLAlchemy 2.0 declarative Base with a consistent
-   naming convention for constraints (so future migrations have stable
-   auto-generated names).
-
-2. Create app/db/session.py: engine + sessionmaker built from
-   settings.DATABASE_URL (import from core/config.py, do not hardcode), and a
-   real get_db() generator function (yield session, close in finally).
-
-3. Update app/api/deps.py: replace the Phase 2 NotImplementedError stub for
-   get_db with an import of the real implementation from db/session.py.
-
-4. Create SQLAlchemy models in app/models/, one file per table, using UUID
-   primary keys (use Python's uuid4 default) and SQLAlchemy 2.0 typed
-   `Mapped[...]` / `mapped_column(...)` style throughout:
-
-   - users: id, email (unique), password_hash, role, created_at
-   - investigations: id, user_id (FK->users.id), title, status, created_at,
-     completed_at (nullable), final_risk_score (nullable float), final_severity
-     (nullable enum: info/low/medium/high/critical), final_confidence
-     (nullable float)
-   - evidence_inputs: id, investigation_id (FK), modality (enum:
-     text/url/qr/image/voice), raw_content_ref (text, nullable),
-     file_path (text, nullable), created_at
-   - agent_runs: id, investigation_id (FK), agent_name (text), status (enum:
-     skipped/running/done/failed), started_at (nullable), finished_at
-     (nullable), latency_ms (nullable int)
-   - agent_findings: id, agent_run_id (FK->agent_runs.id), finding (text),
-     confidence (float), severity (enum: info/low/medium/high/critical),
-     indicators (JSONB), evidence (JSONB), reasoning (text), external_refs
-     (JSONB), timestamp, status (enum: ok/degraded_fallback/failed/skipped)
-   - rag_citations: id, investigation_id (FK), source_title (text),
-     source_type (enum: CERT-In/RBI/Scam-Intel), chunk_text (text),
-     similarity_score (float), url (text, nullable)
-   - risk_breakdown: id, investigation_id (FK), component (text), value
-     (float), weight (float), contribution (float)
-   - investigation_reports: id, investigation_id (FK), generated_at, format
-     (text), file_path (text)
-   - conflict_logs: id, investigation_id (FK), agent_a (text), agent_b (text),
-     conflict_type (text), resolution_rule (text), resolution_outcome (text)
-
-   Add SQLAlchemy relationship() attributes for the FKs described (e.g.
-   Investigation.evidence_inputs, AgentRun.findings, etc.).
-
-5. Initialize Alembic in apps/api/ (alembic.ini, alembic/env.py). Wire env.py
-   to import Base.metadata from app/db/base.py and to read the DB URL from
-   settings rather than a hardcoded connection string in alembic.ini.
-
-6. Generate the initial migration (alembic revision --autogenerate -m
-   "initial schema") reflecting all 9 tables above. Review the generated file
-   for correctness (correct enum types, correct FK ordering — parent tables
-   before child tables) before applying it.
-
-7. Ensure docker-compose's postgres service is running, then run
-   `alembic upgrade head` against it.
-
-8. Write apps/api/tests/test_db_connection.py: create a User row, read it
-   back by id, assert the email matches, then delete it — using the real
-   get_db dependency/session, not a mock.
-
-QUALITY REQUIREMENTS
-- No hardcoded DB credentials anywhere, including alembic.ini or env.py.
-- All models fully typed (SQLAlchemy 2.0 Mapped/mapped_column style).
-- Enum values must exactly match the literals listed above — later phases'
-  Pydantic schemas will depend on these matching exactly.
-
-VERIFICATION (run these and report exact output)
-1. `docker-compose up -d postgres` — confirm it's healthy.
-2. `cd apps/api && alembic upgrade head` — paste full output.
-3. Connect to the DB and list tables (`psql $DATABASE_URL -c "\dt"` or
-   equivalent) — paste output showing all 9 tables.
-4. `pytest -q` — must show all Phase 2 tests plus the new DB test passing.
-   Paste output.
-5. `curl http://localhost:8000/api/v1/health` — confirm this still works
-   (regression check — the app must still boot fine with the DB wired in).
-6. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- The generated Alembic migration file's contents (or a summary of every
-  op.create_table call in it).
-- All six verification outputs above, pasted exactly.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No file upload / ingestion endpoints writing to these tables (Phase 4).
-- No agent or LangGraph code populating agent_findings (Phase 5+).
-- No RAG ingestion writing to rag_citations (Phase 12).
+ROLE
+
+You are implementing PHASE 3 of ThreatWeave. Phases 0–2 already exist — inspect
+
+apps/api/app/core/config.py, app/api/deps.py, and docker-compose.yml before
+
+changing anything. Do not touch apps/web/ in this phase.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the full PostgreSQL schema (SQLAlchemy models + Alembic migrations) and a
+
+real DB session dependency. NO upload endpoints, NO agent logic, NO auth logic
+
+beyond the users table shape — those are later phases.
+
+
+
+TASKS
+
+1. Create app/db/base.py: a SQLAlchemy 2.0 declarative Base with a consistent
+
+   naming convention for constraints (so future migrations have stable
+
+   auto-generated names).
+
+
+
+2. Create app/db/session.py: engine + sessionmaker built from
+
+   settings.DATABASE_URL (import from core/config.py, do not hardcode), and a
+
+   real get_db() generator function (yield session, close in finally).
+
+
+
+3. Update app/api/deps.py: replace the Phase 2 NotImplementedError stub for
+
+   get_db with an import of the real implementation from db/session.py.
+
+
+
+4. Create SQLAlchemy models in app/models/, one file per table, using UUID
+
+   primary keys (use Python's uuid4 default) and SQLAlchemy 2.0 typed
+
+   `Mapped[...]` / `mapped_column(...)` style throughout:
+
+
+
+   - users: id, email (unique), password_hash, role, created_at
+
+   - investigations: id, user_id (FK->users.id), title, status, created_at,
+
+     completed_at (nullable), final_risk_score (nullable float), final_severity
+
+     (nullable enum: info/low/medium/high/critical), final_confidence
+
+     (nullable float)
+
+   - evidence_inputs: id, investigation_id (FK), modality (enum:
+
+     text/url/qr/image/voice), raw_content_ref (text, nullable),
+
+     file_path (text, nullable), created_at
+
+   - agent_runs: id, investigation_id (FK), agent_name (text), status (enum:
+
+     skipped/running/done/failed), started_at (nullable), finished_at
+
+     (nullable), latency_ms (nullable int)
+
+   - agent_findings: id, agent_run_id (FK->agent_runs.id), finding (text),
+
+     confidence (float), severity (enum: info/low/medium/high/critical),
+
+     indicators (JSONB), evidence (JSONB), reasoning (text), external_refs
+
+     (JSONB), timestamp, status (enum: ok/degraded_fallback/failed/skipped)
+
+   - rag_citations: id, investigation_id (FK), source_title (text),
+
+     source_type (enum: CERT-In/RBI/Scam-Intel), chunk_text (text),
+
+     similarity_score (float), url (text, nullable)
+
+   - risk_breakdown: id, investigation_id (FK), component (text), value
+
+     (float), weight (float), contribution (float)
+
+   - investigation_reports: id, investigation_id (FK), generated_at, format
+
+     (text), file_path (text)
+
+   - conflict_logs: id, investigation_id (FK), agent_a (text), agent_b (text),
+
+     conflict_type (text), resolution_rule (text), resolution_outcome (text)
+
+
+
+   Add SQLAlchemy relationship() attributes for the FKs described (e.g.
+
+   Investigation.evidence_inputs, AgentRun.findings, etc.).
+
+
+
+5. Initialize Alembic in apps/api/ (alembic.ini, alembic/env.py). Wire env.py
+
+   to import Base.metadata from app/db/base.py and to read the DB URL from
+
+   settings rather than a hardcoded connection string in alembic.ini.
+
+
+
+6. Generate the initial migration (alembic revision --autogenerate -m
+
+   "initial schema") reflecting all 9 tables above. Review the generated file
+
+   for correctness (correct enum types, correct FK ordering — parent tables
+
+   before child tables) before applying it.
+
+
+
+7. Ensure docker-compose's postgres service is running, then run
+
+   `alembic upgrade head` against it.
+
+
+
+8. Write apps/api/tests/test_db_connection.py: create a User row, read it
+
+   back by id, assert the email matches, then delete it — using the real
+
+   get_db dependency/session, not a mock.
+
+
+
+QUALITY REQUIREMENTS
+
+- No hardcoded DB credentials anywhere, including alembic.ini or env.py.
+
+- All models fully typed (SQLAlchemy 2.0 Mapped/mapped_column style).
+
+- Enum values must exactly match the literals listed above — later phases'
+
+  Pydantic schemas will depend on these matching exactly.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `docker-compose up -d postgres` — confirm it's healthy.
+
+2. `cd apps/api && alembic upgrade head` — paste full output.
+
+3. Connect to the DB and list tables (`psql $DATABASE_URL -c "\dt"` or
+
+   equivalent) — paste output showing all 9 tables.
+
+4. `pytest -q` — must show all Phase 2 tests plus the new DB test passing.
+
+   Paste output.
+
+5. `curl http://localhost:8000/api/v1/health` — confirm this still works
+
+   (regression check — the app must still boot fine with the DB wired in).
+
+6. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- The generated Alembic migration file's contents (or a summary of every
+
+  op.create_table call in it).
+
+- All six verification outputs above, pasted exactly.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No file upload / ingestion endpoints writing to these tables (Phase 4).
+
+- No agent or LangGraph code populating agent_findings (Phase 5+).
+
+- No RAG ingestion writing to rag_citations (Phase 12).
+
 - No authentication/login endpoints — only the bare users table shape exists.
 ```
 
@@ -2478,125 +2853,244 @@ All files, tests, and configurations are committed and updated inside [`walkthro
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 4 of ThreatWeave. Phases 0–3 already exist —
-inspect app/models/, app/db/session.py, app/api/deps.py, and app/api/v1/router.py
-before changing anything. Do not touch apps/web/ in this phase.
-
-SCOPE OF THIS PHASE ONLY
-Build the multimodal upload/ingestion endpoint that validates and stores raw
-evidence and creates investigation + evidence_inputs DB rows. NO QR decoding,
-NO OCR, NO speech-to-text, NO agent logic, NO LangGraph, NO orchestrator trigger
-— those are Phases 5 onward. This phase only accepts, validates, and persists
-raw input.
-
-TASKS
-1. Add `python-multipart` to apps/api/requirements.txt if not already present
-   (required for FastAPI file uploads) and install it.
-
-2. Create app/core/file_validation.py:
-   - Image validation: max size from settings.MAX_IMAGE_SIZE_MB (default 10),
-     allowed types jpg/png/webp — verify actual file signature/magic bytes,
-     do not trust the client's Content-Type header alone.
-   - Audio validation: max size from settings.MAX_AUDIO_SIZE_MB (default 15),
-     allowed types wav/mp3/m4a.
-   - Text validation: max length from settings.MAX_TEXT_CHARS (default 20000).
-   - Each validator raises the existing `ValidationError` (from Phase 2's
-     core/errors.py) with a clear message on failure — do not invent a new
-     error type.
-
-3. Create app/services/storage.py: a `StorageService` class with a `save(file,
-   investigation_id, modality) -> str` method that writes to
-   `{STORAGE_PATH}/{investigation_id}/{modality}_{uuid4}.{ext}`, creating
-   directories as needed (`os.makedirs(..., exist_ok=True)`), and returns the
-   relative path to store in the DB. Design the method signature so a future
-   S3-backed implementation could swap in without changing callers (e.g. an
-   abstract base method sketch is fine, but only implement the local
-   filesystem version now).
-
-4. Create app/schemas/evidence.py with an `EvidenceItem` Pydantic model
-   matching this exact shape (this is a shared contract future agent phases
-   will use — do not add or remove fields):
-   agent: str, modality: str, finding: str, confidence: float (0-1),
-   severity: Literal["info","low","medium","high","critical"],
-   indicators: list[str], evidence: dict, reasoning: str,
-   external_refs: list[str], timestamp: datetime,
-   status: Literal["ok","degraded_fallback","failed","skipped"]
-
-5. Create app/schemas/investigation.py with request/response models:
-   - InvestigationCreateResponse: investigation {id, title, status,
-     created_at}, evidence_inputs: list of {id, modality, created_at}
-   - InvestigationDetailResponse: same investigation fields plus the full
-     evidence_inputs list (include file_path/raw_content_ref).
-
-6. Create app/services/ingestion_service.py with a function that, inside a
-   single DB transaction:
-   - Creates an Investigation row with status="pending" (title optional,
-     default to something like "Untitled investigation" if not provided).
-   - For each of text/url/image/voice actually provided in the request,
-     validates it (step 2), stores files via StorageService (step 3), and
-     creates one EvidenceInput row per input (text/url go to
-     raw_content_ref, image/voice go to file_path).
-   - Returns the hydrated Investigation with its evidence_inputs.
-   - Raises ValidationError if NONE of text/url/image/voice were provided.
-
-7. Create app/api/v1/endpoints/investigations.py:
-   - POST /investigations (multipart form: title, text, url, image, voice —
-     all optional except "at least one of text/url/image/voice") returning
-     201 + InvestigationCreateResponse.
-   - GET /investigations/{id} returning InvestigationDetailResponse, raising
-     NotFoundError (404, via existing error envelope) if the id doesn't exist.
-   Mount this router in app/api/v1/router.py.
-
-8. Add STORAGE_PATH, MAX_IMAGE_SIZE_MB, MAX_AUDIO_SIZE_MB, MAX_TEXT_CHARS to
-   app/core/config.py (extend, don't replace) and to .env.example.
-
-9. Write apps/api/tests/test_ingestion.py covering:
-   - Multi-input upload (text + url + image together) → 201, 1 investigation,
-     3 evidence_inputs with correct modalities.
-   - Single-input upload (text only) → 201, 1 evidence_input.
-   - No input provided → 422 via the standard error envelope.
-   - Oversized file → 422 via the standard error envelope (create a small
-     dummy file exceeding MAX_IMAGE_SIZE_MB for this test, or temporarily
-     patch the limit low in the test rather than uploading a huge real file).
-   - Invalid file type (e.g. a .txt renamed to .png) → 422 via the standard
-     error envelope.
-   - GET round-trip: create an investigation, then GET it, assert the
-     returned data matches.
-
-QUALITY REQUIREMENTS
-- All new code fully typed with docstrings.
-- No trust of client-supplied Content-Type for file validation — check actual
-  file content/signature.
-- Every error path goes through the existing Phase 2 error envelope — no raw
-  tracebacks, no ad hoc error shapes.
-- Storage directory creation must be idempotent and safe on first run.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — paste full output, must show all prior tests
-   plus new ingestion tests passing.
-2. Start the server, then run a real multipart upload with a small sample
-   image (use any small local PNG/JPG you have or generate a 1x1 test image):
-   `curl -i -F "text=Urgent: verify your account now" -F "url=http://bit.ly/fake-bank" -F "image=@sample.png" http://localhost:8000/api/v1/investigations`
-   Paste the full response including status code and body.
-3. `curl -i http://localhost:8000/api/v1/investigations/{id-from-step-2}` —
-   paste the full response.
-4. Confirm the uploaded file actually exists on disk at the stored file_path
-   — paste a directory listing showing it.
-5. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- All five verification outputs above, pasted exactly.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No QR decoding, no OCR, no speech-to-text processing of the uploaded files.
-- No agent code, no LangGraph, no orchestrator trigger from this endpoint.
-- No RAG retrieval.
-- This endpoint's job ends at "validated and stored" — nothing analyzes the
+ROLE
+
+You are implementing PHASE 4 of ThreatWeave. Phases 0–3 already exist —
+
+inspect app/models/, app/db/session.py, app/api/deps.py, and app/api/v1/router.py
+
+before changing anything. Do not touch apps/web/ in this phase.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the multimodal upload/ingestion endpoint that validates and stores raw
+
+evidence and creates investigation + evidence_inputs DB rows. NO QR decoding,
+
+NO OCR, NO speech-to-text, NO agent logic, NO LangGraph, NO orchestrator trigger
+
+— those are Phases 5 onward. This phase only accepts, validates, and persists
+
+raw input.
+
+
+
+TASKS
+
+1. Add `python-multipart` to apps/api/requirements.txt if not already present
+
+   (required for FastAPI file uploads) and install it.
+
+
+
+2. Create app/core/file_validation.py:
+
+   - Image validation: max size from settings.MAX_IMAGE_SIZE_MB (default 10),
+
+     allowed types jpg/png/webp — verify actual file signature/magic bytes,
+
+     do not trust the client's Content-Type header alone.
+
+   - Audio validation: max size from settings.MAX_AUDIO_SIZE_MB (default 15),
+
+     allowed types wav/mp3/m4a.
+
+   - Text validation: max length from settings.MAX_TEXT_CHARS (default 20000).
+
+   - Each validator raises the existing `ValidationError` (from Phase 2's
+
+     core/errors.py) with a clear message on failure — do not invent a new
+
+     error type.
+
+
+
+3. Create app/services/storage.py: a `StorageService` class with a `save(file,
+
+   investigation_id, modality) -> str` method that writes to
+
+   `{STORAGE_PATH}/{investigation_id}/{modality}_{uuid4}.{ext}`, creating
+
+   directories as needed (`os.makedirs(..., exist_ok=True)`), and returns the
+
+   relative path to store in the DB. Design the method signature so a future
+
+   S3-backed implementation could swap in without changing callers (e.g. an
+
+   abstract base method sketch is fine, but only implement the local
+
+   filesystem version now).
+
+
+
+4. Create app/schemas/evidence.py with an `EvidenceItem` Pydantic model
+
+   matching this exact shape (this is a shared contract future agent phases
+
+   will use — do not add or remove fields):
+
+   agent: str, modality: str, finding: str, confidence: float (0-1),
+
+   severity: Literal["info","low","medium","high","critical"],
+
+   indicators: list[str], evidence: dict, reasoning: str,
+
+   external_refs: list[str], timestamp: datetime,
+
+   status: Literal["ok","degraded_fallback","failed","skipped"]
+
+
+
+5. Create app/schemas/investigation.py with request/response models:
+
+   - InvestigationCreateResponse: investigation {id, title, status,
+
+     created_at}, evidence_inputs: list of {id, modality, created_at}
+
+   - InvestigationDetailResponse: same investigation fields plus the full
+
+     evidence_inputs list (include file_path/raw_content_ref).
+
+
+
+6. Create app/services/ingestion_service.py with a function that, inside a
+
+   single DB transaction:
+
+   - Creates an Investigation row with status="pending" (title optional,
+
+     default to something like "Untitled investigation" if not provided).
+
+   - For each of text/url/image/voice actually provided in the request,
+
+     validates it (step 2), stores files via StorageService (step 3), and
+
+     creates one EvidenceInput row per input (text/url go to
+
+     raw_content_ref, image/voice go to file_path).
+
+   - Returns the hydrated Investigation with its evidence_inputs.
+
+   - Raises ValidationError if NONE of text/url/image/voice were provided.
+
+
+
+7. Create app/api/v1/endpoints/investigations.py:
+
+   - POST /investigations (multipart form: title, text, url, image, voice —
+
+     all optional except "at least one of text/url/image/voice") returning
+
+     201 + InvestigationCreateResponse.
+
+   - GET /investigations/{id} returning InvestigationDetailResponse, raising
+
+     NotFoundError (404, via existing error envelope) if the id doesn't exist.
+
+   Mount this router in app/api/v1/router.py.
+
+
+
+8. Add STORAGE_PATH, MAX_IMAGE_SIZE_MB, MAX_AUDIO_SIZE_MB, MAX_TEXT_CHARS to
+
+   app/core/config.py (extend, don't replace) and to .env.example.
+
+
+
+9. Write apps/api/tests/test_ingestion.py covering:
+
+   - Multi-input upload (text + url + image together) → 201, 1 investigation,
+
+     3 evidence_inputs with correct modalities.
+
+   - Single-input upload (text only) → 201, 1 evidence_input.
+
+   - No input provided → 422 via the standard error envelope.
+
+   - Oversized file → 422 via the standard error envelope (create a small
+
+     dummy file exceeding MAX_IMAGE_SIZE_MB for this test, or temporarily
+
+     patch the limit low in the test rather than uploading a huge real file).
+
+   - Invalid file type (e.g. a .txt renamed to .png) → 422 via the standard
+
+     error envelope.
+
+   - GET round-trip: create an investigation, then GET it, assert the
+
+     returned data matches.
+
+
+
+QUALITY REQUIREMENTS
+
+- All new code fully typed with docstrings.
+
+- No trust of client-supplied Content-Type for file validation — check actual
+
+  file content/signature.
+
+- Every error path goes through the existing Phase 2 error envelope — no raw
+
+  tracebacks, no ad hoc error shapes.
+
+- Storage directory creation must be idempotent and safe on first run.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — paste full output, must show all prior tests
+
+   plus new ingestion tests passing.
+
+2. Start the server, then run a real multipart upload with a small sample
+
+   image (use any small local PNG/JPG you have or generate a 1x1 test image):
+
+   `curl -i -F "text=Urgent: verify your account now" -F "url=http://bit.ly/fake-bank" -F "image=@sample.png" http://localhost:8000/api/v1/investigations`
+
+   Paste the full response including status code and body.
+
+3. `curl -i http://localhost:8000/api/v1/investigations/{id-from-step-2}` —
+
+   paste the full response.
+
+4. Confirm the uploaded file actually exists on disk at the stored file_path
+
+   — paste a directory listing showing it.
+
+5. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- All five verification outputs above, pasted exactly.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No QR decoding, no OCR, no speech-to-text processing of the uploaded files.
+
+- No agent code, no LangGraph, no orchestrator trigger from this endpoint.
+
+- No RAG retrieval.
+
+- This endpoint's job ends at "validated and stored" — nothing analyzes the
+
   content yet.
 ```
 
@@ -2863,119 +3357,232 @@ All task statuses are complete and saved inside [`walkthrough.md`](file:///C:/Us
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 5 of ThreatWeave. Phases 0–4 already exist —
-inspect app/schemas/evidence.py (the EvidenceItem contract from Phase 4),
-app/core/config.py, app/core/errors.py, and app/core/logging.py before writing
-anything. Do not touch apps/web/ in this phase.
-
-SCOPE OF THIS PHASE ONLY
-Build the Text Agent as a standalone, directly callable module returning a
-valid EvidenceItem. NO LangGraph wiring, NO database persistence of findings,
-NO risk scoring, NO other agents — those are separate phases. This agent must
-be fully testable on its own before the orchestrator (Phase 10) exists.
-
-TASKS
-1. Create app/core/indicators.py: a fixed list/enum of indicator strings
-   shared across all future agents, e.g.:
-   ["urgency_language", "credential_request", "impersonation_claim",
-   "financial_manipulation", "suspicious_link_mention", "generic_greeting",
-   "spelling_grammar_anomaly", "payment_request", "unusual_sender_pattern"]
-   (extend this list sensibly if needed, but keep it a single shared source
-   of truth other agents will import from).
-
-2. Create app/agents/llm_client.py: a function
-   `call_llm(system_prompt: str, user_content: str, timeout: int) -> str`
-   that calls the Anthropic API (use the `anthropic` Python SDK; add it to
-   requirements.txt if not already present via langchain's dependencies —
-   check first). Read the API key and model name from settings (extend
-   core/config.py with TEXT_AGENT_MODEL, default a current Claude model
-   string, and a generic default timeout setting). On timeout or API error,
-   raise the existing `ExternalServiceError` from core/errors.py — do not
-   swallow the error, and do not print/log the raw API key anywhere.
-
-3. Create app/agents/prompts/text_agent_prompt.py with a system prompt
-   instructing the model: analyze the given text ONLY for phishing / scam /
-   social-engineering indicators; respond with ONLY valid JSON (no markdown
-   fences, no commentary) matching:
-   {"finding": str, "confidence": float 0-1, "severity":
-   "info"|"low"|"medium"|"high"|"critical", "indicators": [str, ...] (must
-   only use values from the shared indicator vocabulary — list them in the
-   prompt explicitly), "reasoning": str (max 2 sentences)}
-
-4. Create app/agents/text_agent.py with `def analyze_text(content: str) ->
-   EvidenceItem:`
-   - Primary path: call llm_client.call_llm(...), defensively strip any
-```json fences if present, json.loads() the result, validate/filter
-     `indicators` against core/indicators.py (drop unknown values, log a
-     warning for each dropped value via the existing structured logger),
-     clamp confidence to [0.0, 1.0], and construct an EvidenceItem with
-     agent="text_agent", modality="text", status="ok", timestamp=now.
-   - Fallback path: if ExternalServiceError is raised, or JSON parsing/
-     validation fails, run a rule-based heuristic instead — keyword/regex
-     matching against the same indicator vocabulary (e.g. urgency phrases
-     like "act now", "verify immediately"; credential-request phrases like
-     "enter your password", "confirm your PIN"; generic greetings like "Dear
-     Customer"). Build a valid EvidenceItem with status="degraded_fallback"
-     and confidence capped at 0.6.
-   - Absolute safety net: wrap the entire function body so NO exception can
-     escape — if literally everything fails (e.g. malformed input), return a
-     minimal EvidenceItem with status="failed", confidence=0.0,
-     severity="info", finding="Analysis could not be completed",
-     indicators=[], reasoning="Text agent encountered an unrecoverable
-     error." Log the actual exception server-side when this happens.
-
-5. Add a dev-only debug endpoint: POST /api/v1/debug/text-agent, guarded by
-   `if settings.ENVIRONMENT != "development": raise NotFoundError(...)` (so
-   it doesn't exist in any non-dev environment), accepting {"content": str}
-   and returning the EvidenceItem as JSON. Mount it in the v1 router.
-
-6. Write apps/api/tests/test_text_agent.py:
-   - Phishing-like sample text → assert severity is "medium" or higher, and
-     at least one expected indicator (e.g. "urgency_language" or
-     "credential_request") is present.
-   - Clearly benign sample text (e.g. "Hey, are we still on for lunch
-     tomorrow?") → assert severity is "info" or "low".
-   - Forced fallback: patch/mock llm_client.call_llm to raise
-     ExternalServiceError, assert the function still returns a valid
-     EvidenceItem with status="degraded_fallback" and does not raise.
-   - Garbage/edge-case input (empty string, very long string) → assert
-     analyze_text never raises an unhandled exception.
-
-QUALITY REQUIREMENTS
-- No unhandled exception may ever escape analyze_text().
-- No raw indicator string from the LLM may bypass the shared vocabulary
-  filter.
-- No API key ever logged or included in error messages.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — paste full output including the new text
-   agent tests.
-2. Start the server, then:
-   `curl -s -X POST http://localhost:8000/api/v1/debug/text-agent -H "Content-Type: application/json" -d '{"content": "URGENT: Your account will be suspended. Verify now by clicking this link and entering your password."}'`
-   Paste the exact JSON EvidenceItem returned. Note in your report whether
-   ANTHROPIC_API_KEY was set for this run (i.e. whether this exercised the
-   LLM path or the fallback path) — test both if possible and paste both
-   outputs.
-3. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- The final indicator vocabulary list you settled on.
-- Both verification outputs from step 2 (LLM path and fallback path, if you
-  were able to test both).
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No LangGraph graph or orchestrator wiring.
-- No writes to agent_runs/agent_findings tables.
-- No risk scoring/aggregation logic.
-- No URL, QR, Image, or Voice agents — this phase is Text Agent only.
-```
-
+ROLE
+
+You are implementing PHASE 5 of ThreatWeave. Phases 0–4 already exist —
+
+inspect app/schemas/evidence.py (the EvidenceItem contract from Phase 4),
+
+app/core/config.py, app/core/errors.py, and app/core/logging.py before writing
+
+anything. Do not touch apps/web/ in this phase.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the Text Agent as a standalone, directly callable module returning a
+
+valid EvidenceItem. NO LangGraph wiring, NO database persistence of findings,
+
+NO risk scoring, NO other agents — those are separate phases. This agent must
+
+be fully testable on its own before the orchestrator (Phase 10) exists.
+
+
+
+TASKS
+
+1. Create app/core/indicators.py: a fixed list/enum of indicator strings
+
+   shared across all future agents, e.g.:
+
+   ["urgency_language", "credential_request", "impersonation_claim",
+
+   "financial_manipulation", "suspicious_link_mention", "generic_greeting",
+
+   "spelling_grammar_anomaly", "payment_request", "unusual_sender_pattern"]
+
+   (extend this list sensibly if needed, but keep it a single shared source
+
+   of truth other agents will import from).
+
+
+
+2. Create app/agents/llm_client.py: a function
+
+   `call_llm(system_prompt: str, user_content: str, timeout: int) -> str`
+
+   that calls the Anthropic API (use the `anthropic` Python SDK; add it to
+
+   requirements.txt if not already present via langchain's dependencies —
+
+   check first). Read the API key and model name from settings (extend
+
+   core/config.py with TEXT_AGENT_MODEL, default a current Claude model
+
+   string, and a generic default timeout setting). On timeout or API error,
+
+   raise the existing `ExternalServiceError` from core/errors.py — do not
+
+   swallow the error, and do not print/log the raw API key anywhere.
+
+
+
+3. Create app/agents/prompts/text_agent_prompt.py with a system prompt
+
+   instructing the model: analyze the given text ONLY for phishing / scam /
+
+   social-engineering indicators; respond with ONLY valid JSON (no markdown
+
+   fences, no commentary) matching:
+
+   {"finding": str, "confidence": float 0-1, "severity":
+
+   "info"|"low"|"medium"|"high"|"critical", "indicators": [str, ...] (must
+
+   only use values from the shared indicator vocabulary — list them in the
+
+   prompt explicitly), "reasoning": str (max 2 sentences)}
+
+
+
+4. Create app/agents/text_agent.py with `def analyze_text(content: str) ->
+
+   EvidenceItem:`
+
+   - Primary path: call llm_client.call_llm(...), defensively strip any
+
+```json fences if present, json.loads() the result, validate/filter
+
+     `indicators` against core/indicators.py (drop unknown values, log a
+
+     warning for each dropped value via the existing structured logger),
+
+     clamp confidence to [0.0, 1.0], and construct an EvidenceItem with
+
+     agent="text_agent", modality="text", status="ok", timestamp=now.
+
+   - Fallback path: if ExternalServiceError is raised, or JSON parsing/
+
+     validation fails, run a rule-based heuristic instead — keyword/regex
+
+     matching against the same indicator vocabulary (e.g. urgency phrases
+
+     like "act now", "verify immediately"; credential-request phrases like
+
+     "enter your password", "confirm your PIN"; generic greetings like "Dear
+
+     Customer"). Build a valid EvidenceItem with status="degraded_fallback"
+
+     and confidence capped at 0.6.
+
+   - Absolute safety net: wrap the entire function body so NO exception can
+
+     escape — if literally everything fails (e.g. malformed input), return a
+
+     minimal EvidenceItem with status="failed", confidence=0.0,
+
+     severity="info", finding="Analysis could not be completed",
+
+     indicators=[], reasoning="Text agent encountered an unrecoverable
+
+     error." Log the actual exception server-side when this happens.
+
+
+
+5. Add a dev-only debug endpoint: POST /api/v1/debug/text-agent, guarded by
+
+   `if settings.ENVIRONMENT != "development": raise NotFoundError(...)` (so
+
+   it doesn't exist in any non-dev environment), accepting {"content": str}
+
+   and returning the EvidenceItem as JSON. Mount it in the v1 router.
+
+
+
+6. Write apps/api/tests/test_text_agent.py:
+
+   - Phishing-like sample text → assert severity is "medium" or higher, and
+
+     at least one expected indicator (e.g. "urgency_language" or
+
+     "credential_request") is present.
+
+   - Clearly benign sample text (e.g. "Hey, are we still on for lunch
+
+     tomorrow?") → assert severity is "info" or "low".
+
+   - Forced fallback: patch/mock llm_client.call_llm to raise
+
+     ExternalServiceError, assert the function still returns a valid
+
+     EvidenceItem with status="degraded_fallback" and does not raise.
+
+   - Garbage/edge-case input (empty string, very long string) → assert
+
+     analyze_text never raises an unhandled exception.
+
+
+
+QUALITY REQUIREMENTS
+
+- No unhandled exception may ever escape analyze_text().
+
+- No raw indicator string from the LLM may bypass the shared vocabulary
+
+  filter.
+
+- No API key ever logged or included in error messages.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — paste full output including the new text
+
+   agent tests.
+
+2. Start the server, then:
+
+   `curl -s -X POST http://localhost:8000/api/v1/debug/text-agent -H "Content-Type: application/json" -d '{"content": "URGENT: Your account will be suspended. Verify now by clicking this link and entering your password."}'`
+
+   Paste the exact JSON EvidenceItem returned. Note in your report whether
+
+   ANTHROPIC_API_KEY was set for this run (i.e. whether this exercised the
+
+   LLM path or the fallback path) — test both if possible and paste both
+
+   outputs.
+
+3. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- The final indicator vocabulary list you settled on.
+
+- Both verification outputs from step 2 (LLM path and fallback path, if you
+
+  were able to test both).
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No LangGraph graph or orchestrator wiring.
+
+- No writes to agent_runs/agent_findings tables.
+
+- No risk scoring/aggregation logic.
+
+- No URL, QR, Image, or Voice agents — this phase is Text Agent only.
+
+```
+
+
+
 Send me the report once this one's done — particularly interested in seeing both the LLM path and fallback path outputs, since that's the core reliability guarantee this whole project depends on. I'll review before Phase 6 (URL Agent).
 ```
 
@@ -3354,96 +3961,186 @@ The `.env` currently has the placeholder `your_anthropic_api_key_here`. The `llm
 #### User Request
 
 ```text
-ROLE
-You are making a focused correction to the already-completed Phase 5 (Text
-Agent) of ThreatWeave. Inspect app/agents/llm_client.py, app/agents/text_agent.py,
-app/core/config.py, and tests/test_text_agent.py before changing anything.
-Do not touch apps/web/, do not touch any other phase's files.
-
-SCOPE OF THIS CHANGE ONLY
-Replace the underlying LLM provider from Anthropic to Groq inside
-llm_client.py only. The function signature, error handling, fallback
-behavior, and EvidenceItem contract must NOT change — text_agent.py should
-require zero or near-zero changes, since it only depends on
-llm_client.call_llm()'s existing signature.
-
-TASKS
-1. Add `groq` to requirements.txt (the official Groq Python SDK) and install
-   it. Remove the `anthropic` SDK from requirements.txt only if nothing else
-   in the codebase uses it — check first (search the whole repo, not just
-   apps/api, for other references before removing).
-
-2. Update app/core/config.py:
-   - Replace/rename ANTHROPIC_API_KEY usage with GROQ_API_KEY.
-   - Replace TEXT_AGENT_MODEL's default value with a current Groq-hosted
-     model string (e.g. a Llama 3.x or similar model available on Groq's
-     free tier — pick a model that supports reliable JSON output; note which
-     one you chose and why in your report).
-   - Update .env.example and .env accordingly (placeholder value in
-     .env.example, e.g. GROQ_API_KEY=your_groq_api_key_here).
-
-3. Rewrite app/agents/llm_client.py's call_llm() internals to call the Groq
-   API instead of Anthropic's, using the Groq SDK's chat completions
-   interface. Keep the exact same function signature:
-   `call_llm(system_prompt: str, user_content: str, timeout: int) -> str`
-   - Preserve existing behavior: raise the existing ExternalServiceError
-     (core/errors.py) on timeout or API failure — do not introduce a new
-     error type.
-   - Preserve the existing placeholder-key detection (the check that
-     rejects "your_anthropic_api_key_here"-style placeholders) — adapt it to
-     detect an unset/placeholder GROQ_API_KEY instead.
-   - Never log the raw API key.
-   - Use Groq's JSON mode / response format option if the SDK supports it,
-     to reduce the chance of markdown-fenced or malformed JSON responses —
-     note in your report whether you used it.
-
-4. Confirm app/agents/text_agent.py needs no logic changes — it should keep
-   working unmodified since it only calls llm_client.call_llm() by signature.
-   If you find it references "Anthropic" or "Claude" anywhere (e.g. in
-   comments, log messages, or the debug endpoint description), update those
-   references to be provider-neutral or Groq-accurate.
-
-5. Update tests/test_text_agent.py: any mock/patch targeting the old
-   Anthropic client call must be updated to patch the new Groq call path
-   instead. The forced-fallback test (ExternalServiceError) and the
-   safety-net test should not need logic changes, only the patch target.
-
-QUALITY REQUIREMENTS
-- No hardcoded API keys.
-- No unhandled exception may escape analyze_text() — this guarantee must
-  survive the provider swap unchanged.
-- Fully typed, docstrings updated to reflect Groq instead of Anthropic.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — paste full output, must show the same test
-   count as before (or explain any change) with zero failures.
-2. With a REAL Groq API key set in .env (not a placeholder), start the
-   server and run:
-   `curl -s -X POST http://localhost:8000/api/v1/debug/text-agent -H "Content-Type: application/json" -d '{"content": "URGENT: Your account will be suspended. Verify now by clicking this link and entering your password."}'`
-   Paste the exact JSON EvidenceItem returned. This MUST show status="ok"
-   (real LLM path, not fallback) if the key is valid — if it falls back
-   anyway, diagnose why and report the actual error, don't paper over it.
-3. Temporarily set GROQ_API_KEY back to a placeholder/invalid value, re-run
-   the same curl, and confirm it cleanly falls back to
-   status="degraded_fallback" with no crash — paste that output too, then
-   restore the real key.
-4. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Which exact Groq model string you chose and why.
-- Whether Groq's JSON mode was used.
-- Both curl outputs from steps 2 and 3 (real LLM path AND fallback path,
-  both live, not mocked).
-- Full pytest output.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No changes to LangGraph/orchestrator (doesn't exist yet — Phase 10).
-- No other agents (URL/QR/Image/Voice — Phases 6–9).
-- No risk scoring.
-- This is a provider swap only — don't refactor anything else in Phase 5's
+ROLE
+
+You are making a focused correction to the already-completed Phase 5 (Text
+
+Agent) of ThreatWeave. Inspect app/agents/llm_client.py, app/agents/text_agent.py,
+
+app/core/config.py, and tests/test_text_agent.py before changing anything.
+
+Do not touch apps/web/, do not touch any other phase's files.
+
+
+
+SCOPE OF THIS CHANGE ONLY
+
+Replace the underlying LLM provider from Anthropic to Groq inside
+
+llm_client.py only. The function signature, error handling, fallback
+
+behavior, and EvidenceItem contract must NOT change — text_agent.py should
+
+require zero or near-zero changes, since it only depends on
+
+llm_client.call_llm()'s existing signature.
+
+
+
+TASKS
+
+1. Add `groq` to requirements.txt (the official Groq Python SDK) and install
+
+   it. Remove the `anthropic` SDK from requirements.txt only if nothing else
+
+   in the codebase uses it — check first (search the whole repo, not just
+
+   apps/api, for other references before removing).
+
+
+
+2. Update app/core/config.py:
+
+   - Replace/rename ANTHROPIC_API_KEY usage with GROQ_API_KEY.
+
+   - Replace TEXT_AGENT_MODEL's default value with a current Groq-hosted
+
+     model string (e.g. a Llama 3.x or similar model available on Groq's
+
+     free tier — pick a model that supports reliable JSON output; note which
+
+     one you chose and why in your report).
+
+   - Update .env.example and .env accordingly (placeholder value in
+
+     .env.example, e.g. GROQ_API_KEY=your_groq_api_key_here).
+
+
+
+3. Rewrite app/agents/llm_client.py's call_llm() internals to call the Groq
+
+   API instead of Anthropic's, using the Groq SDK's chat completions
+
+   interface. Keep the exact same function signature:
+
+   `call_llm(system_prompt: str, user_content: str, timeout: int) -> str`
+
+   - Preserve existing behavior: raise the existing ExternalServiceError
+
+     (core/errors.py) on timeout or API failure — do not introduce a new
+
+     error type.
+
+   - Preserve the existing placeholder-key detection (the check that
+
+     rejects "your_anthropic_api_key_here"-style placeholders) — adapt it to
+
+     detect an unset/placeholder GROQ_API_KEY instead.
+
+   - Never log the raw API key.
+
+   - Use Groq's JSON mode / response format option if the SDK supports it,
+
+     to reduce the chance of markdown-fenced or malformed JSON responses —
+
+     note in your report whether you used it.
+
+
+
+4. Confirm app/agents/text_agent.py needs no logic changes — it should keep
+
+   working unmodified since it only calls llm_client.call_llm() by signature.
+
+   If you find it references "Anthropic" or "Claude" anywhere (e.g. in
+
+   comments, log messages, or the debug endpoint description), update those
+
+   references to be provider-neutral or Groq-accurate.
+
+
+
+5. Update tests/test_text_agent.py: any mock/patch targeting the old
+
+   Anthropic client call must be updated to patch the new Groq call path
+
+   instead. The forced-fallback test (ExternalServiceError) and the
+
+   safety-net test should not need logic changes, only the patch target.
+
+
+
+QUALITY REQUIREMENTS
+
+- No hardcoded API keys.
+
+- No unhandled exception may escape analyze_text() — this guarantee must
+
+  survive the provider swap unchanged.
+
+- Fully typed, docstrings updated to reflect Groq instead of Anthropic.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — paste full output, must show the same test
+
+   count as before (or explain any change) with zero failures.
+
+2. With a REAL Groq API key set in .env (not a placeholder), start the
+
+   server and run:
+
+   `curl -s -X POST http://localhost:8000/api/v1/debug/text-agent -H "Content-Type: application/json" -d '{"content": "URGENT: Your account will be suspended. Verify now by clicking this link and entering your password."}'`
+
+   Paste the exact JSON EvidenceItem returned. This MUST show status="ok"
+
+   (real LLM path, not fallback) if the key is valid — if it falls back
+
+   anyway, diagnose why and report the actual error, don't paper over it.
+
+3. Temporarily set GROQ_API_KEY back to a placeholder/invalid value, re-run
+
+   the same curl, and confirm it cleanly falls back to
+
+   status="degraded_fallback" with no crash — paste that output too, then
+
+   restore the real key.
+
+4. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Which exact Groq model string you chose and why.
+
+- Whether Groq's JSON mode was used.
+
+- Both curl outputs from steps 2 and 3 (real LLM path AND fallback path,
+
+  both live, not mocked).
+
+- Full pytest output.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No changes to LangGraph/orchestrator (doesn't exist yet — Phase 10).
+
+- No other agents (URL/QR/Image/Voice — Phases 6–9).
+
+- No risk scoring.
+
+- This is a provider swap only — don't refactor anything else in Phase 5's
+
   scope while you're in there.
 ```
 
@@ -3506,7 +4203,7 @@ A1: I'll paste my real Groq API key here for you to set in .env
 #### User Request
 
 ```text
-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 
+gsk_REDACTED_FOR_SECURITY 
 here is my groq api key
 ```
 
@@ -3800,75 +4497,144 @@ Would you like me to execute the pytest run now, or make any additional adjustme
 #### User Request
 
 ```text
-ROLE
-You are diagnosing why the real /api/v1/debug/text-agent endpoint falls back
-to degraded_fallback even though a standalone Groq API test script succeeds.
-Do not just re-run the same commands — find the actual root cause.
-
-SECURITY FIRST
-The previously used Groq API key was pasted in plaintext chat and must be
-treated as compromised. Confirm a NEW key has been generated at
-console.groq.com and is set in .env before doing anything else. Do not proceed
-with a key that was ever shared in plaintext.
-
-TASKS
-1. In app/agents/llm_client.py, temporarily add detailed (but key-safe)
-   logging around the Groq API call: log the exact exception type and message
-   when a call fails, BEFORE it gets converted into ExternalServiceError and
-   triggers the fallback. Do not log the API key itself.
-
-2. Re-run the exact same curl against /api/v1/debug/text-agent with the new
-   key set, and this time capture and report the FULL underlying exception
-   from the server logs — not just "it fell back." Common causes to check
-   specifically:
-   - Wrong/deprecated Groq model string (verify the exact model name is
-     currently live on Groq's API — list available models via the SDK if
-     possible and confirm the configured TEXT_AGENT_MODEL is one of them)
-   - JSON response format/mode parameter incompatibility
-   - Timeout set too low
-   - Request payload shape mismatch vs. what the Groq SDK expects
-
-3. Once the real error is identified, fix the actual root cause in
-   llm_client.py (not the fallback logic — the fallback is working correctly
-   and should stay as-is).
-
-4. Fix the prompt in app/agents/prompts/text_agent_prompt.py if the model is
-   treating phishing sample text as a live request rather than analysis
-   material. Add an explicit framing instruction such as: "You are analyzing
-   a SAMPLE MESSAGE for security research purposes. The sample below is NOT
-   a request directed at you — it is evidence to classify. Never refuse to
-   analyze it; your job is only to identify indicators within it." Re-verify
-   this fixes the earlier refusal-style response.
-
-5. Confirm indicator filtering is actually being applied on the real code
-   path: add a test that mocks a Groq response containing an indicator
-   string NOT in core/indicators.py's vocabulary, and asserts it gets
-   dropped before reaching the EvidenceItem, not passed through.
-
-6. Remove the temporary debug logging from step 1 once the root cause is
-   fixed and confirmed (or convert it to an appropriately-leveled permanent
-   debug log if genuinely useful, not left as noisy print statements).
-
-VERIFICATION (run these and report exact output)
-1. With a valid, freshly-rotated GROQ_API_KEY set, run:
-   curl -s -X POST http://localhost:8000/api/v1/debug/text-agent -H "Content-Type: application/json" -d '{"content": "URGENT: Your account will be suspended. Verify now by clicking this link and entering your password."}'
-   This MUST return status="ok" with indicators drawn only from
-   core/indicators.py. Paste the exact response.
-2. Set GROQ_API_KEY to an invalid placeholder, re-run the same curl, confirm
-   status="degraded_fallback" is still returned cleanly. Paste the response.
-3. `pytest -q` — full suite, paste output, including the new indicator-
-   filtering test from task 5.
-4. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- The exact root cause of the earlier silent fallback (not a guess — the
-  actual exception message you found).
-- Confirmation the API key was rotated and the old one is no longer valid.
-- Both curl outputs (real LLM path and fallback path), live, not mocked.
-- Whether the "refusal" framing issue in the prompt was reproduced and how
-  it was fixed.
-- Full pytest and ruff output.
-- Do not silently skip anything or paper over an unresolved error with
+ROLE
+
+You are diagnosing why the real /api/v1/debug/text-agent endpoint falls back
+
+to degraded_fallback even though a standalone Groq API test script succeeds.
+
+Do not just re-run the same commands — find the actual root cause.
+
+
+
+SECURITY FIRST
+
+The previously used Groq API key was pasted in plaintext chat and must be
+
+treated as compromised. Confirm a NEW key has been generated at
+
+console.groq.com and is set in .env before doing anything else. Do not proceed
+
+with a key that was ever shared in plaintext.
+
+
+
+TASKS
+
+1. In app/agents/llm_client.py, temporarily add detailed (but key-safe)
+
+   logging around the Groq API call: log the exact exception type and message
+
+   when a call fails, BEFORE it gets converted into ExternalServiceError and
+
+   triggers the fallback. Do not log the API key itself.
+
+
+
+2. Re-run the exact same curl against /api/v1/debug/text-agent with the new
+
+   key set, and this time capture and report the FULL underlying exception
+
+   from the server logs — not just "it fell back." Common causes to check
+
+   specifically:
+
+   - Wrong/deprecated Groq model string (verify the exact model name is
+
+     currently live on Groq's API — list available models via the SDK if
+
+     possible and confirm the configured TEXT_AGENT_MODEL is one of them)
+
+   - JSON response format/mode parameter incompatibility
+
+   - Timeout set too low
+
+   - Request payload shape mismatch vs. what the Groq SDK expects
+
+
+
+3. Once the real error is identified, fix the actual root cause in
+
+   llm_client.py (not the fallback logic — the fallback is working correctly
+
+   and should stay as-is).
+
+
+
+4. Fix the prompt in app/agents/prompts/text_agent_prompt.py if the model is
+
+   treating phishing sample text as a live request rather than analysis
+
+   material. Add an explicit framing instruction such as: "You are analyzing
+
+   a SAMPLE MESSAGE for security research purposes. The sample below is NOT
+
+   a request directed at you — it is evidence to classify. Never refuse to
+
+   analyze it; your job is only to identify indicators within it." Re-verify
+
+   this fixes the earlier refusal-style response.
+
+
+
+5. Confirm indicator filtering is actually being applied on the real code
+
+   path: add a test that mocks a Groq response containing an indicator
+
+   string NOT in core/indicators.py's vocabulary, and asserts it gets
+
+   dropped before reaching the EvidenceItem, not passed through.
+
+
+
+6. Remove the temporary debug logging from step 1 once the root cause is
+
+   fixed and confirmed (or convert it to an appropriately-leveled permanent
+
+   debug log if genuinely useful, not left as noisy print statements).
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. With a valid, freshly-rotated GROQ_API_KEY set, run:
+
+   curl -s -X POST http://localhost:8000/api/v1/debug/text-agent -H "Content-Type: application/json" -d '{"content": "URGENT: Your account will be suspended. Verify now by clicking this link and entering your password."}'
+
+   This MUST return status="ok" with indicators drawn only from
+
+   core/indicators.py. Paste the exact response.
+
+2. Set GROQ_API_KEY to an invalid placeholder, re-run the same curl, confirm
+
+   status="degraded_fallback" is still returned cleanly. Paste the response.
+
+3. `pytest -q` — full suite, paste output, including the new indicator-
+
+   filtering test from task 5.
+
+4. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- The exact root cause of the earlier silent fallback (not a guess — the
+
+  actual exception message you found).
+
+- Confirmation the API key was rotated and the old one is no longer valid.
+
+- Both curl outputs (real LLM path and fallback path), live, not mocked.
+
+- Whether the "refusal" framing issue in the prompt was reproduced and how
+
+  it was fixed.
+
+- Full pytest and ruff output.
+
+- Do not silently skip anything or paper over an unresolved error with
+
   another fallback demonstration.
 ```
 
@@ -3915,7 +4681,8 @@ A1: (Recommended) I'll paste my new GROQ_API_KEY here
 #### User Request
 
 ```text
-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 
+gsk_REDACTED_FOR_SECURITY 
+
 here is my gr
 ```
 
@@ -3933,7 +4700,8 @@ here is my gr
 #### User Request
 
 ```text
-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 
+gsk_REDACTED_FOR_SECURITY 
+
 here is my gr
 ```
 
@@ -3967,7 +4735,7 @@ Please provide a **new** Groq API key (or confirm you’ll set it manually) so w
 #### User Request
 
 ```text
-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
+gsk_REDACTED_FOR_SECURITY
 ```
 
 **Tools Executed (11 actions):**
@@ -3992,7 +4760,7 @@ Identify why the real `/api/v1/debug/text-agent` endpoint falls back to `degrade
 
 ## User Review Required
 > [!IMPORTANT]  
-> The plan changes several source files, updates the `.env` with a new secret, and adds a new test. Please confirm that you are comfortable with these modifications and that you have **generated a fresh Groq API key** (the one you just provided: `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`). I will use this key for all subsequent commands.
+> The plan changes several source files, updates the `.env` with a new secret, and adds a new test. Please confirm that you are comfortable with these modifications and that you have **generated a fresh Groq API key** (the one you just provided: `gsk_REDACTED_FOR_SECURITY`). I will use this key for all subsequent commands.
 
 ## Open Questions
 > [!CAUTION]  
@@ -4336,7 +5104,7 @@ Once I see a genuine status: "ok" response and the full suite passing (not skipp
 
 > **Step 4:** ✅ Postgres container started. Now **Step 2** — confirm the model list:
 
-> **Step 5:** The API key in `apps/api/.env` is being rejected as invalid — the key `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` is no longer valid (it was shared in plaintext and likely rotated/revoked). We need a fresh key before we can proceed.
+> **Step 5:** The API key in `apps/api/.env` is being rejected as invalid — the key `gsk_REDACTED_FOR_SECURITY` is no longer valid (it was shared in plaintext and likely rotated/revoked). We need a fresh key before we can proceed.
 
 </details>
 
@@ -4348,7 +5116,7 @@ The Groq console requires login. Here's where we are — I need you to do one th
 
 ## 🔑 Action required: Generate a new Groq API key
 
-The current key (`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`) is **rejected with 401 Invalid API Key** — it's been revoked (expected, since it was shared in chat).
+The current key (`gsk_REDACTED_FOR_SECURITY`) is **rejected with 401 Invalid API Key** — it's been revoked (expected, since it was shared in chat).
 
 **Steps:**
 1. Go to **[console.groq.com/keys](https://console.groq.com/keys)** and log in
@@ -4376,7 +5144,7 @@ Once you paste the key, I'll:
 #### User Request
 
 ```text
-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
+gsk_REDACTED_FOR_SECURITY
 ```
 
 **Tools Executed (24 actions):**
@@ -4675,15 +5443,24 @@ Ready for Phase 7 (QR Agent) when you are.
 #### User Request
 
 ```text
-Thought for 4s
-This is thorough work — 71/71 passing, the "not configured, no network call" test using assert_not_called() rather than just eyeballing the result is exactly the right way to prove that path, and catching the IP-in-userinfo obfuscation technique organically during testing is a genuinely good catch that's worth keeping in your viva talking points ("what makes this different from generic URL scanners" — you found and handled a real evasion technique, not just from a spec).
-
-One gap worth checking before I approve, though: in the malicious test case, paypa1-verify.tk is a textbook lookalike of paypal.com (digit 1 substituted for l), but lookalike_domain isn't in the returned indicators list — only no_https, suspicious_url_structure, suspicious_tld fired. That's the one indicator I'd most expect to see here, and its absence suggests lookalike_score() either isn't being wired into the final indicator list at the right threshold, or the edit-distance check isn't catching character-substitution tricks (which are extremely common in real phishing — paypa1, rnicrosoft, arnazon, etc.).
-
-Can you have Antigravity:
-
-Report the actual lookalike_score() value computed for paypa1-verify.tk against paypal.com in this test case (add a temporary print/log if needed).
-Confirm what threshold is required for lookalike_domain to be added to the indicators list, and whether that threshold is being met or missed here.
+Thought for 4s
+
+This is thorough work — 71/71 passing, the "not configured, no network call" test using assert_not_called() rather than just eyeballing the result is exactly the right way to prove that path, and catching the IP-in-userinfo obfuscation technique organically during testing is a genuinely good catch that's worth keeping in your viva talking points ("what makes this different from generic URL scanners" — you found and handled a real evasion technique, not just from a spec).
+
+
+
+One gap worth checking before I approve, though: in the malicious test case, paypa1-verify.tk is a textbook lookalike of paypal.com (digit 1 substituted for l), but lookalike_domain isn't in the returned indicators list — only no_https, suspicious_url_structure, suspicious_tld fired. That's the one indicator I'd most expect to see here, and its absence suggests lookalike_score() either isn't being wired into the final indicator list at the right threshold, or the edit-distance check isn't catching character-substitution tricks (which are extremely common in real phishing — paypa1, rnicrosoft, arnazon, etc.).
+
+
+
+Can you have Antigravity:
+
+
+
+Report the actual lookalike_score() value computed for paypa1-verify.tk against paypal.com in this test case (add a temporary print/log if needed).
+
+Confirm what threshold is required for lookalike_domain to be added to the indicators list, and whether that threshold is being met or missed here.
+
 If the threshold is simply too strict, tune it — this is a core "why is this better than generic URL scanners" demo case, so it should reliably catch obvious character-substitution lookalikes.
 ```
 
@@ -4824,149 +5601,292 @@ Ran the full test suite in [`apps/api`](file:///d:/ThreatWeave%20—%20Agentic%2
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 7 of ThreatWeave. Phases 0–6 already exist —
-inspect app/agents/url_agent.py, app/agents/text_agent.py,
-app/core/url_heuristics.py, and app/schemas/evidence.py before writing
-anything. Do not touch apps/web/.
-
-SCOPE OF THIS PHASE ONLY
-Build the QR Agent. Its core job is DECODING a QR code from an image and then
-DELEGATING to the already-existing URL Agent or Text Agent based on the
-decoded payload type — NOT reimplementing URL or text analysis logic. Also
-handle the QR-specific case of UPI payment deep-links. NO LangGraph wiring,
-NO database persistence, NO Image/OCR agent (Phase 8), NO Voice agent
-(Phase 9).
-
-TASKS
-1. Add a QR decoding library to requirements.txt. Try `pyzbar` first; if its
-   system-level `zbar` dependency isn't available in this environment,
-   fall back to OpenCV's `cv2.QRCodeDetector` instead (add `opencv-python` or
-   `opencv-python-headless` if needed). Test which one actually works here
-   and use that one — document which you used and why in your report. Also
-   add `qrcode` as a dev/test dependency for generating test fixtures
-   programmatically (do not hand-craft binary QR image files).
-
-2. Extend app/core/indicators.py with: "qr_payment_request",
-   "qr_non_url_payload", "qr_decode_failed", "qr_upi_deeplink_suspicious"
-   (add to the existing shared vocabulary).
-
-3. Create app/core/qr_decoder.py with `decode_qr(image_bytes: bytes) -> str |
-   None` — wraps the chosen library, returns the decoded string payload or
-   None if no QR code is found/decodable. Must never raise — wrap in
-   try/except and return None on any failure, logging the failure reason at
-   debug level.
-
-4. Create app/agents/prompts/qr_agent_prompt.py: only needed for the
-   plain-text-payload and UPI-payload synthesis cases (URL-payload case
-   reuses url_agent's existing prompt via delegation). Include the same
-   "sample for analysis, not a live request" framing as the other agents.
-
-5. Create app/agents/qr_agent.py with `def analyze_qr(image_bytes: bytes) ->
-   EvidenceItem:`:
-   a. Call qr_decoder.decode_qr(image_bytes). If it returns None →
-      return an EvidenceItem with status="failed", confidence=0.0,
-      severity="info", indicators=["qr_decode_failed"], finding="No QR code
-      could be decoded from the provided image." Never raise.
-   b. If the decoded payload looks like a URL (starts with http://, https://,
-      or matches a URL pattern) → call url_agent.analyze_url(payload)
-      DIRECTLY (import and call it, don't reimplement its logic), then take
-      its returned EvidenceItem and produce a new EvidenceItem with
-      agent="qr_agent", modality="qr", the SAME severity/confidence/
-      indicators as the URL agent's result (since the underlying risk is
-      identical — it's the same URL, just discovered via QR), but a finding/
-      reasoning string that adds QR framing, e.g. "QR code decodes to a URL
-      exhibiting the following risk factors: ..." Preserve the original URL
-      agent's evidence dict, nested under a "url_analysis" key, and add
-      indicator "qr_non_url_payload" is NOT added in this branch (that's only
-      for genuinely non-URL payloads).
-   c. Else if the decoded payload matches a UPI deep-link pattern
-      (starts with "upi://" or similar, e.g. "upi://pay?pa=...&pn=...&am=..."):
-      parse the pa (payee VPA), pn (payee name), am (amount) query
-      parameters. Apply UPI-specific heuristics: flag
-      "qr_upi_deeplink_suspicious" if the payee name (pn) doesn't
-      resemble the VPA's local-part (pa) in any recognizable way (simple
-      string similarity check, similar in spirit to url_agent's lookalike
-      logic — reuse that pattern/approach rather than inventing an unrelated
-      one), or if the amount is pre-filled to a suspiciously round/large
-      value. Build an EvidenceItem with agent="qr_agent", modality="qr",
-      indicators including "qr_payment_request" always plus
-      "qr_upi_deeplink_suspicious" if flagged, and a synthesized finding/
-      reasoning (LLM synthesis via llm_client if available, else a
-      template-based fallback with status="degraded_fallback", following the
-      exact same fallback pattern as text_agent.py and url_agent.py).
-   d. Else (plain text or unrecognized payload) → call
-      text_agent.analyze_text(payload) DIRECTLY (delegation, same principle
-      as step b), then relabel the result as agent="qr_agent", modality="qr",
-      add indicator "qr_non_url_payload" to its indicators list, and adjust
-      the finding to note it came from a QR code.
-   The function must NEVER raise an unhandled exception under any input,
-   including a completely invalid/corrupted image file.
-
-6. Add dev-only POST /api/v1/debug/qr-agent endpoint (multipart file upload,
-   same ENVIRONMENT=="development" guard as prior debug endpoints), returning
-   the EvidenceItem.
-
-7. Write apps/api/tests/test_qr_agent.py:
-   - Generate a QR image programmatically (using the `qrcode` library) that
-     encodes a malicious-looking URL (reuse a URL from test_url_agent.py's
-     malicious test case for consistency) → assert the QR agent's result has
-     the SAME severity and indicators as calling url_agent.analyze_url()
-     directly on that URL — this proves real delegation, not duplicated
-     logic.
-   - Generate a QR encoding a suspicious UPI deep-link (mismatched payee
-     name vs VPA) → assert "qr_payment_request" and
-     "qr_upi_deeplink_suspicious" are both present.
-   - Generate a QR encoding a legitimate-looking UPI link (payee name
-     resembles VPA, reasonable amount) → assert
-     "qr_upi_deeplink_suspicious" is NOT present.
-   - Generate a QR encoding plain text (e.g. a phishing-style message) →
-     assert the result matches what text_agent.analyze_text() would
-     independently produce for that text, with "qr_non_url_payload" added.
-   - Pass random/corrupted bytes that aren't a valid image at all → assert
-     status="failed", no exception raised.
-   - Pass a valid image with NO QR code in it (e.g. a plain solid-color
-     image) → assert status="failed" with "qr_decode_failed" indicator, no
-     exception.
-
-QUALITY REQUIREMENTS
-- URL-payload delegation must be genuine (import and call url_agent's
-  function) — no reimplementation of URL heuristics inside qr_agent.py.
-- Text-payload delegation must be genuine (import and call text_agent's
-  function) — no reimplementation of text heuristics inside qr_agent.py.
-- No exception may ever escape analyze_qr(), including for non-image input.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full output, all tests including new QR
-   agent tests passing.
-2. Generate a test QR image encoding "http://192.168.1.1@paypa1-verify.tk/login"
-   (reuse Phase 6's test URL) and run:
-   `curl -s -X POST http://localhost:8000/api/v1/debug/qr-agent -F "image=@<path>"`
-   Paste the exact EvidenceItem returned, and confirm its severity/indicators
-   match Phase 6's URL agent result for the same URL.
-3. Generate a test QR encoding a suspicious UPI link and run the same curl
-   pattern — paste the result.
-4. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Which QR decoding library actually worked in this environment (pyzbar vs
-  OpenCV) and why.
-- All curl outputs from steps 2–3.
-- Full pytest output.
-- Explicit confirmation that the URL-payload and text-payload cases are
-  TRUE DELEGATION (paste the relevant import/function-call lines from
-  qr_agent.py as proof) rather than reimplemented logic.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No OCR / arbitrary image text extraction (that's Phase 8, Image Agent).
-- No Voice Agent (Phase 9).
-- No LangGraph/orchestrator wiring.
-- No writes to agent_runs/agent_findings tables.
+ROLE
+
+You are implementing PHASE 7 of ThreatWeave. Phases 0–6 already exist —
+
+inspect app/agents/url_agent.py, app/agents/text_agent.py,
+
+app/core/url_heuristics.py, and app/schemas/evidence.py before writing
+
+anything. Do not touch apps/web/.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the QR Agent. Its core job is DECODING a QR code from an image and then
+
+DELEGATING to the already-existing URL Agent or Text Agent based on the
+
+decoded payload type — NOT reimplementing URL or text analysis logic. Also
+
+handle the QR-specific case of UPI payment deep-links. NO LangGraph wiring,
+
+NO database persistence, NO Image/OCR agent (Phase 8), NO Voice agent
+
+(Phase 9).
+
+
+
+TASKS
+
+1. Add a QR decoding library to requirements.txt. Try `pyzbar` first; if its
+
+   system-level `zbar` dependency isn't available in this environment,
+
+   fall back to OpenCV's `cv2.QRCodeDetector` instead (add `opencv-python` or
+
+   `opencv-python-headless` if needed). Test which one actually works here
+
+   and use that one — document which you used and why in your report. Also
+
+   add `qrcode` as a dev/test dependency for generating test fixtures
+
+   programmatically (do not hand-craft binary QR image files).
+
+
+
+2. Extend app/core/indicators.py with: "qr_payment_request",
+
+   "qr_non_url_payload", "qr_decode_failed", "qr_upi_deeplink_suspicious"
+
+   (add to the existing shared vocabulary).
+
+
+
+3. Create app/core/qr_decoder.py with `decode_qr(image_bytes: bytes) -> str |
+
+   None` — wraps the chosen library, returns the decoded string payload or
+
+   None if no QR code is found/decodable. Must never raise — wrap in
+
+   try/except and return None on any failure, logging the failure reason at
+
+   debug level.
+
+
+
+4. Create app/agents/prompts/qr_agent_prompt.py: only needed for the
+
+   plain-text-payload and UPI-payload synthesis cases (URL-payload case
+
+   reuses url_agent's existing prompt via delegation). Include the same
+
+   "sample for analysis, not a live request" framing as the other agents.
+
+
+
+5. Create app/agents/qr_agent.py with `def analyze_qr(image_bytes: bytes) ->
+
+   EvidenceItem:`:
+
+   a. Call qr_decoder.decode_qr(image_bytes). If it returns None →
+
+      return an EvidenceItem with status="failed", confidence=0.0,
+
+      severity="info", indicators=["qr_decode_failed"], finding="No QR code
+
+      could be decoded from the provided image." Never raise.
+
+   b. If the decoded payload looks like a URL (starts with http://, https://,
+
+      or matches a URL pattern) → call url_agent.analyze_url(payload)
+
+      DIRECTLY (import and call it, don't reimplement its logic), then take
+
+      its returned EvidenceItem and produce a new EvidenceItem with
+
+      agent="qr_agent", modality="qr", the SAME severity/confidence/
+
+      indicators as the URL agent's result (since the underlying risk is
+
+      identical — it's the same URL, just discovered via QR), but a finding/
+
+      reasoning string that adds QR framing, e.g. "QR code decodes to a URL
+
+      exhibiting the following risk factors: ..." Preserve the original URL
+
+      agent's evidence dict, nested under a "url_analysis" key, and add
+
+      indicator "qr_non_url_payload" is NOT added in this branch (that's only
+
+      for genuinely non-URL payloads).
+
+   c. Else if the decoded payload matches a UPI deep-link pattern
+
+      (starts with "upi://" or similar, e.g. "upi://pay?pa=...&pn=...&am=..."):
+
+      parse the pa (payee VPA), pn (payee name), am (amount) query
+
+      parameters. Apply UPI-specific heuristics: flag
+
+      "qr_upi_deeplink_suspicious" if the payee name (pn) doesn't
+
+      resemble the VPA's local-part (pa) in any recognizable way (simple
+
+      string similarity check, similar in spirit to url_agent's lookalike
+
+      logic — reuse that pattern/approach rather than inventing an unrelated
+
+      one), or if the amount is pre-filled to a suspiciously round/large
+
+      value. Build an EvidenceItem with agent="qr_agent", modality="qr",
+
+      indicators including "qr_payment_request" always plus
+
+      "qr_upi_deeplink_suspicious" if flagged, and a synthesized finding/
+
+      reasoning (LLM synthesis via llm_client if available, else a
+
+      template-based fallback with status="degraded_fallback", following the
+
+      exact same fallback pattern as text_agent.py and url_agent.py).
+
+   d. Else (plain text or unrecognized payload) → call
+
+      text_agent.analyze_text(payload) DIRECTLY (delegation, same principle
+
+      as step b), then relabel the result as agent="qr_agent", modality="qr",
+
+      add indicator "qr_non_url_payload" to its indicators list, and adjust
+
+      the finding to note it came from a QR code.
+
+   The function must NEVER raise an unhandled exception under any input,
+
+   including a completely invalid/corrupted image file.
+
+
+
+6. Add dev-only POST /api/v1/debug/qr-agent endpoint (multipart file upload,
+
+   same ENVIRONMENT=="development" guard as prior debug endpoints), returning
+
+   the EvidenceItem.
+
+
+
+7. Write apps/api/tests/test_qr_agent.py:
+
+   - Generate a QR image programmatically (using the `qrcode` library) that
+
+     encodes a malicious-looking URL (reuse a URL from test_url_agent.py's
+
+     malicious test case for consistency) → assert the QR agent's result has
+
+     the SAME severity and indicators as calling url_agent.analyze_url()
+
+     directly on that URL — this proves real delegation, not duplicated
+
+     logic.
+
+   - Generate a QR encoding a suspicious UPI deep-link (mismatched payee
+
+     name vs VPA) → assert "qr_payment_request" and
+
+     "qr_upi_deeplink_suspicious" are both present.
+
+   - Generate a QR encoding a legitimate-looking UPI link (payee name
+
+     resembles VPA, reasonable amount) → assert
+
+     "qr_upi_deeplink_suspicious" is NOT present.
+
+   - Generate a QR encoding plain text (e.g. a phishing-style message) →
+
+     assert the result matches what text_agent.analyze_text() would
+
+     independently produce for that text, with "qr_non_url_payload" added.
+
+   - Pass random/corrupted bytes that aren't a valid image at all → assert
+
+     status="failed", no exception raised.
+
+   - Pass a valid image with NO QR code in it (e.g. a plain solid-color
+
+     image) → assert status="failed" with "qr_decode_failed" indicator, no
+
+     exception.
+
+
+
+QUALITY REQUIREMENTS
+
+- URL-payload delegation must be genuine (import and call url_agent's
+
+  function) — no reimplementation of URL heuristics inside qr_agent.py.
+
+- Text-payload delegation must be genuine (import and call text_agent's
+
+  function) — no reimplementation of text heuristics inside qr_agent.py.
+
+- No exception may ever escape analyze_qr(), including for non-image input.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full output, all tests including new QR
+
+   agent tests passing.
+
+2. Generate a test QR image encoding "http://192.168.1.1@paypa1-verify.tk/login"
+
+   (reuse Phase 6's test URL) and run:
+
+   `curl -s -X POST http://localhost:8000/api/v1/debug/qr-agent -F "image=@<path>"`
+
+   Paste the exact EvidenceItem returned, and confirm its severity/indicators
+
+   match Phase 6's URL agent result for the same URL.
+
+3. Generate a test QR encoding a suspicious UPI link and run the same curl
+
+   pattern — paste the result.
+
+4. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Which QR decoding library actually worked in this environment (pyzbar vs
+
+  OpenCV) and why.
+
+- All curl outputs from steps 2–3.
+
+- Full pytest output.
+
+- Explicit confirmation that the URL-payload and text-payload cases are
+
+  TRUE DELEGATION (paste the relevant import/function-call lines from
+
+  qr_agent.py as proof) rather than reimplemented logic.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No OCR / arbitrary image text extraction (that's Phase 8, Image Agent).
+
+- No Voice Agent (Phase 9).
+
+- No LangGraph/orchestrator wiring.
+
+- No writes to agent_runs/agent_findings tables.
+
 - No risk scoring/aggregation.
 ```
 
@@ -5199,150 +6119,294 @@ All checks passed!
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 8 of ThreatWeave. Phases 0–7 already exist —
-inspect app/agents/qr_agent.py CAREFULLY (it is the direct template for this
-phase's delegation pattern), app/agents/text_agent.py, app/agents/url_agent.py,
-and app/schemas/evidence.py before writing anything. Do not touch apps/web/.
-
-SCOPE OF THIS PHASE ONLY
-Build the Image Agent: OCR text extraction from arbitrary screenshots, image-
-specific pattern detection (fake payment confirmations, impersonation
-banners), and delegation to Text Agent (for OCR'd text) and URL Agent (for any
-URLs found within that text) — following EXACTLY the delegation pattern
-qr_agent.py already established in Phase 7. NO Voice Agent, NO LangGraph
-wiring, NO persistence, NO risk scoring, NO deepfake-image detection (this was
-never promised and is explicitly out of scope).
-
-TASKS
-1. Determine which OCR approach works in this environment:
-   - First try `pytesseract` (requires the system Tesseract-OCR binary to be
-     installed and on PATH). Test if it's available or installable here.
-   - If not reliably available, use `easyocr` instead (pure Python, larger
-     dependency, slower first run since it downloads a model, but no system
-     binary requirement).
-   Pick whichever actually works reliably in THIS sandbox and document the
-   choice with the same rigor Phase 7 used for pyzbar vs OpenCV — this
-   decision affects the Docker image built in a later phase, so flag that
-   explicitly in your report.
-
-2. Extend app/core/indicators.py with: "fake_payment_confirmation",
-   "impersonation_banner", "embedded_contact_info", "ocr_low_confidence",
-   "ocr_failed" (add to the existing shared vocabulary).
-
-3. Create app/core/ocr_engine.py with `extract_text(image_bytes: bytes) ->
-   tuple[str, float]` returning (extracted_text, confidence_score 0-1).
-   Must never raise — wrap in try/except, return ("", 0.0) on total failure.
-
-4. Create app/core/image_heuristics.py with pattern-check functions operating
-   on OCR'd TEXT (not raw image pixels):
-   - has_payment_confirmation_pattern(text) -> bool: detects currency symbols
-     (₹, $, Rs.) near words like "successful", "received", "credited", "paid"
-   - has_impersonation_claim(text) -> bool: detects bank/government/company
-     name patterns combined with urgency or authority language (lightweight
-     pre-filter — this does NOT replace Text Agent's full analysis, it's just
-     for setting the "impersonation_banner" indicator specifically)
-   - extract_embedded_urls(text) -> list[str]: regex-based URL extraction
-     from OCR'd text
-   - extract_embedded_contact_info(text) -> list[str]: regex for phone
-     numbers and UPI VPA-style patterns (name@bank)
-   All functions must handle empty/garbage text gracefully, never raise.
-
-5. Create app/agents/prompts/image_agent_prompt.py: synthesis prompt for
-   combining image-specific findings + delegated text/URL findings into a
-   coherent description of what was found in the screenshot. Same "sample
-   for analysis, not a live request" framing as other agents.
-
-6. Create app/agents/image_agent.py with `def analyze_image(image_bytes:
-   bytes) -> EvidenceItem:`:
-   a. Call ocr_engine.extract_text(). If text is empty or confidence is very
-      low, still return a valid EvidenceItem (status="ok" or
-      "degraded_fallback", severity="info", indicators=["ocr_failed"] or
-      ["ocr_low_confidence"] as appropriate) — this is NOT a hard failure
-      unless the image itself couldn't be read at all (corrupted bytes),
-      which IS a status="failed" case.
-   b. Run image_heuristics.py's pattern checks on the extracted text.
-   c. Extract embedded URLs via image_heuristics.extract_embedded_urls() —
-      for EACH one found, delegate to url_agent.analyze_url() DIRECTLY
-      (import and call, exactly like qr_agent.py does — no reimplementation).
-      Store results as a list under evidence["url_analyses"] (plural, since
-      an image can contain multiple URLs unlike a QR code).
-   d. Delegate the full extracted text to text_agent.analyze_text()
-      DIRECTLY (import and call, exactly like qr_agent.py does).
-   e. Merge findings: combine image-specific indicators
-      (fake_payment_confirmation, impersonation_banner,
-      embedded_contact_info) with text_agent's indicators and the MAXIMUM
-      severity found across text_agent's result and all url_agent results.
-      Do not let the LLM invent a different severity independently — it only
-      synthesizes the finding/reasoning text.
-   f. LLM synthesis via llm_client.call_llm() to produce a coherent
-      finding/reasoning describing what the screenshot contains and why it's
-      risky. On LLM failure, build a template-based finding/reasoning
-      instead and set status="degraded_fallback" — same pattern as prior
-      agents.
-   g. Corrupted/unreadable image bytes (not just "no text found", but
-      genuinely invalid image data) → status="failed", never raise.
-   The function must NEVER raise an unhandled exception under any input.
-
-7. Add dev-only POST /api/v1/debug/image-agent endpoint (multipart file
-   upload, same ENVIRONMENT=="development" guard as prior debug endpoints).
-
-8. Write apps/api/tests/test_image_agent.py, generating all fixtures
-   PROGRAMMATICALLY with PIL (render black text on a white background — keep
-   it high-contrast and simple for OCR reliability):
-   - Image rendering "Payment Successful! Rs. 49,999 received from Ramesh
-     Kumar" → assert fake_payment_confirmation fires.
-   - Image rendering text containing a phishing-style URL (reuse Phase 6's
-     test URL) → assert delegation occurred and severity/indicators match
-     what url_agent.analyze_url() independently returns for that URL.
-   - Image rendering phishing-style message text (reuse Phase 5's test
-     phrase) → assert delegation occurred and indicators match what
-     text_agent.analyze_text() independently returns for that text.
-   - Image rendering bank-impersonation-style text with urgency language →
-     assert impersonation_banner fires.
-   - Blank white image (no text at all) → assert a valid low-severity result
-     with ocr_failed or ocr_low_confidence, no exception.
-   - Corrupted/non-image random bytes → assert status="failed", no
-     exception.
-
-QUALITY REQUIREMENTS
-- URL and text delegation must be genuine (import and directly call
-  url_agent.analyze_url() and text_agent.analyze_text()) — paste the actual
-  lines as proof, exactly as done in Phase 7's report.
-- Final severity must be the maximum across constituent findings, not
-  independently invented by the LLM synthesis step.
-- No exception may ever escape analyze_image(), including for non-image
-  input.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full output, all tests including new image
-   agent tests passing.
-2. `curl -s -X POST http://localhost:8000/api/v1/debug/image-agent -F "image=@<fake_payment_fixture_path>"`
-   — paste the exact EvidenceItem returned.
-3. `curl -s -X POST http://localhost:8000/api/v1/debug/image-agent -F "image=@<phishing_url_text_fixture_path>"`
-   — paste the exact EvidenceItem, and confirm severity/indicators match
-   Phase 6's URL agent result for that same URL.
-4. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Which OCR library actually worked in this environment and why (and flag
-  explicitly what this means for the later Docker phase).
-- All curl outputs from steps 2–3.
-- Full pytest output.
-- The actual import/function-call lines proving genuine delegation to
-  url_agent and text_agent (same proof format as Phase 7).
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No Voice Agent (Phase 9).
-- No LangGraph/orchestrator wiring.
-- No writes to agent_runs/agent_findings tables.
-- No risk scoring/aggregation.
-- No deepfake-image or manipulated-image-detection of any kind — never
+ROLE
+
+You are implementing PHASE 8 of ThreatWeave. Phases 0–7 already exist —
+
+inspect app/agents/qr_agent.py CAREFULLY (it is the direct template for this
+
+phase's delegation pattern), app/agents/text_agent.py, app/agents/url_agent.py,
+
+and app/schemas/evidence.py before writing anything. Do not touch apps/web/.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the Image Agent: OCR text extraction from arbitrary screenshots, image-
+
+specific pattern detection (fake payment confirmations, impersonation
+
+banners), and delegation to Text Agent (for OCR'd text) and URL Agent (for any
+
+URLs found within that text) — following EXACTLY the delegation pattern
+
+qr_agent.py already established in Phase 7. NO Voice Agent, NO LangGraph
+
+wiring, NO persistence, NO risk scoring, NO deepfake-image detection (this was
+
+never promised and is explicitly out of scope).
+
+
+
+TASKS
+
+1. Determine which OCR approach works in this environment:
+
+   - First try `pytesseract` (requires the system Tesseract-OCR binary to be
+
+     installed and on PATH). Test if it's available or installable here.
+
+   - If not reliably available, use `easyocr` instead (pure Python, larger
+
+     dependency, slower first run since it downloads a model, but no system
+
+     binary requirement).
+
+   Pick whichever actually works reliably in THIS sandbox and document the
+
+   choice with the same rigor Phase 7 used for pyzbar vs OpenCV — this
+
+   decision affects the Docker image built in a later phase, so flag that
+
+   explicitly in your report.
+
+
+
+2. Extend app/core/indicators.py with: "fake_payment_confirmation",
+
+   "impersonation_banner", "embedded_contact_info", "ocr_low_confidence",
+
+   "ocr_failed" (add to the existing shared vocabulary).
+
+
+
+3. Create app/core/ocr_engine.py with `extract_text(image_bytes: bytes) ->
+
+   tuple[str, float]` returning (extracted_text, confidence_score 0-1).
+
+   Must never raise — wrap in try/except, return ("", 0.0) on total failure.
+
+
+
+4. Create app/core/image_heuristics.py with pattern-check functions operating
+
+   on OCR'd TEXT (not raw image pixels):
+
+   - has_payment_confirmation_pattern(text) -> bool: detects currency symbols
+
+     (₹, $, Rs.) near words like "successful", "received", "credited", "paid"
+
+   - has_impersonation_claim(text) -> bool: detects bank/government/company
+
+     name patterns combined with urgency or authority language (lightweight
+
+     pre-filter — this does NOT replace Text Agent's full analysis, it's just
+
+     for setting the "impersonation_banner" indicator specifically)
+
+   - extract_embedded_urls(text) -> list[str]: regex-based URL extraction
+
+     from OCR'd text
+
+   - extract_embedded_contact_info(text) -> list[str]: regex for phone
+
+     numbers and UPI VPA-style patterns (name@bank)
+
+   All functions must handle empty/garbage text gracefully, never raise.
+
+
+
+5. Create app/agents/prompts/image_agent_prompt.py: synthesis prompt for
+
+   combining image-specific findings + delegated text/URL findings into a
+
+   coherent description of what was found in the screenshot. Same "sample
+
+   for analysis, not a live request" framing as other agents.
+
+
+
+6. Create app/agents/image_agent.py with `def analyze_image(image_bytes:
+
+   bytes) -> EvidenceItem:`:
+
+   a. Call ocr_engine.extract_text(). If text is empty or confidence is very
+
+      low, still return a valid EvidenceItem (status="ok" or
+
+      "degraded_fallback", severity="info", indicators=["ocr_failed"] or
+
+      ["ocr_low_confidence"] as appropriate) — this is NOT a hard failure
+
+      unless the image itself couldn't be read at all (corrupted bytes),
+
+      which IS a status="failed" case.
+
+   b. Run image_heuristics.py's pattern checks on the extracted text.
+
+   c. Extract embedded URLs via image_heuristics.extract_embedded_urls() —
+
+      for EACH one found, delegate to url_agent.analyze_url() DIRECTLY
+
+      (import and call, exactly like qr_agent.py does — no reimplementation).
+
+      Store results as a list under evidence["url_analyses"] (plural, since
+
+      an image can contain multiple URLs unlike a QR code).
+
+   d. Delegate the full extracted text to text_agent.analyze_text()
+
+      DIRECTLY (import and call, exactly like qr_agent.py does).
+
+   e. Merge findings: combine image-specific indicators
+
+      (fake_payment_confirmation, impersonation_banner,
+
+      embedded_contact_info) with text_agent's indicators and the MAXIMUM
+
+      severity found across text_agent's result and all url_agent results.
+
+      Do not let the LLM invent a different severity independently — it only
+
+      synthesizes the finding/reasoning text.
+
+   f. LLM synthesis via llm_client.call_llm() to produce a coherent
+
+      finding/reasoning describing what the screenshot contains and why it's
+
+      risky. On LLM failure, build a template-based finding/reasoning
+
+      instead and set status="degraded_fallback" — same pattern as prior
+
+      agents.
+
+   g. Corrupted/unreadable image bytes (not just "no text found", but
+
+      genuinely invalid image data) → status="failed", never raise.
+
+   The function must NEVER raise an unhandled exception under any input.
+
+
+
+7. Add dev-only POST /api/v1/debug/image-agent endpoint (multipart file
+
+   upload, same ENVIRONMENT=="development" guard as prior debug endpoints).
+
+
+
+8. Write apps/api/tests/test_image_agent.py, generating all fixtures
+
+   PROGRAMMATICALLY with PIL (render black text on a white background — keep
+
+   it high-contrast and simple for OCR reliability):
+
+   - Image rendering "Payment Successful! Rs. 49,999 received from Ramesh
+
+     Kumar" → assert fake_payment_confirmation fires.
+
+   - Image rendering text containing a phishing-style URL (reuse Phase 6's
+
+     test URL) → assert delegation occurred and severity/indicators match
+
+     what url_agent.analyze_url() independently returns for that URL.
+
+   - Image rendering phishing-style message text (reuse Phase 5's test
+
+     phrase) → assert delegation occurred and indicators match what
+
+     text_agent.analyze_text() independently returns for that text.
+
+   - Image rendering bank-impersonation-style text with urgency language →
+
+     assert impersonation_banner fires.
+
+   - Blank white image (no text at all) → assert a valid low-severity result
+
+     with ocr_failed or ocr_low_confidence, no exception.
+
+   - Corrupted/non-image random bytes → assert status="failed", no
+
+     exception.
+
+
+
+QUALITY REQUIREMENTS
+
+- URL and text delegation must be genuine (import and directly call
+
+  url_agent.analyze_url() and text_agent.analyze_text()) — paste the actual
+
+  lines as proof, exactly as done in Phase 7's report.
+
+- Final severity must be the maximum across constituent findings, not
+
+  independently invented by the LLM synthesis step.
+
+- No exception may ever escape analyze_image(), including for non-image
+
+  input.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full output, all tests including new image
+
+   agent tests passing.
+
+2. `curl -s -X POST http://localhost:8000/api/v1/debug/image-agent -F "image=@<fake_payment_fixture_path>"`
+
+   — paste the exact EvidenceItem returned.
+
+3. `curl -s -X POST http://localhost:8000/api/v1/debug/image-agent -F "image=@<phishing_url_text_fixture_path>"`
+
+   — paste the exact EvidenceItem, and confirm severity/indicators match
+
+   Phase 6's URL agent result for that same URL.
+
+4. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Which OCR library actually worked in this environment and why (and flag
+
+  explicitly what this means for the later Docker phase).
+
+- All curl outputs from steps 2–3.
+
+- Full pytest output.
+
+- The actual import/function-call lines proving genuine delegation to
+
+  url_agent and text_agent (same proof format as Phase 7).
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No Voice Agent (Phase 9).
+
+- No LangGraph/orchestrator wiring.
+
+- No writes to agent_runs/agent_findings tables.
+
+- No risk scoring/aggregation.
+
+- No deepfake-image or manipulated-image-detection of any kind — never
+
   promised, entirely out of scope.
 ```
 
@@ -5401,10 +6465,14 @@ I am running the test suite for the Image Agent (`pytest tests/test_image_agent.
 #### User Request
 
 ```text
-Good diagnosis on Tesseract — a headless environment blocking on an interactive UAC prompt is exactly the kind of environment constraint worth documenting clearly, and you already flagged the right fix for Phase 18 (apt-get install tesseract-ocr in the Dockerfile, where headless installs aren't a problem). The plan itself looks right — genuine delegation to both url_agent and text_agent, max-severity merging, LLM synthesis with template fallback. That all matches the design.
-
-One thing worth double-checking while this runs: EasyOCR's first model download can take a while and needs internet access — if the test suite run seems to hang, that's likely the model download, not a stall. Let it finish rather than interrupting.
-
+Good diagnosis on Tesseract — a headless environment blocking on an interactive UAC prompt is exactly the kind of environment constraint worth documenting clearly, and you already flagged the right fix for Phase 18 (apt-get install tesseract-ocr in the Dockerfile, where headless installs aren't a problem). The plan itself looks right — genuine delegation to both url_agent and text_agent, max-severity merging, LLM synthesis with template fallback. That all matches the design.
+
+
+
+One thing worth double-checking while this runs: EasyOCR's first model download can take a while and needs internet access — if the test suite run seems to hang, that's likely the model download, not a stall. Let it finish rather than interrupting.
+
+
+
 Go ahead and let the test run complete, then send me the full report (files created/modified, OCR choice confirmation, both curl outputs, full pytest output, and the delegation proof lines) — same format as Phase 7's report. I'll review before we move to Phase 9 (Voice Agent).
 ```
 
@@ -5721,16 +6789,26 @@ All checks passed!
 #### User Request
 
 ```text
-Strong work overall — 103/103 tests, genuine delegation proven with real evidence, and the max-severity merging is functioning correctly (critical case correctly inherits the URL agent's critical rating). The OCR library decision and dual-option Docker guidance for Phase 18 is exactly the kind of forward documentation this project needs. Two real issues to fix before I approve, though:
-
-1. text_analysis: {} is empty in both outputs — that's a bug, not a display quirk. The delegation proof shows text_item = analyze_text(extracted_text) is genuinely called and its severity is folded into the max-severity calculation, but the full Text Agent result never actually lands in the evidence["text_analysis"] field the way url_analyses does. That means the API response is silently dropping the Text Agent's own finding/reasoning/indicators — the RAG/explainability UI in later phases needs that data, and right now it's being computed and then discarded. Have Antigravity check the code path where text_item gets serialized into the evidence dict; it looks like url_analyses.append(url_item.model_dump(...)) exists but the equivalent line for text_item is likely missing.
-
-2. False-positive contact extraction pulling from inside the URL itself. In verification step 3, embedded_contacts: ["192.168.1.1@paypal"] isn't a phone number or UPI VPA — it's literally the userinfo segment of the phishing URL (http://192.168.1.1@paypal-verify.tk/login) that the contact-info regex mistakenly matched as an email/VPA-style pattern. This inflated the indicator list with embedded_contact_info, which is misleading — that indicator should mean "a phone number or payment handle was found in the text," not "part of a URL happened to contain an @ symbol." Have extract_embedded_contact_info() exclude substrings that are already captured by extract_embedded_urls() before pattern-matching, so URL fragments can't double-count as contact info.
-
-Both are worth fixing now rather than later — the second one especially, since it's exactly the kind of "hallucinated-looking" indicator that would undermine credibility if a panel member noticed it during a live demo.
-
-One more thing, not a defect, just a note: you modified llm_client.py and url_agent.py — both from already-closed phases. The fixes look reasonable (the getattr guard against missing status_code is a legitimate robustness improvement), and since all 103 tests still pass including the full URL agent suite, there's no evidence of regression. Just flagging it so it's on record that Phase 6/prior-phase files were touched here, in case anything surfaces later.
-
+Strong work overall — 103/103 tests, genuine delegation proven with real evidence, and the max-severity merging is functioning correctly (critical case correctly inherits the URL agent's critical rating). The OCR library decision and dual-option Docker guidance for Phase 18 is exactly the kind of forward documentation this project needs. Two real issues to fix before I approve, though:
+
+
+
+1. text_analysis: {} is empty in both outputs — that's a bug, not a display quirk. The delegation proof shows text_item = analyze_text(extracted_text) is genuinely called and its severity is folded into the max-severity calculation, but the full Text Agent result never actually lands in the evidence["text_analysis"] field the way url_analyses does. That means the API response is silently dropping the Text Agent's own finding/reasoning/indicators — the RAG/explainability UI in later phases needs that data, and right now it's being computed and then discarded. Have Antigravity check the code path where text_item gets serialized into the evidence dict; it looks like url_analyses.append(url_item.model_dump(...)) exists but the equivalent line for text_item is likely missing.
+
+
+
+2. False-positive contact extraction pulling from inside the URL itself. In verification step 3, embedded_contacts: ["192.168.1.1@paypal"] isn't a phone number or UPI VPA — it's literally the userinfo segment of the phishing URL (http://192.168.1.1@paypal-verify.tk/login) that the contact-info regex mistakenly matched as an email/VPA-style pattern. This inflated the indicator list with embedded_contact_info, which is misleading — that indicator should mean "a phone number or payment handle was found in the text," not "part of a URL happened to contain an @ symbol." Have extract_embedded_contact_info() exclude substrings that are already captured by extract_embedded_urls() before pattern-matching, so URL fragments can't double-count as contact info.
+
+
+
+Both are worth fixing now rather than later — the second one especially, since it's exactly the kind of "hallucinated-looking" indicator that would undermine credibility if a panel member noticed it during a live demo.
+
+
+
+One more thing, not a defect, just a note: you modified llm_client.py and url_agent.py — both from already-closed phases. The fixes look reasonable (the getattr guard against missing status_code is a legitimate robustness improvement), and since all 103 tests still pass including the full URL agent suite, there's no evidence of regression. Just flagging it so it's on record that Phase 6/prior-phase files were touched here, in case anything surfaces later.
+
+
+
 Send me the fix for both issues (with a fresh curl showing text_analysis populated and embedded_contacts correctly excluding the URL's userinfo fragment) and I'll approve Phase 8, then we'll move to Phase 9 (Voice Agent) — the last specialist before the Orchestrator.
 ```
 
@@ -5993,176 +7071,346 @@ All checks passed!
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 9 of ThreatWeave — the LAST of the five specialist
-agents before the Orchestrator (Phase 10) wires everything together. Inspect
-app/agents/image_agent.py CAREFULLY (delegation + merging pattern template),
-app/agents/text_agent.py, and app/schemas/evidence.py before writing anything.
-Do not touch apps/web/.
-
-CRITICAL FRAMING REQUIREMENT — READ BEFORE STARTING
-This agent must NEVER claim to have detected or proven AI-generated/deepfake
-voice. Not in code comments, not in the finding/reasoning text, not in the
-prompt, not in logs, not anywhere. Any acoustic "AI voice" signal must be
-named and treated as a WEAK, NON-CONCLUSIVE INDICATOR ONLY, with a hard
-confidence ceiling, clearly hedged language, and explicit acknowledgment of
-its limitations. If you cannot implement this defensibly, SKIP the acoustic
-feature entirely and rely on transcript-based vishing pattern detection only
-— that is an acceptable and expected outcome for this phase. Getting this
-wrong is the single biggest credibility risk in this entire project.
-
-SCOPE OF THIS PHASE ONLY
-Build the Voice Agent: speech-to-text transcription, vishing-pattern
-detection on the transcript, delegation of the transcript to Text Agent
-(following the exact pattern image_agent.py already established), and
-OPTIONALLY a narrowly-scoped, heavily-caveated acoustic indicator. NO
-LangGraph wiring, NO persistence, NO risk scoring engine — those come next.
-
-TASKS
-1. Add `faster-whisper` to requirements.txt (CPU-friendly local Whisper
-   implementation, no API key required — consistent with running fully
-   offline on a laptop). Test transcription with a small model size (e.g.
-   "base") and report actual observed latency on a short (~10-15 second)
-   test clip, since this affects demo responsiveness.
-
-2. Extend app/core/indicators.py with: "vishing_script_pattern",
-   "robotic_speech_pattern", "stt_low_confidence", "stt_failed",
-   "ai_voice_indicator_weak" (add to the existing shared vocabulary — note
-   the deliberate "_weak" naming, keep this naming exactly as specified,
-   do not rename it to something stronger-sounding).
-
-3. Create app/core/stt_engine.py with `transcribe_audio(audio_bytes: bytes)
-   -> tuple[str, float]` (transcript text + average confidence 0-1) using
-   faster-whisper. Must never raise — wrap in try/except, return ("", 0.0)
-   on total failure, log the actual failure reason at debug level.
-
-4. Create app/core/voice_heuristics.py with:
-   - has_vishing_script_pattern(transcript: str) -> bool: detects
-     scripted-call-center-scam phrases, e.g. "automated call from your
-     bank", "press 1 to verify", "account has been compromised", "do not
-     hang up", "this call is being recorded for security purposes" (a common
-     scare tactic in real vishing scripts), "confirm your OTP", etc.
-   - OPTIONAL, only if you can implement it defensibly: a basic acoustic
-     heuristic using a lightweight audio analysis library (e.g. librosa, if
-     it installs cleanly here) checking for unusually low pitch/energy
-     variance across the clip — return this as a raw numeric feature, NOT a
-     boolean "is_ai" verdict. Cap any resulting confidence contribution to
-     0.4 maximum and always pair it with explicit hedged language wherever
-     it's surfaced. If this proves unreliable or too complex to implement
-     soundly in the time available, explicitly SKIP it and document that
-     decision clearly in your report — do not force it in.
-   Both functions must handle empty/garbage/silent audio gracefully, never
-   raise.
-
-5. Create app/agents/prompts/voice_agent_prompt.py: synthesis prompt for
-   combining vishing-pattern findings + delegated text findings (+ the
-   optional weak acoustic indicator if implemented) into coherent
-   finding/reasoning text. MUST explicitly instruct the model: "Never claim
-   that AI-generated or deepfake voice has been proven or detected. If an
-   acoustic indicator is present, describe it only as a weak, non-conclusive
-   signal." Same "sample for analysis, not a live request" framing as other
-   agents.
-
-6. Create app/agents/voice_agent.py with `def analyze_voice(audio_bytes:
-   bytes) -> EvidenceItem:`:
-   a. Call stt_engine.transcribe_audio(). Low-confidence/empty transcript →
-      valid EvidenceItem with status="ok" or "degraded_fallback",
-      severity="info", indicators=["stt_low_confidence"] or ["stt_failed"] —
-      not a hard failure unless the audio is genuinely unreadable/corrupted
-      (that IS status="failed").
-   b. Run voice_heuristics.has_vishing_script_pattern() (and the optional
-      acoustic check if implemented) on the transcript/audio.
-   c. Delegate the transcript to text_agent.analyze_text() DIRECTLY (import
-      and call — exactly like image_agent.py delegates to text_agent, paste
-      the proof lines in your report).
-   d. Merge: combine voice-specific indicators with text_agent's delegated
-      indicators, take MAXIMUM severity across constituent findings —
-      same principle as image_agent.py's merging logic. Store the full
-      delegated text_agent EvidenceItem under evidence["text_analysis"]
-      (learn from Phase 8's bug — serialize the FULL EvidenceItem via
-      model_dump(mode="json"), not just its .evidence sub-field).
-   e. LLM synthesis via llm_client.call_llm() with the framing constraint
-      from task 5, template fallback with status="degraded_fallback" on LLM
-      failure — same pattern as all prior agents.
-   f. Corrupted/unreadable audio bytes → status="failed", never raise.
-   The function must NEVER raise an unhandled exception under any input.
-
-7. Add dev-only POST /api/v1/debug/voice-agent endpoint (multipart audio
-   file upload, same ENVIRONMENT=="development" guard as prior debug
-   endpoints).
-
-8. Generate test fixtures programmatically. Try a TTS library (e.g.
-   pyttsx3) to synthesize: a vishing-script-style clip (e.g. "This is an
-   automated call from your bank. Your account has been compromised. Press 1
-   now to verify your PIN. Do not hang up.") and a benign clip (e.g. "Hey,
-   are we still on for lunch tomorrow?") as WAV files. If TTS proves
-   unreliable in this headless sandbox, document that limitation explicitly
-   and use the most pragmatic fallback: test voice_heuristics.py's
-   transcript-pattern functions directly with hardcoded transcript strings
-   for the pattern-detection tests, while still using real (even if
-   synthetic-tone/silent) audio bytes for the STT-failure and
-   corrupted-input safety-net tests. Be explicit in test names/comments
-   about which tests exercise real STT vs. transcript logic directly.
-
-9. Write apps/api/tests/test_voice_agent.py covering:
-   - Vishing-script transcript/audio → vishing_script_pattern fires,
-     delegation to text_agent produces matching urgency/impersonation-style
-     indicators.
-   - Benign transcript/audio → low severity.
-   - Corrupted/non-audio bytes → status="failed", no exception.
-   - Silent/empty audio → stt_low_confidence or stt_failed, no crash.
-   - If the acoustic heuristic is implemented: a test asserting
-     ai_voice_indicator_weak's confidence contribution never exceeds its
-     documented cap (0.4).
-   - A test that greps the actual finding/reasoning output of a sample run
-     for the absence of phrases like "detected AI voice", "proven deepfake",
-     "confirmed synthetic" etc. — an explicit automated check that the
-     never-claim-proof constraint holds, not just a manual eyeball check.
-
-QUALITY REQUIREMENTS
-- Text delegation must be genuine (import and directly call
-  text_agent.analyze_text()) — paste the actual lines as proof.
-- The full delegated text_agent EvidenceItem must be serialized into
-  evidence["text_analysis"] correctly (apply Phase 8's fix pattern from the
-  start — don't repeat that bug).
-- No exception may ever escape analyze_voice(), including for non-audio
-  input.
-- No claim of proven AI-voice/deepfake detection anywhere in code, prompts,
-  or output — verified by an automated test, not just manual review.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full output, all tests including new voice
-   agent tests passing.
-2. `curl -s -X POST http://localhost:8000/api/v1/debug/voice-agent -F "audio=@<vishing_fixture_path>"`
-   — paste the exact EvidenceItem returned, including the fully populated
-   text_analysis field.
-3. `curl -s -X POST http://localhost:8000/api/v1/debug/voice-agent -F "audio=@<benign_fixture_path>"`
-   — paste the exact EvidenceItem (should be low severity).
-4. `ruff check .` — paste output.
-5. Report the observed faster-whisper transcription latency on your test
-   clips.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Whether the acoustic ai_voice_indicator_weak heuristic was implemented or
-  deliberately skipped, and why — this decision must be explicit either way.
-- Whether TTS fixture generation worked cleanly in this sandbox, or what
-  fallback approach was used and why.
-- All curl outputs from steps 2–3.
-- Full pytest output, including the automated "no proof-of-AI-voice claims"
-  test result specifically called out.
-- The actual import/function-call lines proving genuine delegation to
-  text_agent.
-- Observed STT latency.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No LangGraph/orchestrator wiring (Phase 10 is immediately next).
-- No writes to agent_runs/agent_findings tables.
-- No risk scoring/aggregation engine.
+ROLE
+
+You are implementing PHASE 9 of ThreatWeave — the LAST of the five specialist
+
+agents before the Orchestrator (Phase 10) wires everything together. Inspect
+
+app/agents/image_agent.py CAREFULLY (delegation + merging pattern template),
+
+app/agents/text_agent.py, and app/schemas/evidence.py before writing anything.
+
+Do not touch apps/web/.
+
+
+
+CRITICAL FRAMING REQUIREMENT — READ BEFORE STARTING
+
+This agent must NEVER claim to have detected or proven AI-generated/deepfake
+
+voice. Not in code comments, not in the finding/reasoning text, not in the
+
+prompt, not in logs, not anywhere. Any acoustic "AI voice" signal must be
+
+named and treated as a WEAK, NON-CONCLUSIVE INDICATOR ONLY, with a hard
+
+confidence ceiling, clearly hedged language, and explicit acknowledgment of
+
+its limitations. If you cannot implement this defensibly, SKIP the acoustic
+
+feature entirely and rely on transcript-based vishing pattern detection only
+
+— that is an acceptable and expected outcome for this phase. Getting this
+
+wrong is the single biggest credibility risk in this entire project.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the Voice Agent: speech-to-text transcription, vishing-pattern
+
+detection on the transcript, delegation of the transcript to Text Agent
+
+(following the exact pattern image_agent.py already established), and
+
+OPTIONALLY a narrowly-scoped, heavily-caveated acoustic indicator. NO
+
+LangGraph wiring, NO persistence, NO risk scoring engine — those come next.
+
+
+
+TASKS
+
+1. Add `faster-whisper` to requirements.txt (CPU-friendly local Whisper
+
+   implementation, no API key required — consistent with running fully
+
+   offline on a laptop). Test transcription with a small model size (e.g.
+
+   "base") and report actual observed latency on a short (~10-15 second)
+
+   test clip, since this affects demo responsiveness.
+
+
+
+2. Extend app/core/indicators.py with: "vishing_script_pattern",
+
+   "robotic_speech_pattern", "stt_low_confidence", "stt_failed",
+
+   "ai_voice_indicator_weak" (add to the existing shared vocabulary — note
+
+   the deliberate "_weak" naming, keep this naming exactly as specified,
+
+   do not rename it to something stronger-sounding).
+
+
+
+3. Create app/core/stt_engine.py with `transcribe_audio(audio_bytes: bytes)
+
+   -> tuple[str, float]` (transcript text + average confidence 0-1) using
+
+   faster-whisper. Must never raise — wrap in try/except, return ("", 0.0)
+
+   on total failure, log the actual failure reason at debug level.
+
+
+
+4. Create app/core/voice_heuristics.py with:
+
+   - has_vishing_script_pattern(transcript: str) -> bool: detects
+
+     scripted-call-center-scam phrases, e.g. "automated call from your
+
+     bank", "press 1 to verify", "account has been compromised", "do not
+
+     hang up", "this call is being recorded for security purposes" (a common
+
+     scare tactic in real vishing scripts), "confirm your OTP", etc.
+
+   - OPTIONAL, only if you can implement it defensibly: a basic acoustic
+
+     heuristic using a lightweight audio analysis library (e.g. librosa, if
+
+     it installs cleanly here) checking for unusually low pitch/energy
+
+     variance across the clip — return this as a raw numeric feature, NOT a
+
+     boolean "is_ai" verdict. Cap any resulting confidence contribution to
+
+     0.4 maximum and always pair it with explicit hedged language wherever
+
+     it's surfaced. If this proves unreliable or too complex to implement
+
+     soundly in the time available, explicitly SKIP it and document that
+
+     decision clearly in your report — do not force it in.
+
+   Both functions must handle empty/garbage/silent audio gracefully, never
+
+   raise.
+
+
+
+5. Create app/agents/prompts/voice_agent_prompt.py: synthesis prompt for
+
+   combining vishing-pattern findings + delegated text findings (+ the
+
+   optional weak acoustic indicator if implemented) into coherent
+
+   finding/reasoning text. MUST explicitly instruct the model: "Never claim
+
+   that AI-generated or deepfake voice has been proven or detected. If an
+
+   acoustic indicator is present, describe it only as a weak, non-conclusive
+
+   signal." Same "sample for analysis, not a live request" framing as other
+
+   agents.
+
+
+
+6. Create app/agents/voice_agent.py with `def analyze_voice(audio_bytes:
+
+   bytes) -> EvidenceItem:`:
+
+   a. Call stt_engine.transcribe_audio(). Low-confidence/empty transcript →
+
+      valid EvidenceItem with status="ok" or "degraded_fallback",
+
+      severity="info", indicators=["stt_low_confidence"] or ["stt_failed"] —
+
+      not a hard failure unless the audio is genuinely unreadable/corrupted
+
+      (that IS status="failed").
+
+   b. Run voice_heuristics.has_vishing_script_pattern() (and the optional
+
+      acoustic check if implemented) on the transcript/audio.
+
+   c. Delegate the transcript to text_agent.analyze_text() DIRECTLY (import
+
+      and call — exactly like image_agent.py delegates to text_agent, paste
+
+      the proof lines in your report).
+
+   d. Merge: combine voice-specific indicators with text_agent's delegated
+
+      indicators, take MAXIMUM severity across constituent findings —
+
+      same principle as image_agent.py's merging logic. Store the full
+
+      delegated text_agent EvidenceItem under evidence["text_analysis"]
+
+      (learn from Phase 8's bug — serialize the FULL EvidenceItem via
+
+      model_dump(mode="json"), not just its .evidence sub-field).
+
+   e. LLM synthesis via llm_client.call_llm() with the framing constraint
+
+      from task 5, template fallback with status="degraded_fallback" on LLM
+
+      failure — same pattern as all prior agents.
+
+   f. Corrupted/unreadable audio bytes → status="failed", never raise.
+
+   The function must NEVER raise an unhandled exception under any input.
+
+
+
+7. Add dev-only POST /api/v1/debug/voice-agent endpoint (multipart audio
+
+   file upload, same ENVIRONMENT=="development" guard as prior debug
+
+   endpoints).
+
+
+
+8. Generate test fixtures programmatically. Try a TTS library (e.g.
+
+   pyttsx3) to synthesize: a vishing-script-style clip (e.g. "This is an
+
+   automated call from your bank. Your account has been compromised. Press 1
+
+   now to verify your PIN. Do not hang up.") and a benign clip (e.g. "Hey,
+
+   are we still on for lunch tomorrow?") as WAV files. If TTS proves
+
+   unreliable in this headless sandbox, document that limitation explicitly
+
+   and use the most pragmatic fallback: test voice_heuristics.py's
+
+   transcript-pattern functions directly with hardcoded transcript strings
+
+   for the pattern-detection tests, while still using real (even if
+
+   synthetic-tone/silent) audio bytes for the STT-failure and
+
+   corrupted-input safety-net tests. Be explicit in test names/comments
+
+   about which tests exercise real STT vs. transcript logic directly.
+
+
+
+9. Write apps/api/tests/test_voice_agent.py covering:
+
+   - Vishing-script transcript/audio → vishing_script_pattern fires,
+
+     delegation to text_agent produces matching urgency/impersonation-style
+
+     indicators.
+
+   - Benign transcript/audio → low severity.
+
+   - Corrupted/non-audio bytes → status="failed", no exception.
+
+   - Silent/empty audio → stt_low_confidence or stt_failed, no crash.
+
+   - If the acoustic heuristic is implemented: a test asserting
+
+     ai_voice_indicator_weak's confidence contribution never exceeds its
+
+     documented cap (0.4).
+
+   - A test that greps the actual finding/reasoning output of a sample run
+
+     for the absence of phrases like "detected AI voice", "proven deepfake",
+
+     "confirmed synthetic" etc. — an explicit automated check that the
+
+     never-claim-proof constraint holds, not just a manual eyeball check.
+
+
+
+QUALITY REQUIREMENTS
+
+- Text delegation must be genuine (import and directly call
+
+  text_agent.analyze_text()) — paste the actual lines as proof.
+
+- The full delegated text_agent EvidenceItem must be serialized into
+
+  evidence["text_analysis"] correctly (apply Phase 8's fix pattern from the
+
+  start — don't repeat that bug).
+
+- No exception may ever escape analyze_voice(), including for non-audio
+
+  input.
+
+- No claim of proven AI-voice/deepfake detection anywhere in code, prompts,
+
+  or output — verified by an automated test, not just manual review.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full output, all tests including new voice
+
+   agent tests passing.
+
+2. `curl -s -X POST http://localhost:8000/api/v1/debug/voice-agent -F "audio=@<vishing_fixture_path>"`
+
+   — paste the exact EvidenceItem returned, including the fully populated
+
+   text_analysis field.
+
+3. `curl -s -X POST http://localhost:8000/api/v1/debug/voice-agent -F "audio=@<benign_fixture_path>"`
+
+   — paste the exact EvidenceItem (should be low severity).
+
+4. `ruff check .` — paste output.
+
+5. Report the observed faster-whisper transcription latency on your test
+
+   clips.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Whether the acoustic ai_voice_indicator_weak heuristic was implemented or
+
+  deliberately skipped, and why — this decision must be explicit either way.
+
+- Whether TTS fixture generation worked cleanly in this sandbox, or what
+
+  fallback approach was used and why.
+
+- All curl outputs from steps 2–3.
+
+- Full pytest output, including the automated "no proof-of-AI-voice claims"
+
+  test result specifically called out.
+
+- The actual import/function-call lines proving genuine delegation to
+
+  text_agent.
+
+- Observed STT latency.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No LangGraph/orchestrator wiring (Phase 10 is immediately next).
+
+- No writes to agent_runs/agent_findings tables.
+
+- No risk scoring/aggregation engine.
+
 - No claim, anywhere, of proven or detected AI-generated/deepfake voice.
 ```
 
@@ -6611,192 +7859,378 @@ All 5 specialist agents (**Text**, **URL**, **QR**, **Image**, and **Voice**) ar
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 10 of ThreatWeave — the LangGraph Orchestrator.
-This is the architectural core of the entire project: dynamic agent routing
-based on which evidence modalities are present. Inspect app/agents/text_agent.py,
-url_agent.py, qr_agent.py, image_agent.py, voice_agent.py (all five, to
-confirm their exact function signatures), app/models/ (investigation.py,
-evidence_input.py, agent_run.py, agent_finding.py), and app/schemas/evidence.py
-before writing anything. Do not touch apps/web/.
-
-SCOPE OF THIS PHASE ONLY
-Build the LangGraph state machine that dynamically routes to only the
-required specialist agents based on evidence present, executes them, and
-persists agent_runs/agent_findings. NO risk scoring/aggregation (Phase 11),
-NO RAG retrieval (Phase 12), NO conflict resolution, NO frontend wiring
-(Phase 13). Leave clear extension points for Phase 11/12 to append nodes to
-this graph later without restructuring it.
-
-CRITICAL ROUTING DECISION — RESOLVE AND DOCUMENT EXPLICITLY
-Evidence inputs only have modalities: text, url, image, voice (per Phase 4's
-schema — QR codes arrive as "image" evidence, there is no separate "qr"
-modality in evidence_inputs). You must decide and clearly document this rule:
-For every "image" evidence_input, ALWAYS attempt QR decoding first (reuse
-qr_decoder.decode_qr() from Phase 7 — it's fast). If a QR code is
-successfully decoded, invoke qr_agent (which internally calls
-qr_decoder again via analyze_qr() — this minor redundant decode call is
-acceptable for correctness/simplicity, do not over-optimize it away this
-phase). ALSO invoke image_agent on the same image REGARDLESS of whether a QR
-was found, UNLESS the image is essentially nothing but the QR code itself
-with no surrounding readable content (use a simple heuristic: if OCR on the
-image yields near-empty text AND a QR was found, skip image_agent for that
-input; otherwise run both). Document this decision clearly in your report —
-it is a real architectural judgment call, not something implied by the
-original spec.
-
-TASKS
-1. Create app/agents/orchestrator_state.py: an InvestigationState TypedDict
-   with fields: investigation_id: str, evidence_inputs: list[dict] (loaded
-   from DB), required_agents: list[str], findings: Annotated[list[dict],
-   operator.add] (use LangGraph's reducer pattern for safe concurrent
-   appends during parallel fan-out — this is important, don't use a plain
-   list that concurrent branches mutate directly).
-
-2. Create app/agents/orchestrator_nodes.py with these node functions:
-   - classify_node(state): reads evidence_inputs already loaded into state,
-     determines present modalities.
-   - plan_node(state): for each evidence_input, determines which
-     specialist(s) apply using the QR/image routing rule above; sets
-     state["required_agents"] as a list of (agent_name, evidence_input_id)
-     pairs or similar structure sufficient for routing (design the exact
-     shape, document it).
-   - text_agent_node(state), url_agent_node(state), qr_agent_node(state),
-     image_agent_node(state), voice_agent_node(state): each node, ONLY IF
-     its agent is in required_agents for a given evidence_input:
-     a. Opens its own DB session (do not share a long-lived session across
-        parallel branches).
-     b. Creates an AgentRun row (agent_name, investigation_id,
-        status="running", started_at=now), commits.
-     c. Calls the corresponding Phase 5-9 analyze_*() function on the
-        evidence_input's content (raw_content_ref for text/url, file bytes
-        read from file_path for image/voice/qr).
-     d. Wraps the call in try/except as a defensive second layer (the
-        agents themselves are exception-shielded per Phases 5-9, but this
-        orchestration layer must not blindly trust that) — on any exception,
-        mark AgentRun status="failed", log the error, and still return
-        gracefully (do not crash the graph run).
-     e. Writes an AgentFinding row from the returned EvidenceItem's fields.
-     f. Updates AgentRun to status="done" (or "failed"), finished_at=now,
-        latency_ms=elapsed.
-     g. Returns the EvidenceItem (as a dict) to be added to state["findings"]
-        via the reducer.
-     For any specialist NOT required for a given investigation, create an
-     AgentRun row with status="skipped" (so this is visible in the DB, not
-     just absent) — decide whether to do this in plan_node or have each
-     skipped node still run briefly just to write "skipped" and exit; pick
-     whichever fits LangGraph's conditional-edge model most cleanly and
-     document your choice.
-   - collect_node(state): final node, no-op beyond confirming all expected
-     findings are present (useful as an explicit extension point comment for
-     Phase 11 to hook into next).
-
-3. Create app/agents/graph.py: build a LangGraph StateGraph using
-   InvestigationState, wiring classify_node -> plan_node -> conditional
-   edges to the five specialist nodes (run in parallel via LangGraph's
-   fan-out where multiple are required) -> collect_node -> END. Export a
-   compiled graph instance (e.g. `investigation_graph = graph.compile()`)
-   for the service layer to invoke.
-
-4. Create app/services/orchestration_service.py with a function like
-   `run_investigation_analysis(investigation_id: str, db: Session) -> dict`
-   that:
-   - Loads the investigation and its evidence_inputs from DB.
-   - Sets investigation.status = "running", commits.
-   - Invokes the compiled graph with the initial state.
-   - On completion, sets investigation.status = "completed" (or "failed" if
-     the graph itself raised an unexpected top-level exception — this should
-     be rare given node-level exception handling, but handle it).
-   - Returns a summary dict: which agents ran/were skipped, and their
-     findings.
-
-5. Create app/api/v1/endpoints/orchestration.py:
-   POST /investigations/{id}/analyze -> calls orchestration_service, returns
-   200 with the summary dict (or 404 via NotFoundError if the investigation
-   doesn't exist). Mount in api/v1/router.py.
-
-6. Extend app/schemas/investigation.py's InvestigationDetailResponse to
-   include agent_runs: list[{agent_name, status, latency_ms, ...}] and their
-   nested agent_findings — extend GET /investigations/{id} (Phase 4's
-   existing endpoint) to return this once populated.
-
-7. Write apps/api/tests/test_orchestrator_routing.py (the most important
-   test file this phase):
-   - Investigation with ONLY text evidence -> after /analyze, assert
-     agent_runs shows text_agent status="done", and url_agent/qr_agent/
-     image_agent/voice_agent all status="skipped".
-   - Investigation with url + image (image has NO QR code, has readable
-     text) -> assert url_agent and image_agent ran, text_agent/qr_agent/
-     voice_agent skipped.
-   - Investigation with an image containing a decodable QR code (reuse
-     Phase 7's QR test fixture generation) -> assert qr_agent ran.
-   - Full cross-modal investigation (text + url + image + voice all
-     present, simulating the demo's headline scenario) -> assert all
-     relevant agents ran, assert agent_findings rows exist for each with
-     correct agent_run_id foreign keys, query the DB directly to confirm
-     this (not just check the API response).
-
-8. Write apps/api/tests/test_orchestrator.py:
-   - End-to-end: create investigation via POST /investigations (Phase 4),
-     call POST /investigations/{id}/analyze, then GET /investigations/{id},
-     confirm agent_runs and agent_findings are correctly populated and
-     linked in the response.
-   - Confirm investigations.status transitions pending -> running ->
-     completed correctly (query DB state, don't just trust the API
-     response).
-   - Mock one specialist's analyze_*() function to raise an exception
-     DESPITE its own exception-shielding (simulating an orchestration-layer
-     bug elsewhere, testing this layer's OWN defensive wrapping specifically)
-     -> assert that agent_run shows status="failed" for that one agent, but
-     OTHER agents still complete successfully and investigation.status still
-     reaches "completed" (a single agent failure must not take down the
-     whole investigation).
-
-QUALITY REQUIREMENTS
-- Use LangGraph's Annotated/reducer pattern for concurrent state updates —
-  do not naively mutate a shared list across parallel branches.
-- Each parallel node manages its own DB session — no shared session across
-  concurrent branches.
-- Routing correctness must be verified by querying actual DB state
-  (agent_runs table), not just by trusting log output or API response shape.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full output, all tests including the new
-   orchestrator and routing tests passing.
-2. Create an investigation with text + url only:
-   `curl -s -X POST http://localhost:8000/api/v1/investigations -F "text=Urgent: verify your account now" -F "url=http://bit.ly/fake-bank"`
-   Then: `curl -s -X POST http://localhost:8000/api/v1/investigations/{id}/analyze`
-   Paste the exact response, and confirm it shows text_agent + url_agent ran,
-   others skipped.
-3. `curl -s http://localhost:8000/api/v1/investigations/{id}` — paste the
-   full response showing populated agent_runs/agent_findings.
-4. Directly query the database (psql or equivalent) for the agent_runs rows
-   of this investigation, showing the actual status column values including
-   "skipped" entries — paste this output as independent confirmation beyond
-   the API response.
-5. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Your exact documented decision on the QR-vs-image routing rule and why.
-- Your decision on how "skipped" AgentRun rows are created (in plan_node vs.
-  each node individually) and why.
-- All verification outputs from steps 2-4, including the direct DB query.
-- Full pytest output.
-- Confirmation that the reducer pattern (not naive list mutation) was used
-  for concurrent state updates, with the relevant code snippet.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No risk scoring/aggregation logic (Phase 11).
-- No RAG retrieval (Phase 12).
-- No conflict resolution logic (Phase 11).
-- No frontend wiring (Phase 13).
-- Leave the graph structure extensible for Phase 11/12 to append nodes —
-  don't hardcode assumptions that would require restructuring collect_node
+ROLE
+
+You are implementing PHASE 10 of ThreatWeave — the LangGraph Orchestrator.
+
+This is the architectural core of the entire project: dynamic agent routing
+
+based on which evidence modalities are present. Inspect app/agents/text_agent.py,
+
+url_agent.py, qr_agent.py, image_agent.py, voice_agent.py (all five, to
+
+confirm their exact function signatures), app/models/ (investigation.py,
+
+evidence_input.py, agent_run.py, agent_finding.py), and app/schemas/evidence.py
+
+before writing anything. Do not touch apps/web/.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the LangGraph state machine that dynamically routes to only the
+
+required specialist agents based on evidence present, executes them, and
+
+persists agent_runs/agent_findings. NO risk scoring/aggregation (Phase 11),
+
+NO RAG retrieval (Phase 12), NO conflict resolution, NO frontend wiring
+
+(Phase 13). Leave clear extension points for Phase 11/12 to append nodes to
+
+this graph later without restructuring it.
+
+
+
+CRITICAL ROUTING DECISION — RESOLVE AND DOCUMENT EXPLICITLY
+
+Evidence inputs only have modalities: text, url, image, voice (per Phase 4's
+
+schema — QR codes arrive as "image" evidence, there is no separate "qr"
+
+modality in evidence_inputs). You must decide and clearly document this rule:
+
+For every "image" evidence_input, ALWAYS attempt QR decoding first (reuse
+
+qr_decoder.decode_qr() from Phase 7 — it's fast). If a QR code is
+
+successfully decoded, invoke qr_agent (which internally calls
+
+qr_decoder again via analyze_qr() — this minor redundant decode call is
+
+acceptable for correctness/simplicity, do not over-optimize it away this
+
+phase). ALSO invoke image_agent on the same image REGARDLESS of whether a QR
+
+was found, UNLESS the image is essentially nothing but the QR code itself
+
+with no surrounding readable content (use a simple heuristic: if OCR on the
+
+image yields near-empty text AND a QR was found, skip image_agent for that
+
+input; otherwise run both). Document this decision clearly in your report —
+
+it is a real architectural judgment call, not something implied by the
+
+original spec.
+
+
+
+TASKS
+
+1. Create app/agents/orchestrator_state.py: an InvestigationState TypedDict
+
+   with fields: investigation_id: str, evidence_inputs: list[dict] (loaded
+
+   from DB), required_agents: list[str], findings: Annotated[list[dict],
+
+   operator.add] (use LangGraph's reducer pattern for safe concurrent
+
+   appends during parallel fan-out — this is important, don't use a plain
+
+   list that concurrent branches mutate directly).
+
+
+
+2. Create app/agents/orchestrator_nodes.py with these node functions:
+
+   - classify_node(state): reads evidence_inputs already loaded into state,
+
+     determines present modalities.
+
+   - plan_node(state): for each evidence_input, determines which
+
+     specialist(s) apply using the QR/image routing rule above; sets
+
+     state["required_agents"] as a list of (agent_name, evidence_input_id)
+
+     pairs or similar structure sufficient for routing (design the exact
+
+     shape, document it).
+
+   - text_agent_node(state), url_agent_node(state), qr_agent_node(state),
+
+     image_agent_node(state), voice_agent_node(state): each node, ONLY IF
+
+     its agent is in required_agents for a given evidence_input:
+
+     a. Opens its own DB session (do not share a long-lived session across
+
+        parallel branches).
+
+     b. Creates an AgentRun row (agent_name, investigation_id,
+
+        status="running", started_at=now), commits.
+
+     c. Calls the corresponding Phase 5-9 analyze_*() function on the
+
+        evidence_input's content (raw_content_ref for text/url, file bytes
+
+        read from file_path for image/voice/qr).
+
+     d. Wraps the call in try/except as a defensive second layer (the
+
+        agents themselves are exception-shielded per Phases 5-9, but this
+
+        orchestration layer must not blindly trust that) — on any exception,
+
+        mark AgentRun status="failed", log the error, and still return
+
+        gracefully (do not crash the graph run).
+
+     e. Writes an AgentFinding row from the returned EvidenceItem's fields.
+
+     f. Updates AgentRun to status="done" (or "failed"), finished_at=now,
+
+        latency_ms=elapsed.
+
+     g. Returns the EvidenceItem (as a dict) to be added to state["findings"]
+
+        via the reducer.
+
+     For any specialist NOT required for a given investigation, create an
+
+     AgentRun row with status="skipped" (so this is visible in the DB, not
+
+     just absent) — decide whether to do this in plan_node or have each
+
+     skipped node still run briefly just to write "skipped" and exit; pick
+
+     whichever fits LangGraph's conditional-edge model most cleanly and
+
+     document your choice.
+
+   - collect_node(state): final node, no-op beyond confirming all expected
+
+     findings are present (useful as an explicit extension point comment for
+
+     Phase 11 to hook into next).
+
+
+
+3. Create app/agents/graph.py: build a LangGraph StateGraph using
+
+   InvestigationState, wiring classify_node -> plan_node -> conditional
+
+   edges to the five specialist nodes (run in parallel via LangGraph's
+
+   fan-out where multiple are required) -> collect_node -> END. Export a
+
+   compiled graph instance (e.g. `investigation_graph = graph.compile()`)
+
+   for the service layer to invoke.
+
+
+
+4. Create app/services/orchestration_service.py with a function like
+
+   `run_investigation_analysis(investigation_id: str, db: Session) -> dict`
+
+   that:
+
+   - Loads the investigation and its evidence_inputs from DB.
+
+   - Sets investigation.status = "running", commits.
+
+   - Invokes the compiled graph with the initial state.
+
+   - On completion, sets investigation.status = "completed" (or "failed" if
+
+     the graph itself raised an unexpected top-level exception — this should
+
+     be rare given node-level exception handling, but handle it).
+
+   - Returns a summary dict: which agents ran/were skipped, and their
+
+     findings.
+
+
+
+5. Create app/api/v1/endpoints/orchestration.py:
+
+   POST /investigations/{id}/analyze -> calls orchestration_service, returns
+
+   200 with the summary dict (or 404 via NotFoundError if the investigation
+
+   doesn't exist). Mount in api/v1/router.py.
+
+
+
+6. Extend app/schemas/investigation.py's InvestigationDetailResponse to
+
+   include agent_runs: list[{agent_name, status, latency_ms, ...}] and their
+
+   nested agent_findings — extend GET /investigations/{id} (Phase 4's
+
+   existing endpoint) to return this once populated.
+
+
+
+7. Write apps/api/tests/test_orchestrator_routing.py (the most important
+
+   test file this phase):
+
+   - Investigation with ONLY text evidence -> after /analyze, assert
+
+     agent_runs shows text_agent status="done", and url_agent/qr_agent/
+
+     image_agent/voice_agent all status="skipped".
+
+   - Investigation with url + image (image has NO QR code, has readable
+
+     text) -> assert url_agent and image_agent ran, text_agent/qr_agent/
+
+     voice_agent skipped.
+
+   - Investigation with an image containing a decodable QR code (reuse
+
+     Phase 7's QR test fixture generation) -> assert qr_agent ran.
+
+   - Full cross-modal investigation (text + url + image + voice all
+
+     present, simulating the demo's headline scenario) -> assert all
+
+     relevant agents ran, assert agent_findings rows exist for each with
+
+     correct agent_run_id foreign keys, query the DB directly to confirm
+
+     this (not just check the API response).
+
+
+
+8. Write apps/api/tests/test_orchestrator.py:
+
+   - End-to-end: create investigation via POST /investigations (Phase 4),
+
+     call POST /investigations/{id}/analyze, then GET /investigations/{id},
+
+     confirm agent_runs and agent_findings are correctly populated and
+
+     linked in the response.
+
+   - Confirm investigations.status transitions pending -> running ->
+
+     completed correctly (query DB state, don't just trust the API
+
+     response).
+
+   - Mock one specialist's analyze_*() function to raise an exception
+
+     DESPITE its own exception-shielding (simulating an orchestration-layer
+
+     bug elsewhere, testing this layer's OWN defensive wrapping specifically)
+
+     -> assert that agent_run shows status="failed" for that one agent, but
+
+     OTHER agents still complete successfully and investigation.status still
+
+     reaches "completed" (a single agent failure must not take down the
+
+     whole investigation).
+
+
+
+QUALITY REQUIREMENTS
+
+- Use LangGraph's Annotated/reducer pattern for concurrent state updates —
+
+  do not naively mutate a shared list across parallel branches.
+
+- Each parallel node manages its own DB session — no shared session across
+
+  concurrent branches.
+
+- Routing correctness must be verified by querying actual DB state
+
+  (agent_runs table), not just by trusting log output or API response shape.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full output, all tests including the new
+
+   orchestrator and routing tests passing.
+
+2. Create an investigation with text + url only:
+
+   `curl -s -X POST http://localhost:8000/api/v1/investigations -F "text=Urgent: verify your account now" -F "url=http://bit.ly/fake-bank"`
+
+   Then: `curl -s -X POST http://localhost:8000/api/v1/investigations/{id}/analyze`
+
+   Paste the exact response, and confirm it shows text_agent + url_agent ran,
+
+   others skipped.
+
+3. `curl -s http://localhost:8000/api/v1/investigations/{id}` — paste the
+
+   full response showing populated agent_runs/agent_findings.
+
+4. Directly query the database (psql or equivalent) for the agent_runs rows
+
+   of this investigation, showing the actual status column values including
+
+   "skipped" entries — paste this output as independent confirmation beyond
+
+   the API response.
+
+5. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Your exact documented decision on the QR-vs-image routing rule and why.
+
+- Your decision on how "skipped" AgentRun rows are created (in plan_node vs.
+
+  each node individually) and why.
+
+- All verification outputs from steps 2-4, including the direct DB query.
+
+- Full pytest output.
+
+- Confirmation that the reducer pattern (not naive list mutation) was used
+
+  for concurrent state updates, with the relevant code snippet.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No risk scoring/aggregation logic (Phase 11).
+
+- No RAG retrieval (Phase 12).
+
+- No conflict resolution logic (Phase 11).
+
+- No frontend wiring (Phase 13).
+
+- Leave the graph structure extensible for Phase 11/12 to append nodes —
+
+  don't hardcode assumptions that would require restructuring collect_node
+
   into something else later.
 ```
 
@@ -7389,187 +8823,368 @@ All 127 tests pass, linter is clean, and the pipeline is fully ready for **Phase
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 11 of ThreatWeave: Evidence Correlation & Risk
-Engine. This is the phase that makes the risk score deterministic and
-defensible instead of "an LLM said so" — the single most scrutinized part of
-this project at viva. Inspect app/agents/graph.py, orchestrator_nodes.py,
-orchestrator_state.py, app/core/indicators.py, and app/models/ (risk_breakdown.py,
-conflict_log.py) before writing anything. Do not touch apps/web/.
-
-SCOPE OF THIS PHASE ONLY
-Add correlation, conflict resolution, and deterministic risk scoring nodes to
-the EXISTING graph from Phase 10 (append after collect_node — do not
-restructure what Phase 10 built). NO RAG (Phase 12 — leave intel_bonus as an
-explicit 0 placeholder), NO explanation-generation, NO frontend wiring.
-
-THE FORMULA — IMPLEMENT EXACTLY, NO DEVIATION
-severity_weight = {"info": 0, "low": 0.25, "medium": 0.5, "high": 0.75, "critical": 1.0}
-per_finding_score = severity_weight[finding.severity] * finding.confidence
-  (exclude findings with status == "failed" from this calculation entirely;
-  findings with status == "degraded_fallback" ARE included, same as "ok")
-base_score = mean(per_finding_score across all included findings)
-corroboration_bonus:
-  Group findings by shared indicator strings across DIFFERENT agents (exact
-  string match against core/indicators.py's vocabulary). For each group of
-  2+ agents sharing a related indicator, add +0.10 per additional
-  corroborating agent beyond the first, total capped at +0.25.
-  Dedupe indicators WITHIN a single agent's own finding first — one agent
-  mentioning the same indicator twice must not count as two corroborations.
-intel_bonus = 0.0 (hardcoded placeholder this phase — Phase 12 will replace
-  this with real RAG-derived logic; leave a clear comment explaining this)
-contradiction_penalty:
-  -0.10 per detected conflict (see conflict detection below), capped at -0.30
-  (i.e. penalty value is between 0 and 0.30, subtracted from the score)
-final_risk = clamp(base_score + corroboration_bonus + intel_bonus - contradiction_penalty, 0.0, 1.0)
-
-Severity bands: 0.00-0.19 info, 0.20-0.39 low, 0.40-0.59 medium, 0.60-0.79
-high, 0.80-1.00 critical.
-
-Uncertainty rule: if fewer than 2 findings were included in base_score's
-calculation, OR the average confidence across included findings is < 0.4,
-set low_confidence=true on the result (do NOT suppress or hide the numeric
-score — just flag it).
-
-CONFLICT DETECTION RULE
-Two agents conflict when BOTH produced a non-skipped, non-failed finding,
-AND their severities diverge significantly (one is "info" or "low" while
-another is "high" or "critical") on findings that share or relate to a
-similar indicator category. Do not flag a conflict just because two agents
-looked at different things — both must have actually run and both must have
-a relevant finding.
-
-TASKS
-1. Create app/agents/correlation.py:
-   - find_corroboration(findings: list[dict]) -> list[dict]: returns groups
-     of {indicator: str, agents: list[str]} for indicators shared by 2+
-     DIFFERENT agents (dedupe within each agent's own indicator list first).
-   - find_conflicts(findings: list[dict]) -> list[dict]: returns
-     {agent_a, agent_b, conflict_type, description} for detected
-     severity-divergence conflicts per the rule above.
-
-2. Create app/agents/risk_engine.py:
-   - compute_risk(findings: list[dict]) -> dict implementing the EXACT
-     formula above. Return {"final_risk": float, "severity": str,
-     "low_confidence": bool, "breakdown": [{"component": str, "value":
-     float, "weight": float, "contribution": float}, ...]} with one
-     breakdown entry per formula component (base_score, corroboration_bonus,
-     intel_bonus, contradiction_penalty).
-   This function must be a PURE function — same input list always produces
-   the same output, no randomness, no LLM calls, fully unit-testable in
-   isolation without hitting the graph or database.
-
-3. Extend app/agents/orchestrator_state.py: add risk_result: dict | None and
-   conflicts: list[dict] to InvestigationState.
-
-4. Extend app/agents/orchestrator_nodes.py with three new node functions:
-   - correlate_node(state): calls find_corroboration() and find_conflicts()
-     on state["findings"], stores results in state.
-   - conflict_resolution_node(state): for each conflict found, writes a
-     ConflictLog row (agent_a, agent_b, conflict_type,
-     resolution_rule="contradiction_penalty_applied", resolution_outcome
-     describing what happened) to the database. Conflicts are NEVER silently
-     averaged away — always logged.
-   - risk_engine_node(state): calls risk_engine.compute_risk() on
-     state["findings"] (using the corroboration/conflict data already
-     computed by correlate_node), writes one RiskBreakdown row per formula
-     component, updates the Investigation row's final_risk_score,
-     final_severity, final_confidence fields, commits.
-
-5. Update app/agents/graph.py: add correlate_node -> conflict_resolution_node
-   -> risk_engine_node as sequential edges AFTER collect_node (these run
-   once on the merged findings, no fan-out needed here) -> END. Do not
-   restructure Phase 10's existing routing/fan-out logic.
-
-6. Extend app/schemas/investigation.py's InvestigationDetailResponse with a
-   risk field: {score, severity, confidence, low_confidence, breakdown: [...],
-   conflicts: [...]}. Update the GET /investigations/{id} endpoint response
-   accordingly (query risk_breakdown and conflict_logs tables).
-
-7. Write apps/api/tests/test_risk_engine.py testing compute_risk() DIRECTLY
-   with constructed finding lists (bypass the graph entirely for these unit
-   tests):
-   - Single finding, severity="critical", confidence=0.9 -> verify the exact
-     expected final_risk value by hand-calculating it in the test.
-   - Two findings from different agents sharing an indicator -> verify
-     corroboration_bonus = 0.10 is applied.
-   - Four findings from four different agents all sharing an indicator ->
-     verify corroboration_bonus caps at 0.25, not 0.30.
-   - Two findings in direct conflict -> verify contradiction_penalty = 0.10
-     is applied and reflected in the final score.
-   - Four+ conflicts -> verify contradiction_penalty caps at 0.30.
-   - Only 1 finding included -> verify low_confidence=true.
-   - Same input list run twice -> verify byte-identical output (determinism
-     check).
-
-8. Write apps/api/tests/test_correlation.py:
-   - Findings sharing an indicator string across 2 agents -> detected as
-     corroboration.
-   - One agent mentioning the same indicator twice in its own indicators
-     list -> verify this does NOT count as corroboration (dedupe check).
-   - Findings with genuinely divergent severity on a related signal, both
-     agents having actually run -> detected as conflict.
-   - One agent skipped, one agent found something -> verify this is NOT
-     flagged as a conflict (both must have actually run).
-
-9. Write an end-to-end test in test_orchestrator.py (or a new
-   test_risk_integration.py) running the FULL graph on a constructed
-   cross-modal scenario (text + url + image evidence, all describing the
-   same scam, reusing fixtures from Phases 5/6/8) and asserting:
-   - final_risk_score for the combined investigation is HIGHER than what you
-     get by calling compute_risk() on any single agent's finding alone.
-   - This is the most important test in this phase — it is the direct,
-     provable evidence for the "cross-modal correlation adds signal" thesis
-     of the entire project. Make sure it is not trivially true by
-     construction (e.g. don't rig it so corroboration always adds exactly a
-     fixed amount regardless of whether real correlation occurred) — use
-     genuinely related fixtures that plausibly WOULD share indicators.
-
-QUALITY REQUIREMENTS
-- risk_engine.compute_risk() must be a pure function with zero side effects,
-  zero randomness, zero LLM calls — fully deterministic.
-- Every formula constant (severity weights, bonus caps, penalty caps) must
-  match the architecture doc exactly — no silent tuning without flagging it
-  in your report if you believe a change is warranted (don't just change it).
-- Conflicts must always be logged to conflict_logs, never silently resolved
-  by averaging away the disagreement.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full output, all tests including new risk
-   engine, correlation, and the cross-modal integration test passing.
-2. Run the cross-modal demo scenario end-to-end:
-   create investigation with text+url+image (same scam) -> /analyze ->
-   GET /investigations/{id} -- paste the full risk object from the response
-   (score, severity, breakdown, conflicts).
-3. Manually hand-calculate the expected final_risk for that same scenario
-   from the individual finding severities/confidences shown in the response,
-   and confirm it matches the API's reported score exactly. Show this
-   arithmetic in your report.
-4. Directly query risk_breakdown and conflict_logs tables in the database
-   for this investigation_id, paste the raw rows.
-5. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- The exact formula implementation (paste risk_engine.py's compute_risk
-  function in full).
-- All verification outputs from steps 2-4, including your hand-calculated
-  arithmetic check from step 3.
-- Full pytest output, with special attention called out to the cross-modal
-  integration test result specifically.
-- Confirmation compute_risk() is a pure function (no DB/LLM calls inside it)
-  — paste the function signature and imports as proof.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No RAG retrieval, no real intel_bonus value (Phase 12) — leave it as a
-  documented 0.0 placeholder.
-- No explanation-generation/narrative node.
-- No frontend wiring (Phase 13).
-- Do not restructure Phase 10's existing routing/fan-out — only append new
+ROLE
+
+You are implementing PHASE 11 of ThreatWeave: Evidence Correlation & Risk
+
+Engine. This is the phase that makes the risk score deterministic and
+
+defensible instead of "an LLM said so" — the single most scrutinized part of
+
+this project at viva. Inspect app/agents/graph.py, orchestrator_nodes.py,
+
+orchestrator_state.py, app/core/indicators.py, and app/models/ (risk_breakdown.py,
+
+conflict_log.py) before writing anything. Do not touch apps/web/.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Add correlation, conflict resolution, and deterministic risk scoring nodes to
+
+the EXISTING graph from Phase 10 (append after collect_node — do not
+
+restructure what Phase 10 built). NO RAG (Phase 12 — leave intel_bonus as an
+
+explicit 0 placeholder), NO explanation-generation, NO frontend wiring.
+
+
+
+THE FORMULA — IMPLEMENT EXACTLY, NO DEVIATION
+
+severity_weight = {"info": 0, "low": 0.25, "medium": 0.5, "high": 0.75, "critical": 1.0}
+
+per_finding_score = severity_weight[finding.severity] * finding.confidence
+
+  (exclude findings with status == "failed" from this calculation entirely;
+
+  findings with status == "degraded_fallback" ARE included, same as "ok")
+
+base_score = mean(per_finding_score across all included findings)
+
+corroboration_bonus:
+
+  Group findings by shared indicator strings across DIFFERENT agents (exact
+
+  string match against core/indicators.py's vocabulary). For each group of
+
+  2+ agents sharing a related indicator, add +0.10 per additional
+
+  corroborating agent beyond the first, total capped at +0.25.
+
+  Dedupe indicators WITHIN a single agent's own finding first — one agent
+
+  mentioning the same indicator twice must not count as two corroborations.
+
+intel_bonus = 0.0 (hardcoded placeholder this phase — Phase 12 will replace
+
+  this with real RAG-derived logic; leave a clear comment explaining this)
+
+contradiction_penalty:
+
+  -0.10 per detected conflict (see conflict detection below), capped at -0.30
+
+  (i.e. penalty value is between 0 and 0.30, subtracted from the score)
+
+final_risk = clamp(base_score + corroboration_bonus + intel_bonus - contradiction_penalty, 0.0, 1.0)
+
+
+
+Severity bands: 0.00-0.19 info, 0.20-0.39 low, 0.40-0.59 medium, 0.60-0.79
+
+high, 0.80-1.00 critical.
+
+
+
+Uncertainty rule: if fewer than 2 findings were included in base_score's
+
+calculation, OR the average confidence across included findings is < 0.4,
+
+set low_confidence=true on the result (do NOT suppress or hide the numeric
+
+score — just flag it).
+
+
+
+CONFLICT DETECTION RULE
+
+Two agents conflict when BOTH produced a non-skipped, non-failed finding,
+
+AND their severities diverge significantly (one is "info" or "low" while
+
+another is "high" or "critical") on findings that share or relate to a
+
+similar indicator category. Do not flag a conflict just because two agents
+
+looked at different things — both must have actually run and both must have
+
+a relevant finding.
+
+
+
+TASKS
+
+1. Create app/agents/correlation.py:
+
+   - find_corroboration(findings: list[dict]) -> list[dict]: returns groups
+
+     of {indicator: str, agents: list[str]} for indicators shared by 2+
+
+     DIFFERENT agents (dedupe within each agent's own indicator list first).
+
+   - find_conflicts(findings: list[dict]) -> list[dict]: returns
+
+     {agent_a, agent_b, conflict_type, description} for detected
+
+     severity-divergence conflicts per the rule above.
+
+
+
+2. Create app/agents/risk_engine.py:
+
+   - compute_risk(findings: list[dict]) -> dict implementing the EXACT
+
+     formula above. Return {"final_risk": float, "severity": str,
+
+     "low_confidence": bool, "breakdown": [{"component": str, "value":
+
+     float, "weight": float, "contribution": float}, ...]} with one
+
+     breakdown entry per formula component (base_score, corroboration_bonus,
+
+     intel_bonus, contradiction_penalty).
+
+   This function must be a PURE function — same input list always produces
+
+   the same output, no randomness, no LLM calls, fully unit-testable in
+
+   isolation without hitting the graph or database.
+
+
+
+3. Extend app/agents/orchestrator_state.py: add risk_result: dict | None and
+
+   conflicts: list[dict] to InvestigationState.
+
+
+
+4. Extend app/agents/orchestrator_nodes.py with three new node functions:
+
+   - correlate_node(state): calls find_corroboration() and find_conflicts()
+
+     on state["findings"], stores results in state.
+
+   - conflict_resolution_node(state): for each conflict found, writes a
+
+     ConflictLog row (agent_a, agent_b, conflict_type,
+
+     resolution_rule="contradiction_penalty_applied", resolution_outcome
+
+     describing what happened) to the database. Conflicts are NEVER silently
+
+     averaged away — always logged.
+
+   - risk_engine_node(state): calls risk_engine.compute_risk() on
+
+     state["findings"] (using the corroboration/conflict data already
+
+     computed by correlate_node), writes one RiskBreakdown row per formula
+
+     component, updates the Investigation row's final_risk_score,
+
+     final_severity, final_confidence fields, commits.
+
+
+
+5. Update app/agents/graph.py: add correlate_node -> conflict_resolution_node
+
+   -> risk_engine_node as sequential edges AFTER collect_node (these run
+
+   once on the merged findings, no fan-out needed here) -> END. Do not
+
+   restructure Phase 10's existing routing/fan-out logic.
+
+
+
+6. Extend app/schemas/investigation.py's InvestigationDetailResponse with a
+
+   risk field: {score, severity, confidence, low_confidence, breakdown: [...],
+
+   conflicts: [...]}. Update the GET /investigations/{id} endpoint response
+
+   accordingly (query risk_breakdown and conflict_logs tables).
+
+
+
+7. Write apps/api/tests/test_risk_engine.py testing compute_risk() DIRECTLY
+
+   with constructed finding lists (bypass the graph entirely for these unit
+
+   tests):
+
+   - Single finding, severity="critical", confidence=0.9 -> verify the exact
+
+     expected final_risk value by hand-calculating it in the test.
+
+   - Two findings from different agents sharing an indicator -> verify
+
+     corroboration_bonus = 0.10 is applied.
+
+   - Four findings from four different agents all sharing an indicator ->
+
+     verify corroboration_bonus caps at 0.25, not 0.30.
+
+   - Two findings in direct conflict -> verify contradiction_penalty = 0.10
+
+     is applied and reflected in the final score.
+
+   - Four+ conflicts -> verify contradiction_penalty caps at 0.30.
+
+   - Only 1 finding included -> verify low_confidence=true.
+
+   - Same input list run twice -> verify byte-identical output (determinism
+
+     check).
+
+
+
+8. Write apps/api/tests/test_correlation.py:
+
+   - Findings sharing an indicator string across 2 agents -> detected as
+
+     corroboration.
+
+   - One agent mentioning the same indicator twice in its own indicators
+
+     list -> verify this does NOT count as corroboration (dedupe check).
+
+   - Findings with genuinely divergent severity on a related signal, both
+
+     agents having actually run -> detected as conflict.
+
+   - One agent skipped, one agent found something -> verify this is NOT
+
+     flagged as a conflict (both must have actually run).
+
+
+
+9. Write an end-to-end test in test_orchestrator.py (or a new
+
+   test_risk_integration.py) running the FULL graph on a constructed
+
+   cross-modal scenario (text + url + image evidence, all describing the
+
+   same scam, reusing fixtures from Phases 5/6/8) and asserting:
+
+   - final_risk_score for the combined investigation is HIGHER than what you
+
+     get by calling compute_risk() on any single agent's finding alone.
+
+   - This is the most important test in this phase — it is the direct,
+
+     provable evidence for the "cross-modal correlation adds signal" thesis
+
+     of the entire project. Make sure it is not trivially true by
+
+     construction (e.g. don't rig it so corroboration always adds exactly a
+
+     fixed amount regardless of whether real correlation occurred) — use
+
+     genuinely related fixtures that plausibly WOULD share indicators.
+
+
+
+QUALITY REQUIREMENTS
+
+- risk_engine.compute_risk() must be a pure function with zero side effects,
+
+  zero randomness, zero LLM calls — fully deterministic.
+
+- Every formula constant (severity weights, bonus caps, penalty caps) must
+
+  match the architecture doc exactly — no silent tuning without flagging it
+
+  in your report if you believe a change is warranted (don't just change it).
+
+- Conflicts must always be logged to conflict_logs, never silently resolved
+
+  by averaging away the disagreement.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full output, all tests including new risk
+
+   engine, correlation, and the cross-modal integration test passing.
+
+2. Run the cross-modal demo scenario end-to-end:
+
+   create investigation with text+url+image (same scam) -> /analyze ->
+
+   GET /investigations/{id} -- paste the full risk object from the response
+
+   (score, severity, breakdown, conflicts).
+
+3. Manually hand-calculate the expected final_risk for that same scenario
+
+   from the individual finding severities/confidences shown in the response,
+
+   and confirm it matches the API's reported score exactly. Show this
+
+   arithmetic in your report.
+
+4. Directly query risk_breakdown and conflict_logs tables in the database
+
+   for this investigation_id, paste the raw rows.
+
+5. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- The exact formula implementation (paste risk_engine.py's compute_risk
+
+  function in full).
+
+- All verification outputs from steps 2-4, including your hand-calculated
+
+  arithmetic check from step 3.
+
+- Full pytest output, with special attention called out to the cross-modal
+
+  integration test result specifically.
+
+- Confirmation compute_risk() is a pure function (no DB/LLM calls inside it)
+
+  — paste the function signature and imports as proof.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No RAG retrieval, no real intel_bonus value (Phase 12) — leave it as a
+
+  documented 0.0 placeholder.
+
+- No explanation-generation/narrative node.
+
+- No frontend wiring (Phase 13).
+
+- Do not restructure Phase 10's existing routing/fan-out — only append new
+
   sequential nodes after collect_node.
 ```
 
@@ -7995,11 +9610,16 @@ All checks passed!
 #### User Request
 
 ```text
-Thought for 4s
-This is rigorous and exactly what I wanted to see — the formula implementation is clean, compute_risk() is genuinely pure (only imports correlation.py and stdlib), the hand-calculated arithmetic matches the API and DB exactly, and the cross-modal integration test is the real proof: 0.835 critical from three corroborating agents versus what any single agent would produce alone, with a nonzero +0.25 corroboration bonus showing genuine indicator-sharing was detected, not just constructed to pass trivially. Conflict penalty, corroboration cap, and determinism are all unit-tested individually. This is the strongest phase yet — it's your actual thesis, proven in code.
-
-One gap before I fully close it: your message said the full suite was at "140/144" when this report was written, but the report only shows the 15 new Phase 11 unit tests passing — I don't see the full pytest -q output confirming all ~144+ tests (Phases 0–11 combined) pass together with no regressions. That matters here specifically because Phase 11 modified orchestrator_state.py, orchestrator_nodes.py, graph.py, and the investigation schema/endpoint — all shared infrastructure Phase 10's routing tests depend on.
-
+Thought for 4s
+
+This is rigorous and exactly what I wanted to see — the formula implementation is clean, compute_risk() is genuinely pure (only imports correlation.py and stdlib), the hand-calculated arithmetic matches the API and DB exactly, and the cross-modal integration test is the real proof: 0.835 critical from three corroborating agents versus what any single agent would produce alone, with a nonzero +0.25 corroboration bonus showing genuine indicator-sharing was detected, not just constructed to pass trivially. Conflict penalty, corroboration cap, and determinism are all unit-tested individually. This is the strongest phase yet — it's your actual thesis, proven in code.
+
+
+
+One gap before I fully close it: your message said the full suite was at "140/144" when this report was written, but the report only shows the 15 new Phase 11 unit tests passing — I don't see the full pytest -q output confirming all ~144+ tests (Phases 0–11 combined) pass together with no regressions. That matters here specifically because Phase 11 modified orchestrator_state.py, orchestrator_nodes.py, graph.py, and the investigation schema/endpoint — all shared infrastructure Phase 10's routing tests depend on.
+
+
+
 Can you get the full pytest -q output (whole suite, not just the two new test files) and confirm the total pass count with zero failures? Once that's in, Phase 11 is fully approved and we move to Phase 12 — RAG pipeline + ChromaDB, where the intel_bonus placeholder finally gets replaced with real CERT-In/RBI-grounded retrieval.
 ```
 
@@ -8105,177 +9725,348 @@ Phase 11 is complete. We are ready to proceed to **Phase 12: RAG Pipeline + Chro
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 12 of ThreatWeave: RAG Pipeline + ChromaDB. This
-is what makes "RAG-grounded threat intelligence" real. Inspect
-app/agents/risk_engine.py (Phase 11's pure function — you will make ONE
-small, surgical change to it), app/agents/graph.py, orchestrator_nodes.py,
-and docker-compose.yml (ChromaDB service from Phase 0, running but unused
-until now) before writing anything. Do not touch apps/web/.
-
-CRITICAL HONESTY REQUIREMENT
-Per the original project brief: do NOT pretend external intelligence is live
-unless it is actually retrieved. If no advisory chunk clears the similarity
-threshold, the system must return an empty result and say so — never
-fabricate or force a low-relevance citation to look more impressive. This
-matters as much as the risk engine's determinism did in Phase 11.
-
-SCOPE OF THIS PHASE ONLY
-Build corpus curation, chunking, embedding, ChromaDB ingestion, retrieval,
-and wire retrieval into the graph so Phase 11's intel_bonus placeholder
-becomes real. NO explanation-generation/narrative synthesis of citations
-(that can wait), NO frontend (Phase 13), NO live external advisory scraping
-(corpus is curated/static, never live-fetched).
-
-TASKS
-1. Curate a corpus of 20-30 advisory documents in app/rag/sources/, organized
-   into cert_in/, rbi/, scam_intel/ subfolders (plain markdown or text
-   files). Write these YOURSELF, in your own words, based on REAL CERT-In
-   advisory categories (phishing campaigns, malware alerts adapted to a
-   scam-advisory framing) and REAL RBI customer fraud-awareness advisory
-   categories (UPI fraud, OTP scams, fake bank calls, lookalike domains,
-   digital arrest scams). Do NOT copy-paste real advisory text verbatim —
-   paraphrase accurately and note in each document's metadata what real
-   advisory category/topic it represents. Cover categories that map to the
-   existing indicator vocabulary (credential_request, urgency_language,
-   qr_upi_deeplink_suspicious, vishing_script_pattern, lookalike_domain,
-   fake_payment_confirmation, etc.) so retrieval has real material to find.
-
-2. Create app/rag/chunking.py: splits each source document into ~300-500
-   token chunks (paragraph-aware where possible, ~15% overlap), attaching
-   metadata: source_title, source_type ("CERT-In"|"RBI"|"Scam-Intel" —
-   match rag_citations table's enum exactly from Phase 3), category,
-   original_reference (a plain description of what this paraphrases).
-
-3. Create app/rag/embeddings.py: wraps a local sentence-transformer model
-   (e.g. all-MiniLM-L6-v2 via the sentence-transformers library — add to
-   requirements.txt) to embed text chunks and queries. CPU-only, no API key,
-   consistent with the project's "runs on a laptop" requirement.
-
-4. Create app/rag/ingest.py + apps/api/scripts/ingest_corpus.py: reads all
-   files under app/rag/sources/, chunks them, embeds them, upserts into a
-   ChromaDB collection named "advisories" using STABLE chunk IDs (derived
-   from filename + chunk index) so re-running the script is idempotent (same
-   chunk count, no duplicates) — connect to the ChromaDB service already
-   defined in docker-compose.yml from Phase 0.
-
-5. Create app/rag/retriever.py:
-   `retrieve_relevant_advisories(indicators: list[str], top_k: int = 5) ->
-   list[dict]`: builds a query from the given indicator strings (join into a
-   query string, or embed indicator terms), queries the ChromaDB
-   "advisories" collection, FILTERS OUT any result below
-   settings.RAG_SIMILARITY_THRESHOLD (default 0.55) — if nothing clears the
-   threshold, return an empty list. Each returned dict should include
-   chunk_text, source_title, source_type, similarity_score.
-
-6. Add RAG_SIMILARITY_THRESHOLD (default 0.55) and RAG_TOP_K (default 5) to
-   core/config.py and .env.example. Confirm/formalize CHROMA_HOST/CHROMA_PORT
-   settings already implied by Phase 0's docker-compose.
-
-7. Extend app/agents/orchestrator_state.py with rag_citations: list[dict].
-   Add a rag_node to app/agents/orchestrator_nodes.py: aggregates all
-   indicators across state["findings"], calls retriever.py, writes
-   RagCitation rows to the database for each result (empty write if no
-   results — that's fine, don't force anything). Wire rag_node into
-   app/agents/graph.py positioned so its output is available BEFORE
-   risk_engine_node runs (either parallel-with-correlate_node then a join,
-   or sequential before risk_engine_node — your choice, document which you
-   picked and why in your report).
-
-8. Make ONE surgical change to app/agents/risk_engine.py: replace the
-   hardcoded `intel_bonus = 0.0` line with real logic:
-   `intel_bonus = 0.15 if any(c.get("similarity_score", 0) >=
-   settings.RAG_SIMILARITY_THRESHOLD for c in rag_citations) else 0.0`
-   (compute_risk() will need a new optional parameter, e.g.
-   `rag_citations: list[dict] | None = None`, defaulting to None/empty so
-   existing Phase 11 unit tests that don't pass this parameter still work
-   unchanged — check this carefully). Re-run ALL of Phase 11's existing
-   tests after this change to confirm zero regressions.
-
-9. Add GET /api/v1/rag/search?q=<query> endpoint (app/api/v1/endpoints/rag.py)
-   for ad-hoc search/debugging — embeds the query string directly, returns
-   top-k results with similarity scores, same threshold filtering.
-
-10. Extend app/schemas/investigation.py and GET /investigations/{id} to
-    include a rag_citations array (empty if none found).
-
-11. Write apps/api/tests/test_rag_ingest.py:
-    - Run ingestion twice, assert identical chunk count both times
-      (idempotency).
-    - Assert the ChromaDB collection is queryable and non-empty after
-      ingestion.
-
-12. Write apps/api/tests/test_rag_retriever.py:
-    - Query with on-topic indicator terms (e.g.
-      ["credential_request","urgency_language"]) -> assert at least one
-      result returned with similarity_score >= threshold, and the returned
-      chunk is genuinely relevant (assert on source_type or category, not
-      just "a result exists").
-    - Query designed to have no good match -> assert an EMPTY list is
-      returned, not a low-relevance result forced through.
-    - Verify no result below RAG_SIMILARITY_THRESHOLD is ever returned.
-
-13. Write a test confirming the intel_bonus change: construct a findings
-    list + a rag_citations list with similarity_score >= threshold, call
-    compute_risk() with both, assert intel_bonus == 0.15 and it's correctly
-    reflected in final_risk. Also test with an empty rag_citations list ->
-    intel_bonus == 0.0, matching Phase 11's original behavior exactly (this
-    is your regression proof).
-
-14. Write an end-to-end test: run a full investigation through the graph
-    with evidence that should surface a real citation (e.g. a UPI-fraud-
-    style QR or text matching one of your corpus documents), confirm
-    rag_citations rows exist in the database AND final_risk_score reflects
-    the +0.15 bonus compared to an otherwise-identical investigation with no
-    matching evidence.
-
-QUALITY REQUIREMENTS
-- Retrieval must never return a fabricated or below-threshold result — this
-  is checked by an explicit test, not assumed.
-- Ingestion must be idempotent — verified by running it twice.
-- compute_risk()'s new rag_citations parameter must be backward-compatible
-  with Phase 11's existing test calls (default to empty/None).
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && python scripts/ingest_corpus.py` — paste output showing
-   chunk count ingested.
-2. `pytest -q` — full suite, ALL tests (Phase 0-12 combined) passing, paste
-   output, with specific confirmation that Phase 11's original risk engine
-   tests still pass unchanged.
-3. `curl "http://localhost:8000/api/v1/rag/search?q=urgent%20verify%20your%20account%20password"`
-   — paste the response showing relevant results with similarity scores.
-4. `curl "http://localhost:8000/api/v1/rag/search?q=xyzabc123nonsense"` (or
-   similar deliberately irrelevant query) — paste the response, confirm it's
-   an empty/honest result, not a forced low-relevance match.
-5. Run a full investigation end-to-end (create -> analyze -> GET) with
-   evidence matching a corpus document, paste the rag_citations from the
-   response AND the final_risk_score, and confirm intel_bonus visibly
-   contributed to the score in the breakdown.
-6. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified, including a list of the corpus
-  documents you wrote (titles + which real advisory category each
-  represents).
-- Where you positioned rag_node in the graph relative to correlate_node/
-  risk_engine_node, and why.
-- All verification outputs from steps 1-5.
-- Full pytest output with the total test count.
-- Explicit confirmation Phase 11's original tests pass unchanged after the
-  intel_bonus surgical change (this is your regression proof).
-- The similarity threshold value you used and any tuning you did to arrive
-  at it.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No explanation-generation/narrative synthesis of citations into prose.
-- No frontend RAG panel (Phase 13).
-- No live/external advisory scraping or fetching — corpus is static/curated
-  only.
-- Do not restructure Phase 10/11's existing graph nodes beyond adding
+ROLE
+
+You are implementing PHASE 12 of ThreatWeave: RAG Pipeline + ChromaDB. This
+
+is what makes "RAG-grounded threat intelligence" real. Inspect
+
+app/agents/risk_engine.py (Phase 11's pure function — you will make ONE
+
+small, surgical change to it), app/agents/graph.py, orchestrator_nodes.py,
+
+and docker-compose.yml (ChromaDB service from Phase 0, running but unused
+
+until now) before writing anything. Do not touch apps/web/.
+
+
+
+CRITICAL HONESTY REQUIREMENT
+
+Per the original project brief: do NOT pretend external intelligence is live
+
+unless it is actually retrieved. If no advisory chunk clears the similarity
+
+threshold, the system must return an empty result and say so — never
+
+fabricate or force a low-relevance citation to look more impressive. This
+
+matters as much as the risk engine's determinism did in Phase 11.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build corpus curation, chunking, embedding, ChromaDB ingestion, retrieval,
+
+and wire retrieval into the graph so Phase 11's intel_bonus placeholder
+
+becomes real. NO explanation-generation/narrative synthesis of citations
+
+(that can wait), NO frontend (Phase 13), NO live external advisory scraping
+
+(corpus is curated/static, never live-fetched).
+
+
+
+TASKS
+
+1. Curate a corpus of 20-30 advisory documents in app/rag/sources/, organized
+
+   into cert_in/, rbi/, scam_intel/ subfolders (plain markdown or text
+
+   files). Write these YOURSELF, in your own words, based on REAL CERT-In
+
+   advisory categories (phishing campaigns, malware alerts adapted to a
+
+   scam-advisory framing) and REAL RBI customer fraud-awareness advisory
+
+   categories (UPI fraud, OTP scams, fake bank calls, lookalike domains,
+
+   digital arrest scams). Do NOT copy-paste real advisory text verbatim —
+
+   paraphrase accurately and note in each document's metadata what real
+
+   advisory category/topic it represents. Cover categories that map to the
+
+   existing indicator vocabulary (credential_request, urgency_language,
+
+   qr_upi_deeplink_suspicious, vishing_script_pattern, lookalike_domain,
+
+   fake_payment_confirmation, etc.) so retrieval has real material to find.
+
+
+
+2. Create app/rag/chunking.py: splits each source document into ~300-500
+
+   token chunks (paragraph-aware where possible, ~15% overlap), attaching
+
+   metadata: source_title, source_type ("CERT-In"|"RBI"|"Scam-Intel" —
+
+   match rag_citations table's enum exactly from Phase 3), category,
+
+   original_reference (a plain description of what this paraphrases).
+
+
+
+3. Create app/rag/embeddings.py: wraps a local sentence-transformer model
+
+   (e.g. all-MiniLM-L6-v2 via the sentence-transformers library — add to
+
+   requirements.txt) to embed text chunks and queries. CPU-only, no API key,
+
+   consistent with the project's "runs on a laptop" requirement.
+
+
+
+4. Create app/rag/ingest.py + apps/api/scripts/ingest_corpus.py: reads all
+
+   files under app/rag/sources/, chunks them, embeds them, upserts into a
+
+   ChromaDB collection named "advisories" using STABLE chunk IDs (derived
+
+   from filename + chunk index) so re-running the script is idempotent (same
+
+   chunk count, no duplicates) — connect to the ChromaDB service already
+
+   defined in docker-compose.yml from Phase 0.
+
+
+
+5. Create app/rag/retriever.py:
+
+   `retrieve_relevant_advisories(indicators: list[str], top_k: int = 5) ->
+
+   list[dict]`: builds a query from the given indicator strings (join into a
+
+   query string, or embed indicator terms), queries the ChromaDB
+
+   "advisories" collection, FILTERS OUT any result below
+
+   settings.RAG_SIMILARITY_THRESHOLD (default 0.55) — if nothing clears the
+
+   threshold, return an empty list. Each returned dict should include
+
+   chunk_text, source_title, source_type, similarity_score.
+
+
+
+6. Add RAG_SIMILARITY_THRESHOLD (default 0.55) and RAG_TOP_K (default 5) to
+
+   core/config.py and .env.example. Confirm/formalize CHROMA_HOST/CHROMA_PORT
+
+   settings already implied by Phase 0's docker-compose.
+
+
+
+7. Extend app/agents/orchestrator_state.py with rag_citations: list[dict].
+
+   Add a rag_node to app/agents/orchestrator_nodes.py: aggregates all
+
+   indicators across state["findings"], calls retriever.py, writes
+
+   RagCitation rows to the database for each result (empty write if no
+
+   results — that's fine, don't force anything). Wire rag_node into
+
+   app/agents/graph.py positioned so its output is available BEFORE
+
+   risk_engine_node runs (either parallel-with-correlate_node then a join,
+
+   or sequential before risk_engine_node — your choice, document which you
+
+   picked and why in your report).
+
+
+
+8. Make ONE surgical change to app/agents/risk_engine.py: replace the
+
+   hardcoded `intel_bonus = 0.0` line with real logic:
+
+   `intel_bonus = 0.15 if any(c.get("similarity_score", 0) >=
+
+   settings.RAG_SIMILARITY_THRESHOLD for c in rag_citations) else 0.0`
+
+   (compute_risk() will need a new optional parameter, e.g.
+
+   `rag_citations: list[dict] | None = None`, defaulting to None/empty so
+
+   existing Phase 11 unit tests that don't pass this parameter still work
+
+   unchanged — check this carefully). Re-run ALL of Phase 11's existing
+
+   tests after this change to confirm zero regressions.
+
+
+
+9. Add GET /api/v1/rag/search?q=<query> endpoint (app/api/v1/endpoints/rag.py)
+
+   for ad-hoc search/debugging — embeds the query string directly, returns
+
+   top-k results with similarity scores, same threshold filtering.
+
+
+
+10. Extend app/schemas/investigation.py and GET /investigations/{id} to
+
+    include a rag_citations array (empty if none found).
+
+
+
+11. Write apps/api/tests/test_rag_ingest.py:
+
+    - Run ingestion twice, assert identical chunk count both times
+
+      (idempotency).
+
+    - Assert the ChromaDB collection is queryable and non-empty after
+
+      ingestion.
+
+
+
+12. Write apps/api/tests/test_rag_retriever.py:
+
+    - Query with on-topic indicator terms (e.g.
+
+      ["credential_request","urgency_language"]) -> assert at least one
+
+      result returned with similarity_score >= threshold, and the returned
+
+      chunk is genuinely relevant (assert on source_type or category, not
+
+      just "a result exists").
+
+    - Query designed to have no good match -> assert an EMPTY list is
+
+      returned, not a low-relevance result forced through.
+
+    - Verify no result below RAG_SIMILARITY_THRESHOLD is ever returned.
+
+
+
+13. Write a test confirming the intel_bonus change: construct a findings
+
+    list + a rag_citations list with similarity_score >= threshold, call
+
+    compute_risk() with both, assert intel_bonus == 0.15 and it's correctly
+
+    reflected in final_risk. Also test with an empty rag_citations list ->
+
+    intel_bonus == 0.0, matching Phase 11's original behavior exactly (this
+
+    is your regression proof).
+
+
+
+14. Write an end-to-end test: run a full investigation through the graph
+
+    with evidence that should surface a real citation (e.g. a UPI-fraud-
+
+    style QR or text matching one of your corpus documents), confirm
+
+    rag_citations rows exist in the database AND final_risk_score reflects
+
+    the +0.15 bonus compared to an otherwise-identical investigation with no
+
+    matching evidence.
+
+
+
+QUALITY REQUIREMENTS
+
+- Retrieval must never return a fabricated or below-threshold result — this
+
+  is checked by an explicit test, not assumed.
+
+- Ingestion must be idempotent — verified by running it twice.
+
+- compute_risk()'s new rag_citations parameter must be backward-compatible
+
+  with Phase 11's existing test calls (default to empty/None).
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && python scripts/ingest_corpus.py` — paste output showing
+
+   chunk count ingested.
+
+2. `pytest -q` — full suite, ALL tests (Phase 0-12 combined) passing, paste
+
+   output, with specific confirmation that Phase 11's original risk engine
+
+   tests still pass unchanged.
+
+3. `curl "http://localhost:8000/api/v1/rag/search?q=urgent%20verify%20your%20account%20password"`
+
+   — paste the response showing relevant results with similarity scores.
+
+4. `curl "http://localhost:8000/api/v1/rag/search?q=xyzabc123nonsense"` (or
+
+   similar deliberately irrelevant query) — paste the response, confirm it's
+
+   an empty/honest result, not a forced low-relevance match.
+
+5. Run a full investigation end-to-end (create -> analyze -> GET) with
+
+   evidence matching a corpus document, paste the rag_citations from the
+
+   response AND the final_risk_score, and confirm intel_bonus visibly
+
+   contributed to the score in the breakdown.
+
+6. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified, including a list of the corpus
+
+  documents you wrote (titles + which real advisory category each
+
+  represents).
+
+- Where you positioned rag_node in the graph relative to correlate_node/
+
+  risk_engine_node, and why.
+
+- All verification outputs from steps 1-5.
+
+- Full pytest output with the total test count.
+
+- Explicit confirmation Phase 11's original tests pass unchanged after the
+
+  intel_bonus surgical change (this is your regression proof).
+
+- The similarity threshold value you used and any tuning you did to arrive
+
+  at it.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No explanation-generation/narrative synthesis of citations into prose.
+
+- No frontend RAG panel (Phase 13).
+
+- No live/external advisory scraping or fetching — corpus is static/curated
+
+  only.
+
+- Do not restructure Phase 10/11's existing graph nodes beyond adding
+
   rag_node and the one-line intel_bonus change.
 ```
 
@@ -8897,152 +10688,298 @@ Phase 12 is fully in place, verified, and ready for Phase 13.
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 13 of ThreatWeave: the Investigation UI. This is
-the first phase where the backend (Phases 4, 10, 11, 12 — all complete and
-verified) becomes actually usable by a person, not just curl. Inspect
-apps/web/lib/tokens.ts, components/ui/ (all Phase 1 primitives), and the
-ACTUAL CURRENT Pydantic schemas in apps/api/app/schemas/investigation.py,
-evidence.py, and rag.py before writing any TypeScript types — do not assume
-earlier-phase shapes are still accurate, re-read them fresh. Do not touch
-apps/api/ in this phase except to add a GET /investigations list endpoint if
-one doesn't already exist (check first).
-
-SCOPE OF THIS PHASE ONLY
-Build the working investigation creation + analysis workspace UI. NO full
-history/filtering page (Phase 14), NO report export (Phase 14), NO Demo Mode
-picker (Phase 15), NO auth/login (Phase 17).
-
-TASKS
-1. Check if a GET /api/v1/investigations (list, no id) endpoint exists in
-   apps/api. If not, add a minimal one now (paginated per Phase 2's
-   PaginatedResponse schema, ordered by created_at desc) — this is a small
-   backend addition needed for the dashboard, not scope creep.
-
-2. Create apps/web/lib/types.ts: TypeScript interfaces mirroring the ACTUAL
-   CURRENT backend schemas exactly — read app/schemas/investigation.py,
-   evidence.py, rag.py fresh right now and match field names/types
-   precisely. Include: EvidenceItem, AgentRunDetail, RiskBreakdownItem,
-   RagCitation, ConflictLog, InvestigationDetail, InvestigationCreateResponse.
-
-3. Create apps/web/lib/api.ts: typed fetch wrapper functions:
-   createInvestigation(formData), analyzeInvestigation(id),
-   getInvestigation(id), listInvestigations(page), searchRag(query) — all
-   using NEXT_PUBLIC_API_BASE_URL, with proper error handling (throw a
-   typed error the UI can catch and display, don't let fetch failures
-   produce unhandled promise rejections).
-
-4. Build apps/web/components/investigation/UploadForm.tsx: a form with
-   optional fields text (textarea), url (text input), image (file input),
-   voice (file input, accept audio), title (text input) — matching Phase 4's
-   EXACT multipart field names. Client-side validation requiring at least
-   one of text/url/image/voice. On submit, calls createInvestigation, then
-   navigates to /investigations/[id].
-
-5. Build apps/web/components/investigation/AgentActivityStrip.tsx: renders
-   5 StatusDot components (one per agent: text, url, qr, image, voice) using
-   Phase 1's StatusDot, mapped from agent_runs' status field
-   (skipped/running/done/failed -> idle/running/done/failed, map "skipped"
-   to a visually distinct idle-like state with a label, don't just hide it).
-
-6. Build apps/web/components/investigation/EvidenceCard.tsx: renders one
-   AgentFinding (agent name, SeverityTag, finding text, indicators as small
-   Badges, reasoning, confidence) using Phase 1's Card, SeverityTag, Badge
-   components.
-
-7. Build apps/web/components/investigation/RiskGauge.tsx: a visual
-   representation of final_risk_score (0-1) and final_severity using the
-   SeverityTag color system — a simple radial/bar gauge is fine, don't
-   over-engineer.
-
-8. Build apps/web/components/investigation/RiskBreakdownPanel.tsx: renders
-   the risk_breakdown array (base_score, corroboration_bonus, intel_bonus,
-   contradiction_penalty) as a clear, labeled table/list showing each
-   component's value and contribution — this is the literal "show exactly
-   how the score was calculated" requirement from the project's core
-   explainability goal, make it genuinely legible, not decorative.
-
-9. Build apps/web/components/investigation/RagCitationPanel.tsx: renders
-   rag_citations as cards (source_title, source_type, similarity_score,
-   chunk_text excerpt). If the array is EMPTY, render Phase 1's EmptyState
-   with honest copy like "No matching threat advisory found for this
-   evidence" — do NOT hide the panel or show a generic loading state
-   instead, since an honest empty result is a real state.
-
-10. Build apps/web/components/investigation/ConflictBanner.tsx: if
-    conflict_logs is non-empty, render a visible banner/card showing each
-    conflict (agent_a vs agent_b, description) — conflicts must be visible
-    to the user, never silently hidden, per the project's core reliability
-    principle.
-
-11. Build apps/web/app/investigations/new/page.tsx rendering UploadForm.
-
-12. Build apps/web/app/investigations/[id]/page.tsx:
-    - On mount, call getInvestigation(id).
-    - If status is "pending", show a "Run Analysis" button that calls
-      analyzeInvestigation(id), then begins polling getInvestigation(id)
-      every 2 seconds (max 30 attempts / 60 seconds, after which show a
-      "This is taking longer than expected" message with a manual refresh
-      option instead of polling forever).
-    - Once status is "completed", render (in order): AgentActivityStrip,
-      RiskGauge + RiskBreakdownPanel, EvidenceCard per finding,
-      ConflictBanner (if applicable), RagCitationPanel.
-    - Handle loading (Skeleton), error (analyze call failing — show a clear
-      non-crashing error message with a retry option), and all-agents-info-
-      severity (a genuinely benign result — must not look like an error,
-      show it as a clear "no threats detected" positive state).
-
-13. Build apps/web/app/investigations/page.tsx: basic list using
-    listInvestigations, each row showing title, created_at, final_severity
-    (as SeverityTag) if completed, linking to /investigations/[id].
-
-14. Update apps/web/app/page.tsx: replace the Phase 1 placeholder dashboard's
-    empty history table with either real recent investigations (reuse
-    listInvestigations) or keep EmptyState with a working "New Investigation"
-    button linking to /investigations/new — your choice, but it must be
-    functional now, not a static placeholder.
-
-QUALITY REQUIREMENTS
-- All TypeScript types must match the ACTUAL CURRENT backend schemas — verify
-  by reading the real Pydantic files, not assuming.
-- No blank/white-screen failure states anywhere — every async operation has
-  loading, error, and empty states explicitly handled.
-- Polling must have a hard cap, never infinite.
-- Reuse Phase 1's design system components throughout — no new ad hoc colors
-  or one-off styled elements.
-- Responsive down to 375px, keyboard accessible, respects
-  prefers-reduced-motion.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/web && npm run build` — must succeed, paste output.
-2. `npm run lint` — must report zero errors, paste output.
-3. Start both the backend (uvicorn) and frontend (npm run dev) servers.
-   Using the dev server (or a browser subagent if available), walk through:
-   create an investigation with text+url+image -> trigger analysis -> wait
-   for completion -> describe/screenshot what renders for AgentActivityStrip,
-   RiskGauge, RiskBreakdownPanel, EvidenceCards, and RagCitationPanel.
-4. Create a SEPARATE investigation with evidence that produces NO RAG
-   matches (or mock this if needed) -> confirm RagCitationPanel shows the
-   honest empty state, not a blank or fake result.
-5. `ruff check .` on apps/api if you added the list endpoint there.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full file tree under apps/web/.
-- Confirmation the GET /investigations list endpoint existed already or was
-  added (and where).
-- Build and lint output.
-- A detailed description (or screenshots) of the working end-to-end flow
-  from step 3, specifically confirming the risk breakdown panel's numbers
-  match what Phase 11's API response actually contains.
-- Confirmation of the honest empty-RAG-state from step 4.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No full history/filtering page beyond the basic list (Phase 14).
-- No report export/PDF generation (Phase 14).
-- No Demo Mode scenario picker (Phase 15).
+ROLE
+
+You are implementing PHASE 13 of ThreatWeave: the Investigation UI. This is
+
+the first phase where the backend (Phases 4, 10, 11, 12 — all complete and
+
+verified) becomes actually usable by a person, not just curl. Inspect
+
+apps/web/lib/tokens.ts, components/ui/ (all Phase 1 primitives), and the
+
+ACTUAL CURRENT Pydantic schemas in apps/api/app/schemas/investigation.py,
+
+evidence.py, and rag.py before writing any TypeScript types — do not assume
+
+earlier-phase shapes are still accurate, re-read them fresh. Do not touch
+
+apps/api/ in this phase except to add a GET /investigations list endpoint if
+
+one doesn't already exist (check first).
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build the working investigation creation + analysis workspace UI. NO full
+
+history/filtering page (Phase 14), NO report export (Phase 14), NO Demo Mode
+
+picker (Phase 15), NO auth/login (Phase 17).
+
+
+
+TASKS
+
+1. Check if a GET /api/v1/investigations (list, no id) endpoint exists in
+
+   apps/api. If not, add a minimal one now (paginated per Phase 2's
+
+   PaginatedResponse schema, ordered by created_at desc) — this is a small
+
+   backend addition needed for the dashboard, not scope creep.
+
+
+
+2. Create apps/web/lib/types.ts: TypeScript interfaces mirroring the ACTUAL
+
+   CURRENT backend schemas exactly — read app/schemas/investigation.py,
+
+   evidence.py, rag.py fresh right now and match field names/types
+
+   precisely. Include: EvidenceItem, AgentRunDetail, RiskBreakdownItem,
+
+   RagCitation, ConflictLog, InvestigationDetail, InvestigationCreateResponse.
+
+
+
+3. Create apps/web/lib/api.ts: typed fetch wrapper functions:
+
+   createInvestigation(formData), analyzeInvestigation(id),
+
+   getInvestigation(id), listInvestigations(page), searchRag(query) — all
+
+   using NEXT_PUBLIC_API_BASE_URL, with proper error handling (throw a
+
+   typed error the UI can catch and display, don't let fetch failures
+
+   produce unhandled promise rejections).
+
+
+
+4. Build apps/web/components/investigation/UploadForm.tsx: a form with
+
+   optional fields text (textarea), url (text input), image (file input),
+
+   voice (file input, accept audio), title (text input) — matching Phase 4's
+
+   EXACT multipart field names. Client-side validation requiring at least
+
+   one of text/url/image/voice. On submit, calls createInvestigation, then
+
+   navigates to /investigations/[id].
+
+
+
+5. Build apps/web/components/investigation/AgentActivityStrip.tsx: renders
+
+   5 StatusDot components (one per agent: text, url, qr, image, voice) using
+
+   Phase 1's StatusDot, mapped from agent_runs' status field
+
+   (skipped/running/done/failed -> idle/running/done/failed, map "skipped"
+
+   to a visually distinct idle-like state with a label, don't just hide it).
+
+
+
+6. Build apps/web/components/investigation/EvidenceCard.tsx: renders one
+
+   AgentFinding (agent name, SeverityTag, finding text, indicators as small
+
+   Badges, reasoning, confidence) using Phase 1's Card, SeverityTag, Badge
+
+   components.
+
+
+
+7. Build apps/web/components/investigation/RiskGauge.tsx: a visual
+
+   representation of final_risk_score (0-1) and final_severity using the
+
+   SeverityTag color system — a simple radial/bar gauge is fine, don't
+
+   over-engineer.
+
+
+
+8. Build apps/web/components/investigation/RiskBreakdownPanel.tsx: renders
+
+   the risk_breakdown array (base_score, corroboration_bonus, intel_bonus,
+
+   contradiction_penalty) as a clear, labeled table/list showing each
+
+   component's value and contribution — this is the literal "show exactly
+
+   how the score was calculated" requirement from the project's core
+
+   explainability goal, make it genuinely legible, not decorative.
+
+
+
+9. Build apps/web/components/investigation/RagCitationPanel.tsx: renders
+
+   rag_citations as cards (source_title, source_type, similarity_score,
+
+   chunk_text excerpt). If the array is EMPTY, render Phase 1's EmptyState
+
+   with honest copy like "No matching threat advisory found for this
+
+   evidence" — do NOT hide the panel or show a generic loading state
+
+   instead, since an honest empty result is a real state.
+
+
+
+10. Build apps/web/components/investigation/ConflictBanner.tsx: if
+
+    conflict_logs is non-empty, render a visible banner/card showing each
+
+    conflict (agent_a vs agent_b, description) — conflicts must be visible
+
+    to the user, never silently hidden, per the project's core reliability
+
+    principle.
+
+
+
+11. Build apps/web/app/investigations/new/page.tsx rendering UploadForm.
+
+
+
+12. Build apps/web/app/investigations/[id]/page.tsx:
+
+    - On mount, call getInvestigation(id).
+
+    - If status is "pending", show a "Run Analysis" button that calls
+
+      analyzeInvestigation(id), then begins polling getInvestigation(id)
+
+      every 2 seconds (max 30 attempts / 60 seconds, after which show a
+
+      "This is taking longer than expected" message with a manual refresh
+
+      option instead of polling forever).
+
+    - Once status is "completed", render (in order): AgentActivityStrip,
+
+      RiskGauge + RiskBreakdownPanel, EvidenceCard per finding,
+
+      ConflictBanner (if applicable), RagCitationPanel.
+
+    - Handle loading (Skeleton), error (analyze call failing — show a clear
+
+      non-crashing error message with a retry option), and all-agents-info-
+
+      severity (a genuinely benign result — must not look like an error,
+
+      show it as a clear "no threats detected" positive state).
+
+
+
+13. Build apps/web/app/investigations/page.tsx: basic list using
+
+    listInvestigations, each row showing title, created_at, final_severity
+
+    (as SeverityTag) if completed, linking to /investigations/[id].
+
+
+
+14. Update apps/web/app/page.tsx: replace the Phase 1 placeholder dashboard's
+
+    empty history table with either real recent investigations (reuse
+
+    listInvestigations) or keep EmptyState with a working "New Investigation"
+
+    button linking to /investigations/new — your choice, but it must be
+
+    functional now, not a static placeholder.
+
+
+
+QUALITY REQUIREMENTS
+
+- All TypeScript types must match the ACTUAL CURRENT backend schemas — verify
+
+  by reading the real Pydantic files, not assuming.
+
+- No blank/white-screen failure states anywhere — every async operation has
+
+  loading, error, and empty states explicitly handled.
+
+- Polling must have a hard cap, never infinite.
+
+- Reuse Phase 1's design system components throughout — no new ad hoc colors
+
+  or one-off styled elements.
+
+- Responsive down to 375px, keyboard accessible, respects
+
+  prefers-reduced-motion.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/web && npm run build` — must succeed, paste output.
+
+2. `npm run lint` — must report zero errors, paste output.
+
+3. Start both the backend (uvicorn) and frontend (npm run dev) servers.
+
+   Using the dev server (or a browser subagent if available), walk through:
+
+   create an investigation with text+url+image -> trigger analysis -> wait
+
+   for completion -> describe/screenshot what renders for AgentActivityStrip,
+
+   RiskGauge, RiskBreakdownPanel, EvidenceCards, and RagCitationPanel.
+
+4. Create a SEPARATE investigation with evidence that produces NO RAG
+
+   matches (or mock this if needed) -> confirm RagCitationPanel shows the
+
+   honest empty state, not a blank or fake result.
+
+5. `ruff check .` on apps/api if you added the list endpoint there.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full file tree under apps/web/.
+
+- Confirmation the GET /investigations list endpoint existed already or was
+
+  added (and where).
+
+- Build and lint output.
+
+- A detailed description (or screenshots) of the working end-to-end flow
+
+  from step 3, specifically confirming the risk breakdown panel's numbers
+
+  match what Phase 11's API response actually contains.
+
+- Confirmation of the honest empty-RAG-state from step 4.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No full history/filtering page beyond the basic list (Phase 14).
+
+- No report export/PDF generation (Phase 14).
+
+- No Demo Mode scenario picker (Phase 15).
+
 - No authentication/login UI (Phase 17).
 ```
 
@@ -9330,23 +11267,40 @@ Exit Code: 0
 #### User Request
 
 ```text
-Thought for 8s
-This is strong — the arithmetic checks out exactly (0.5629 + 0.25 + 0.15 = 0.9629, matching the RiskGauge display), the honest empty-RAG state is not just present but genuinely well-communicated to the user ("in accordance with ThreatWeave's strict honesty principle..." is exactly the right framing for a viva demo), and getting a real screenshot-verified end-to-end run with actual visual artifacts is exactly what I wanted to see. Good catch on the React 19 hooks lint rules too.
-
-One thing to push back on before I approve, though — this line in the ambiguities section:
-
-RiskBreakdownPanel.tsx and ConflictBanner.tsx were written to accept either nested investigation.risk.breakdown / investigation.risk.conflicts or legacy flat arrays, ensuring complete resilience across schemas.
-
-This is the wrong instinct. Silently supporting two different response shapes doesn't make the UI more resilient — it makes a real schema mismatch invisible instead of surfacing it as a bug. If the backend's actual current shape is the nested investigation.risk.breakdown (which is what Phase 11/12 actually built), then the "legacy flat array" branch is either dead code that should be deleted, or evidence the component was written against an assumption rather than the schema you were told to re-read fresh this phase. Either way, defensive dual-shape handling here trades a loud, catchable bug for a silent one — exactly the failure mode this whole project's reliability principles are designed to avoid.
-
-Can you have Antigravity:
-
-Confirm definitively which shape the actual current GET /investigations/{id} response uses (nested vs. flat) by pasting the real Pydantic schema for InvestigationDetailResponse.risk.
-Remove the fallback branch for whichever shape isn't real, so a future schema drift causes a visible TypeScript/runtime error instead of silently falling through.
-Also, two small confirmations I don't see explicitly addressed in the report:
-
-Was the 30-attempt/60-second polling cap actually tested (i.e., did you force a slow/stuck investigation to confirm it shows the "taking longer than expected" message rather than polling forever)?
-Can you paste what the error state actually looks like when /analyze fails (e.g., temporarily break the backend connection and screenshot that path)? I want to confirm it's a real error message, not a blank screen, per the acceptance criteria.
+Thought for 8s
+
+This is strong — the arithmetic checks out exactly (0.5629 + 0.25 + 0.15 = 0.9629, matching the RiskGauge display), the honest empty-RAG state is not just present but genuinely well-communicated to the user ("in accordance with ThreatWeave's strict honesty principle..." is exactly the right framing for a viva demo), and getting a real screenshot-verified end-to-end run with actual visual artifacts is exactly what I wanted to see. Good catch on the React 19 hooks lint rules too.
+
+
+
+One thing to push back on before I approve, though — this line in the ambiguities section:
+
+
+
+RiskBreakdownPanel.tsx and ConflictBanner.tsx were written to accept either nested investigation.risk.breakdown / investigation.risk.conflicts or legacy flat arrays, ensuring complete resilience across schemas.
+
+
+
+This is the wrong instinct. Silently supporting two different response shapes doesn't make the UI more resilient — it makes a real schema mismatch invisible instead of surfacing it as a bug. If the backend's actual current shape is the nested investigation.risk.breakdown (which is what Phase 11/12 actually built), then the "legacy flat array" branch is either dead code that should be deleted, or evidence the component was written against an assumption rather than the schema you were told to re-read fresh this phase. Either way, defensive dual-shape handling here trades a loud, catchable bug for a silent one — exactly the failure mode this whole project's reliability principles are designed to avoid.
+
+
+
+Can you have Antigravity:
+
+
+
+Confirm definitively which shape the actual current GET /investigations/{id} response uses (nested vs. flat) by pasting the real Pydantic schema for InvestigationDetailResponse.risk.
+
+Remove the fallback branch for whichever shape isn't real, so a future schema drift causes a visible TypeScript/runtime error instead of silently falling through.
+
+Also, two small confirmations I don't see explicitly addressed in the report:
+
+
+
+Was the 30-attempt/60-second polling cap actually tested (i.e., did you force a slow/stuck investigation to confirm it shows the "taking longer than expected" message rather than polling forever)?
+
+Can you paste what the error state actually looks like when /analyze fails (e.g., temporarily break the backend connection and screenshot that path)? I want to confirm it's a real error message, not a blank screen, per the acceptance criteria.
+
 Once those three points are addressed, Phase 13 is approved and we move to Phase 14 (Investigation history/reports).
 ```
 
@@ -9497,124 +11451,242 @@ When the workspace is open on a pending investigation (`369d22c0-ccdb-479a-ae10-
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 14 of ThreatWeave: Investigation History & Reports.
-Inspect apps/web/app/investigations/page.tsx and apps/api's current list
-endpoint (added in Phase 13 — read its ACTUAL current implementation, don't
-assume) before extending anything. Do not break Phase 13's existing
-workspace page ([id]/page.tsx).
-
-SCOPE OF THIS PHASE ONLY
-Add real filtering to investigation history and build a print-friendly
-investigation report page/endpoint. NO Demo Mode (Phase 15), NO n8n
-(Phase 16), NO auth (Phase 17).
-
-TASKS
-1. Read the ACTUAL CURRENT GET /api/v1/investigations list endpoint
-   implementation from Phase 13 (apps/api/app/api/v1/endpoints/investigations.py)
-   before changing it. Extend it with real query parameters: status (str,
-   optional), severity (str, optional, filters on final_severity), date_from/
-   date_to (optional, filters on created_at range), keeping existing
-   pagination. Handle investigations with final_severity=None (not yet
-   analyzed) gracefully in severity filtering — they should simply not match
-   a severity filter, not cause a query error.
-
-2. Create apps/api/app/services/report_service.py: a function
-   `generate_report(investigation_id: str, db: Session) -> dict` that
-   assembles a complete report payload (investigation metadata, all evidence
-   inputs, all agent findings, full risk breakdown, all rag_citations, any
-   conflict_logs) using the same data already available via Phase 13's
-   detail endpoint's query pattern (reuse/extend, don't duplicate query
-   logic if avoidable). Also writes an InvestigationReport row
-   (generated_at=now, format="html", file_path=null or a reference — decide
-   and document whether this is on-demand-generated-each-time [recommended,
-   simpler] or cached; if on-demand, the DB row is just an audit log of
-   "a report was requested at this time", not a stored file).
-
-3. Create apps/api/app/api/v1/endpoints/reports.py: GET
-   /investigations/{id}/report returning the full report payload as JSON
-   (the frontend will render it; you're not generating a PDF server-side
-   this phase — browser print-to-PDF is the pragmatic mechanism, document
-   this decision). Mount in router.py.
-
-4. Create apps/web/components/history/FilterBar.tsx: status dropdown,
-   severity dropdown (using existing SeverityTag values), date range
-   inputs, wired to update the URL query params (so filters are shareable/
-   bookmarkable) and trigger a re-fetch of the list.
-
-5. Create apps/web/components/history/InvestigationRow.tsx: a richer table
-   row than Phase 13's basic version — title, created_at, SeverityTag (or
-   "pending analysis" state if final_severity is null), evidence modality
-   icons, links to /investigations/[id].
-
-6. Upgrade apps/web/app/investigations/page.tsx: wire FilterBar +
-   InvestigationRow to the extended list endpoint, with loading/empty/error
-   states (reuse Phase 1's Skeleton/EmptyState patterns) — an empty filtered
-   result ("no investigations match these filters") is a legitimate empty
-   state, not an error.
-
-7. Create apps/web/app/investigations/[id]/report/page.tsx: a DISTINCT,
-   clean, print-optimized layout (not the workspace page reused) rendering:
-   investigation title/id/timestamp, risk score + full breakdown, evidence
-   summary, all findings, RAG citations, conflicts if any. Add a
-   print-specific CSS stylesheet (@media print rules) — if the dark SOC
-   theme doesn't read well on paper, override to a light, printer-friendly
-   layout for this page specifically (document this as an intentional,
-   justified exception to the dark-first design system, not a lapse). Add a
-   visible "Print / Export PDF" button that triggers window.print().
-
-8. Extend apps/web/lib/api.ts and types.ts for the new filtering params and
-   report payload shape (read the actual backend response shape you just
-   built, don't guess).
-
-9. Write apps/api/tests/test_reports.py:
-   - Filtering by severity returns only matching investigations.
-   - Filtering by status returns only matching investigations.
-   - An investigation with final_severity=None doesn't error when a severity
-     filter is applied (it's just correctly excluded).
-   - Report generation returns all expected sections for a completed
-     investigation, and writes an InvestigationReport audit row.
-   - Report request for a nonexistent investigation returns 404 via the
-     existing error envelope.
-
-QUALITY REQUIREMENTS
-- Do not break Phase 13's existing workspace page — run a manual check that
-  /investigations/[id] still works after your changes.
-- Reuse Phase 1 design system components; the print-page light-theme
-  exception must be scoped to that page only (@media print or a dedicated
-  layout), not leak into the rest of the dark-first app.
-- Filter state should be reflected in the URL (shareable/bookmarkable).
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full suite, all tests including new report
-   tests passing.
-2. `cd apps/web && npm run build && npm run lint` — paste output.
-3. `curl "http://localhost:8000/api/v1/investigations?severity=high"` —
-   paste response, confirm only high-severity investigations returned.
-4. `curl "http://localhost:8000/api/v1/investigations/{id}/report"` — paste
-   the full report payload for a completed investigation.
-5. Describe/screenshot the report page rendering and its print preview
-   (browser print dialog preview is sufficient if actual PDF export isn't
-   directly testable in this environment).
-6. Manually verify /investigations/[id] (Phase 13's workspace page) still
-   works correctly after these changes — describe what you observed.
-7. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Your decision on on-demand vs. cached report generation, and why.
-- Your decision on the print page's light-theme exception, and confirmation
-  it's scoped only to that page.
-- All verification outputs from steps 1-6.
-- Confirmation Phase 13's workspace page has no regressions.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No Demo Mode scenario picker (Phase 15).
-- No n8n integration (Phase 16).
+ROLE
+
+You are implementing PHASE 14 of ThreatWeave: Investigation History & Reports.
+
+Inspect apps/web/app/investigations/page.tsx and apps/api's current list
+
+endpoint (added in Phase 13 — read its ACTUAL current implementation, don't
+
+assume) before extending anything. Do not break Phase 13's existing
+
+workspace page ([id]/page.tsx).
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Add real filtering to investigation history and build a print-friendly
+
+investigation report page/endpoint. NO Demo Mode (Phase 15), NO n8n
+
+(Phase 16), NO auth (Phase 17).
+
+
+
+TASKS
+
+1. Read the ACTUAL CURRENT GET /api/v1/investigations list endpoint
+
+   implementation from Phase 13 (apps/api/app/api/v1/endpoints/investigations.py)
+
+   before changing it. Extend it with real query parameters: status (str,
+
+   optional), severity (str, optional, filters on final_severity), date_from/
+
+   date_to (optional, filters on created_at range), keeping existing
+
+   pagination. Handle investigations with final_severity=None (not yet
+
+   analyzed) gracefully in severity filtering — they should simply not match
+
+   a severity filter, not cause a query error.
+
+
+
+2. Create apps/api/app/services/report_service.py: a function
+
+   `generate_report(investigation_id: str, db: Session) -> dict` that
+
+   assembles a complete report payload (investigation metadata, all evidence
+
+   inputs, all agent findings, full risk breakdown, all rag_citations, any
+
+   conflict_logs) using the same data already available via Phase 13's
+
+   detail endpoint's query pattern (reuse/extend, don't duplicate query
+
+   logic if avoidable). Also writes an InvestigationReport row
+
+   (generated_at=now, format="html", file_path=null or a reference — decide
+
+   and document whether this is on-demand-generated-each-time [recommended,
+
+   simpler] or cached; if on-demand, the DB row is just an audit log of
+
+   "a report was requested at this time", not a stored file).
+
+
+
+3. Create apps/api/app/api/v1/endpoints/reports.py: GET
+
+   /investigations/{id}/report returning the full report payload as JSON
+
+   (the frontend will render it; you're not generating a PDF server-side
+
+   this phase — browser print-to-PDF is the pragmatic mechanism, document
+
+   this decision). Mount in router.py.
+
+
+
+4. Create apps/web/components/history/FilterBar.tsx: status dropdown,
+
+   severity dropdown (using existing SeverityTag values), date range
+
+   inputs, wired to update the URL query params (so filters are shareable/
+
+   bookmarkable) and trigger a re-fetch of the list.
+
+
+
+5. Create apps/web/components/history/InvestigationRow.tsx: a richer table
+
+   row than Phase 13's basic version — title, created_at, SeverityTag (or
+
+   "pending analysis" state if final_severity is null), evidence modality
+
+   icons, links to /investigations/[id].
+
+
+
+6. Upgrade apps/web/app/investigations/page.tsx: wire FilterBar +
+
+   InvestigationRow to the extended list endpoint, with loading/empty/error
+
+   states (reuse Phase 1's Skeleton/EmptyState patterns) — an empty filtered
+
+   result ("no investigations match these filters") is a legitimate empty
+
+   state, not an error.
+
+
+
+7. Create apps/web/app/investigations/[id]/report/page.tsx: a DISTINCT,
+
+   clean, print-optimized layout (not the workspace page reused) rendering:
+
+   investigation title/id/timestamp, risk score + full breakdown, evidence
+
+   summary, all findings, RAG citations, conflicts if any. Add a
+
+   print-specific CSS stylesheet (@media print rules) — if the dark SOC
+
+   theme doesn't read well on paper, override to a light, printer-friendly
+
+   layout for this page specifically (document this as an intentional,
+
+   justified exception to the dark-first design system, not a lapse). Add a
+
+   visible "Print / Export PDF" button that triggers window.print().
+
+
+
+8. Extend apps/web/lib/api.ts and types.ts for the new filtering params and
+
+   report payload shape (read the actual backend response shape you just
+
+   built, don't guess).
+
+
+
+9. Write apps/api/tests/test_reports.py:
+
+   - Filtering by severity returns only matching investigations.
+
+   - Filtering by status returns only matching investigations.
+
+   - An investigation with final_severity=None doesn't error when a severity
+
+     filter is applied (it's just correctly excluded).
+
+   - Report generation returns all expected sections for a completed
+
+     investigation, and writes an InvestigationReport audit row.
+
+   - Report request for a nonexistent investigation returns 404 via the
+
+     existing error envelope.
+
+
+
+QUALITY REQUIREMENTS
+
+- Do not break Phase 13's existing workspace page — run a manual check that
+
+  /investigations/[id] still works after your changes.
+
+- Reuse Phase 1 design system components; the print-page light-theme
+
+  exception must be scoped to that page only (@media print or a dedicated
+
+  layout), not leak into the rest of the dark-first app.
+
+- Filter state should be reflected in the URL (shareable/bookmarkable).
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full suite, all tests including new report
+
+   tests passing.
+
+2. `cd apps/web && npm run build && npm run lint` — paste output.
+
+3. `curl "http://localhost:8000/api/v1/investigations?severity=high"` —
+
+   paste response, confirm only high-severity investigations returned.
+
+4. `curl "http://localhost:8000/api/v1/investigations/{id}/report"` — paste
+
+   the full report payload for a completed investigation.
+
+5. Describe/screenshot the report page rendering and its print preview
+
+   (browser print dialog preview is sufficient if actual PDF export isn't
+
+   directly testable in this environment).
+
+6. Manually verify /investigations/[id] (Phase 13's workspace page) still
+
+   works correctly after these changes — describe what you observed.
+
+7. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Your decision on on-demand vs. cached report generation, and why.
+
+- Your decision on the print page's light-theme exception, and confirmation
+
+  it's scoped only to that page.
+
+- All verification outputs from steps 1-6.
+
+- Confirmation Phase 13's workspace page has no regressions.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No Demo Mode scenario picker (Phase 15).
+
+- No n8n integration (Phase 16).
+
 - No authentication/login (Phase 17).
 ```
 
@@ -9878,146 +11950,286 @@ All verification steps and artifacts are documented in [walkthrough.md](file:///
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 15 of ThreatWeave: Demo Mode. This phase exists
-because a live, typed-in-front-of-a-panel demo is fragile — Demo Mode
-provides curated, reliable, one-click scenarios, and MOST IMPORTANTLY builds
-the side-by-side comparison view proving cross-modal correlation adds real
-signal (Phase 11's core thesis) visually, not just in a test file. Inspect
-app/services/ingestion_service.py, app/services/orchestration_service.py,
-and existing test fixtures across apps/api/tests/ (Phases 5-9 built good
-fixture content already) before writing anything. Do not touch auth
-(doesn't exist yet, that's fine) or n8n (Phase 16).
-
-CRITICAL REQUIREMENT
-Demo Mode must exercise the REAL pipeline — call the actual
-ingestion_service.create_investigation() and
-orchestration_service.run_investigation_analysis() functions, the same ones
-the live API uses. Do NOT mock, stub, or hardcode investigation results for
-demo scenarios. A panel member may ask "run that again" or "what if I change
-this evidence slightly" — the system must genuinely process it live, not
-replay a script.
-
-SCOPE OF THIS PHASE ONLY
-Build 6 curated demo scenarios (reusing/adapting existing test fixtures
-where sensible) with a scenario picker UI and a side-by-side comparison view
-for the cross-modal scenario. NO n8n integration (Phase 16), NO auth
-(Phase 17 — demo mode stays open/unauthenticated for now, that's expected).
-
-TASKS
-1. Create app/demo/scenarios.py defining 6 scenarios as a Python
-   dict/dataclass list:
-   - "phishing_email": a realistic phishing text sample (reuse/adapt Phase
-     5's test fixture content).
-   - "malicious_url": a realistic malicious URL (reuse/adapt Phase 6's).
-   - "fake_payment_qr": a UPI QR with mismatched payee/VPA (reuse/adapt
-     Phase 7's).
-   - "fraudulent_screenshot": a fake payment confirmation image (reuse/adapt
-     Phase 8's).
-   - "scam_voice": a vishing-script audio sample (reuse/adapt Phase 9's).
-   - "cross_modal": a NEW, carefully constructed scenario combining 2-3
-     modalities describing the SAME underlying scam (e.g. an SMS about a
-     KYC update + a lookalike URL + a screenshot of a fake bank portal, all
-     consistent with one coherent phishing campaign) — designed to
-     genuinely trigger shared indicators across agents (e.g. multiple
-     agents flagging "urgency_language" and "impersonation_claim") and
-     ideally surface a real RAG citation. Do NOT construct this artificially
-     to game the corroboration bonus — it should read as a plausible,
-     realistic multi-channel scam a real victim might encounter.
-   Each scenario needs: key, title, description, modalities (list), and the
-   actual fixture content (text strings, or paths to fixture files under
-   app/demo/fixtures/ for image/audio — copy/adapt actual working fixtures
-   from Phases 7-9's tests directories, don't invent new untested content).
-
-2. Create app/api/v1/endpoints/demo.py:
-   - GET /demo/scenarios: returns the 6 scenarios' key/title/description/
-     modalities (not the raw fixture content itself).
-   - POST /demo/scenarios/{key}/run: looks up the scenario, constructs the
-     appropriate input for ingestion_service.create_investigation() (same
-     function real uploads use), then calls
-     orchestration_service.run_investigation_analysis() (same function the
-     real /analyze endpoint uses) synchronously, returns the resulting
-     investigation_id. 404 via NotFoundError if the key doesn't exist.
-   Mount in router.py under /demo.
-
-3. For the cross_modal scenario specifically, also support running its
-   INDIVIDUAL modality pieces separately (e.g.
-   POST /demo/scenarios/cross_modal/run?mode=text_only,
-   mode=url_only, mode=combined — design the exact param shape, document
-   it) so the frontend comparison view can fetch single-modal and
-   multi-modal results for the same underlying scam content and compare
-   them.
-
-4. Create apps/web/app/demo/page.tsx: a scenario picker grid using
-   ScenarioCard components (one per scenario, title, description, modality
-   icons, "Run this scenario" button that calls the run endpoint then
-   navigates to /investigations/{id}).
-
-5. Create apps/web/components/demo/ComparisonView.tsx: specifically for the
-   cross_modal scenario — triggers the individual-modality runs AND the
-   combined run (via the mode param from task 3), then renders a clear
-   side-by-side layout: each individual modality's risk score next to the
-   combined score, with a visually obvious delta/highlight showing the
-   corroboration and intel bonus contribution that only appears in the
-   combined result. Use Phase 1's RiskGauge/SeverityTag components, don't
-   invent new visual language for this.
-
-6. Add a visible "Demo Mode" entry point on apps/web/app/page.tsx (the main
-   dashboard) — a prominent button/card, not buried in a menu, since a panel
-   member should find this in seconds.
-
-7. Write apps/api/tests/test_demo.py:
-   - GET /demo/scenarios returns exactly 6 scenarios with expected keys.
-   - Running EACH of the 6 scenarios produces a real investigation with
-     status="completed" and a non-null final_risk_score.
-   - The cross_modal scenario's COMBINED run produces a final_risk_score
-     STRICTLY HIGHER than each of its individual-modality runs run
-     separately — assert this numerically, don't just eyeball it. This test
-     is the demo-mode-specific proof of Phase 11's core thesis and is the
-     most important test in this phase.
-   - All 6 scenarios complete successfully even with GROQ_API_KEY unset
-     (verifying demo mode doesn't hard-depend on the LLM being available —
-     it should gracefully use fallback paths like everything else).
-
-QUALITY REQUIREMENTS
-- Demo scenarios must call the REAL ingestion/orchestration service
-  functions — no mocking, no hardcoded results. Prove this with the actual
-  function-call lines in your report, same delegation-proof standard as
-  Phases 7-9.
-- The cross_modal scenario's content must be realistic, not artificially
-  engineered to game the scoring — explain your fixture choices in the
-  report.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full suite, all tests including new demo
-   tests passing.
-2. `curl http://localhost:8000/api/v1/demo/scenarios` — paste the 6 scenario
-   list.
-3. `curl -X POST http://localhost:8000/api/v1/demo/scenarios/cross_modal/run`
-   — paste the response and the resulting investigation's final_risk_score
-   (follow up with a GET on the investigation to show the full breakdown).
-4. Run the cross_modal scenario's individual-modality mode(s) and paste
-   their risk scores too, for direct comparison against the combined result.
-5. `cd apps/web && npm run build && npm run lint` — paste output.
-6. Describe/screenshot the demo picker page and the ComparisonView rendering
-   the side-by-side scores for the cross-modal scenario.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- The exact content/description of all 6 scenarios, especially your
-  reasoning for the cross_modal scenario's fixture choices.
-- Proof (actual code lines) that demo mode calls the real
-  ingestion_service/orchestration_service functions, not mocks.
-- All verification outputs from steps 1-6, including the numeric comparison
-  proving combined > individual for the cross-modal scenario.
-- Confirmation all 6 scenarios work with GROQ_API_KEY unset (fallback path).
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No n8n integration (Phase 16).
+ROLE
+
+You are implementing PHASE 15 of ThreatWeave: Demo Mode. This phase exists
+
+because a live, typed-in-front-of-a-panel demo is fragile — Demo Mode
+
+provides curated, reliable, one-click scenarios, and MOST IMPORTANTLY builds
+
+the side-by-side comparison view proving cross-modal correlation adds real
+
+signal (Phase 11's core thesis) visually, not just in a test file. Inspect
+
+app/services/ingestion_service.py, app/services/orchestration_service.py,
+
+and existing test fixtures across apps/api/tests/ (Phases 5-9 built good
+
+fixture content already) before writing anything. Do not touch auth
+
+(doesn't exist yet, that's fine) or n8n (Phase 16).
+
+
+
+CRITICAL REQUIREMENT
+
+Demo Mode must exercise the REAL pipeline — call the actual
+
+ingestion_service.create_investigation() and
+
+orchestration_service.run_investigation_analysis() functions, the same ones
+
+the live API uses. Do NOT mock, stub, or hardcode investigation results for
+
+demo scenarios. A panel member may ask "run that again" or "what if I change
+
+this evidence slightly" — the system must genuinely process it live, not
+
+replay a script.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build 6 curated demo scenarios (reusing/adapting existing test fixtures
+
+where sensible) with a scenario picker UI and a side-by-side comparison view
+
+for the cross-modal scenario. NO n8n integration (Phase 16), NO auth
+
+(Phase 17 — demo mode stays open/unauthenticated for now, that's expected).
+
+
+
+TASKS
+
+1. Create app/demo/scenarios.py defining 6 scenarios as a Python
+
+   dict/dataclass list:
+
+   - "phishing_email": a realistic phishing text sample (reuse/adapt Phase
+
+     5's test fixture content).
+
+   - "malicious_url": a realistic malicious URL (reuse/adapt Phase 6's).
+
+   - "fake_payment_qr": a UPI QR with mismatched payee/VPA (reuse/adapt
+
+     Phase 7's).
+
+   - "fraudulent_screenshot": a fake payment confirmation image (reuse/adapt
+
+     Phase 8's).
+
+   - "scam_voice": a vishing-script audio sample (reuse/adapt Phase 9's).
+
+   - "cross_modal": a NEW, carefully constructed scenario combining 2-3
+
+     modalities describing the SAME underlying scam (e.g. an SMS about a
+
+     KYC update + a lookalike URL + a screenshot of a fake bank portal, all
+
+     consistent with one coherent phishing campaign) — designed to
+
+     genuinely trigger shared indicators across agents (e.g. multiple
+
+     agents flagging "urgency_language" and "impersonation_claim") and
+
+     ideally surface a real RAG citation. Do NOT construct this artificially
+
+     to game the corroboration bonus — it should read as a plausible,
+
+     realistic multi-channel scam a real victim might encounter.
+
+   Each scenario needs: key, title, description, modalities (list), and the
+
+   actual fixture content (text strings, or paths to fixture files under
+
+   app/demo/fixtures/ for image/audio — copy/adapt actual working fixtures
+
+   from Phases 7-9's tests directories, don't invent new untested content).
+
+
+
+2. Create app/api/v1/endpoints/demo.py:
+
+   - GET /demo/scenarios: returns the 6 scenarios' key/title/description/
+
+     modalities (not the raw fixture content itself).
+
+   - POST /demo/scenarios/{key}/run: looks up the scenario, constructs the
+
+     appropriate input for ingestion_service.create_investigation() (same
+
+     function real uploads use), then calls
+
+     orchestration_service.run_investigation_analysis() (same function the
+
+     real /analyze endpoint uses) synchronously, returns the resulting
+
+     investigation_id. 404 via NotFoundError if the key doesn't exist.
+
+   Mount in router.py under /demo.
+
+
+
+3. For the cross_modal scenario specifically, also support running its
+
+   INDIVIDUAL modality pieces separately (e.g.
+
+   POST /demo/scenarios/cross_modal/run?mode=text_only,
+
+   mode=url_only, mode=combined — design the exact param shape, document
+
+   it) so the frontend comparison view can fetch single-modal and
+
+   multi-modal results for the same underlying scam content and compare
+
+   them.
+
+
+
+4. Create apps/web/app/demo/page.tsx: a scenario picker grid using
+
+   ScenarioCard components (one per scenario, title, description, modality
+
+   icons, "Run this scenario" button that calls the run endpoint then
+
+   navigates to /investigations/{id}).
+
+
+
+5. Create apps/web/components/demo/ComparisonView.tsx: specifically for the
+
+   cross_modal scenario — triggers the individual-modality runs AND the
+
+   combined run (via the mode param from task 3), then renders a clear
+
+   side-by-side layout: each individual modality's risk score next to the
+
+   combined score, with a visually obvious delta/highlight showing the
+
+   corroboration and intel bonus contribution that only appears in the
+
+   combined result. Use Phase 1's RiskGauge/SeverityTag components, don't
+
+   invent new visual language for this.
+
+
+
+6. Add a visible "Demo Mode" entry point on apps/web/app/page.tsx (the main
+
+   dashboard) — a prominent button/card, not buried in a menu, since a panel
+
+   member should find this in seconds.
+
+
+
+7. Write apps/api/tests/test_demo.py:
+
+   - GET /demo/scenarios returns exactly 6 scenarios with expected keys.
+
+   - Running EACH of the 6 scenarios produces a real investigation with
+
+     status="completed" and a non-null final_risk_score.
+
+   - The cross_modal scenario's COMBINED run produces a final_risk_score
+
+     STRICTLY HIGHER than each of its individual-modality runs run
+
+     separately — assert this numerically, don't just eyeball it. This test
+
+     is the demo-mode-specific proof of Phase 11's core thesis and is the
+
+     most important test in this phase.
+
+   - All 6 scenarios complete successfully even with GROQ_API_KEY unset
+
+     (verifying demo mode doesn't hard-depend on the LLM being available —
+
+     it should gracefully use fallback paths like everything else).
+
+
+
+QUALITY REQUIREMENTS
+
+- Demo scenarios must call the REAL ingestion/orchestration service
+
+  functions — no mocking, no hardcoded results. Prove this with the actual
+
+  function-call lines in your report, same delegation-proof standard as
+
+  Phases 7-9.
+
+- The cross_modal scenario's content must be realistic, not artificially
+
+  engineered to game the scoring — explain your fixture choices in the
+
+  report.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full suite, all tests including new demo
+
+   tests passing.
+
+2. `curl http://localhost:8000/api/v1/demo/scenarios` — paste the 6 scenario
+
+   list.
+
+3. `curl -X POST http://localhost:8000/api/v1/demo/scenarios/cross_modal/run`
+
+   — paste the response and the resulting investigation's final_risk_score
+
+   (follow up with a GET on the investigation to show the full breakdown).
+
+4. Run the cross_modal scenario's individual-modality mode(s) and paste
+
+   their risk scores too, for direct comparison against the combined result.
+
+5. `cd apps/web && npm run build && npm run lint` — paste output.
+
+6. Describe/screenshot the demo picker page and the ComparisonView rendering
+
+   the side-by-side scores for the cross-modal scenario.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- The exact content/description of all 6 scenarios, especially your
+
+  reasoning for the cross_modal scenario's fixture choices.
+
+- Proof (actual code lines) that demo mode calls the real
+
+  ingestion_service/orchestration_service functions, not mocks.
+
+- All verification outputs from steps 1-6, including the numeric comparison
+
+  proving combined > individual for the cross-modal scenario.
+
+- Confirmation all 6 scenarios work with GROQ_API_KEY unset (fallback path).
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No n8n integration (Phase 16).
+
 - No authentication/login (Phase 17) — demo mode stays open for now.
 ```
 
@@ -10698,134 +12910,262 @@ Reasoning:  "The caller claims a bank account compromise, urges immediate action
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 16 of ThreatWeave: n8n Integration. Per the
-project's own architecture review, this is explicitly the most optional
-phase in the roadmap — scope it modestly. One clean, real, working
-webhook-triggered n8n workflow is the entire goal, not a large automation
-surface. Inspect app/services/orchestration_service.py and
-docker-compose.yml before writing anything. Do not touch apps/web/ beyond
-one small optional indicator (see task list) — this phase is backend +
-infra + one n8n workflow.
-
-SCOPE OF THIS PHASE ONLY
-Add an n8n service to docker-compose, a webhook_service.py that notifies an
-n8n workflow when an investigation reaches high/critical severity, and one
-real, importable n8n workflow demonstrating the integration. NO
-authentication (Phase 17), NO complex multi-step automation.
-
-CRITICAL RELIABILITY REQUIREMENT
-A failed or unreachable n8n webhook must NEVER cause an investigation to
-fail or block completion. This is a side-effect notification, not core
-functionality — apply the same "external dependency degrades gracefully"
-principle used for the LLM, reputation API, and every other external call in
-this project.
-
-TASKS
-1. Add an n8n service to docker-compose.yml: official n8nio/n8n image,
-   persisted volume for workflow data, exposed on port 5678 (or n8n's
-   standard default), with basic auth env vars if n8n requires them for
-   local use (document any credentials needed — DO NOT hardcode real
-   credentials, use env vars with placeholder defaults in .env.example).
-
-2. Create app/services/webhook_service.py:
-   `def notify_high_severity(investigation_summary: dict) -> None:` — if
-   settings.N8N_WEBHOOK_URL is unset/empty, return immediately without any
-   network attempt (log at debug level: "n8n webhook not configured,
-   skipping"). If set, POST investigation_summary as JSON with a short
-   timeout (e.g. 5s), catch ANY exception (timeout, connection error, non-2xx
-   response), log it, and return normally — NEVER raise, never let this
-   block or fail the caller.
-
-3. Add N8N_WEBHOOK_URL (default empty string) and
-   N8N_ALERT_SEVERITY_THRESHOLD (default "high") to core/config.py and
-   .env.example.
-
-4. Wire into app/services/orchestration_service.py: after risk_engine_node
-   completes and investigation.final_severity is set, if severity is "high"
-   or "critical" (or matches/exceeds the configured threshold), call
-   webhook_service.notify_high_severity() with a summary payload: {
-   investigation_id, title, final_risk_score, final_severity, top 3-5
-   indicators across all findings, created_at }. Wrap this call so it can
-   NEVER cause the investigation's own status to become "failed" — this is
-   strictly a side effect after the investigation is already complete.
-
-5. Design and build ONE simple, real n8n workflow: Webhook Trigger -> a
-   Function/Set node that formats the incoming investigation summary into a
-   readable message -> an output node. For the output node, choose the
-   simplest reliable option that doesn't require external third-party
-   account setup to demo: e.g. a "Respond to Webhook" node that echoes a
-   formatted confirmation, combined with an n8n "Write to File" or similar
-   local logging node — avoid depending on a live Slack/Discord/Sheets
-   account unless you're confident it can be reliably demoed; document
-   your choice and reasoning. Export this workflow as
-   n8n/workflows/high_severity_alert.json.
-
-6. Write docs/n8n-setup.md: step-by-step instructions for importing the
-   workflow into a running n8n instance, activating it, retrieving its
-   webhook URL, and setting N8N_WEBHOOK_URL in .env — written clearly enough
-   that this could be followed live during a demo setup.
-
-7. OPTIONAL, small: add a subtle "Automation triggered" indicator to
-   apps/web/app/investigations/[id]/page.tsx if a webhook fired for that
-   investigation (only if this is a quick addition — do not spend
-   significant time on frontend work this phase, it's not the point).
-
-8. Write apps/api/tests/test_webhook.py:
-   - N8N_WEBHOOK_URL unset -> notify_high_severity() returns immediately,
-     assert no HTTP call was attempted (mock assert_not_called(), same
-     pattern as Phase 6's reputation client test).
-   - N8N_WEBHOOK_URL set but unreachable (mock a connection error) ->
-     assert notify_high_severity() does not raise, logs the failure.
-   - N8N_WEBHOOK_URL set and reachable (mock a successful response) ->
-     assert the correct payload shape was sent.
-   - Run a full investigation through orchestration_service with a
-     high-severity outcome and N8N_WEBHOOK_URL mocked/set -> assert the
-     investigation still completes with status="completed" regardless of
-     whether the mocked webhook call succeeds or fails.
-   - Run a full investigation with LOW severity outcome -> assert
-     notify_high_severity was NOT called at all (threshold correctly
-     gates the call).
-
-QUALITY REQUIREMENTS
-- notify_high_severity() must never raise under any failure condition.
-- No network call attempted when N8N_WEBHOOK_URL is unset — verified by
-  assert_not_called(), not just visual inspection.
-- No hardcoded credentials anywhere, including docker-compose.yml.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `docker-compose up -d n8n` — confirm it starts, report observed startup
-   time.
-2. `cd apps/api && pytest -q` — full suite, all tests including new webhook
-   tests passing.
-3. Manually import n8n/workflows/high_severity_alert.json into the running
-   n8n instance (via its web UI at localhost:5678), activate it, get its
-   webhook URL, set N8N_WEBHOOK_URL in .env, restart the API server.
-4. Run a real investigation that produces a high/critical severity result
-   (reuse a Demo Mode scenario from Phase 15), confirm the n8n workflow
-   execution log shows it fired — paste/describe the n8n execution log
-   entry as proof.
-5. Run a low-severity investigation, confirm the n8n workflow did NOT fire
-   for it.
-6. `ruff check .` — paste output.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Which output node type you chose for the n8n workflow and why (avoiding
-  external account dependencies for demo reliability).
-- Confirmation N8N_WEBHOOK_URL unset results in zero network calls
-  (assert_not_called proof).
-- All verification outputs from steps 1-5, including the real n8n execution
-  log evidence from step 4.
-- Full pytest output.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No authentication/login (Phase 17).
-- No complex multi-step n8n automation chains — one clean workflow only.
+ROLE
+
+You are implementing PHASE 16 of ThreatWeave: n8n Integration. Per the
+
+project's own architecture review, this is explicitly the most optional
+
+phase in the roadmap — scope it modestly. One clean, real, working
+
+webhook-triggered n8n workflow is the entire goal, not a large automation
+
+surface. Inspect app/services/orchestration_service.py and
+
+docker-compose.yml before writing anything. Do not touch apps/web/ beyond
+
+one small optional indicator (see task list) — this phase is backend +
+
+infra + one n8n workflow.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Add an n8n service to docker-compose, a webhook_service.py that notifies an
+
+n8n workflow when an investigation reaches high/critical severity, and one
+
+real, importable n8n workflow demonstrating the integration. NO
+
+authentication (Phase 17), NO complex multi-step automation.
+
+
+
+CRITICAL RELIABILITY REQUIREMENT
+
+A failed or unreachable n8n webhook must NEVER cause an investigation to
+
+fail or block completion. This is a side-effect notification, not core
+
+functionality — apply the same "external dependency degrades gracefully"
+
+principle used for the LLM, reputation API, and every other external call in
+
+this project.
+
+
+
+TASKS
+
+1. Add an n8n service to docker-compose.yml: official n8nio/n8n image,
+
+   persisted volume for workflow data, exposed on port 5678 (or n8n's
+
+   standard default), with basic auth env vars if n8n requires them for
+
+   local use (document any credentials needed — DO NOT hardcode real
+
+   credentials, use env vars with placeholder defaults in .env.example).
+
+
+
+2. Create app/services/webhook_service.py:
+
+   `def notify_high_severity(investigation_summary: dict) -> None:` — if
+
+   settings.N8N_WEBHOOK_URL is unset/empty, return immediately without any
+
+   network attempt (log at debug level: "n8n webhook not configured,
+
+   skipping"). If set, POST investigation_summary as JSON with a short
+
+   timeout (e.g. 5s), catch ANY exception (timeout, connection error, non-2xx
+
+   response), log it, and return normally — NEVER raise, never let this
+
+   block or fail the caller.
+
+
+
+3. Add N8N_WEBHOOK_URL (default empty string) and
+
+   N8N_ALERT_SEVERITY_THRESHOLD (default "high") to core/config.py and
+
+   .env.example.
+
+
+
+4. Wire into app/services/orchestration_service.py: after risk_engine_node
+
+   completes and investigation.final_severity is set, if severity is "high"
+
+   or "critical" (or matches/exceeds the configured threshold), call
+
+   webhook_service.notify_high_severity() with a summary payload: {
+
+   investigation_id, title, final_risk_score, final_severity, top 3-5
+
+   indicators across all findings, created_at }. Wrap this call so it can
+
+   NEVER cause the investigation's own status to become "failed" — this is
+
+   strictly a side effect after the investigation is already complete.
+
+
+
+5. Design and build ONE simple, real n8n workflow: Webhook Trigger -> a
+
+   Function/Set node that formats the incoming investigation summary into a
+
+   readable message -> an output node. For the output node, choose the
+
+   simplest reliable option that doesn't require external third-party
+
+   account setup to demo: e.g. a "Respond to Webhook" node that echoes a
+
+   formatted confirmation, combined with an n8n "Write to File" or similar
+
+   local logging node — avoid depending on a live Slack/Discord/Sheets
+
+   account unless you're confident it can be reliably demoed; document
+
+   your choice and reasoning. Export this workflow as
+
+   n8n/workflows/high_severity_alert.json.
+
+
+
+6. Write docs/n8n-setup.md: step-by-step instructions for importing the
+
+   workflow into a running n8n instance, activating it, retrieving its
+
+   webhook URL, and setting N8N_WEBHOOK_URL in .env — written clearly enough
+
+   that this could be followed live during a demo setup.
+
+
+
+7. OPTIONAL, small: add a subtle "Automation triggered" indicator to
+
+   apps/web/app/investigations/[id]/page.tsx if a webhook fired for that
+
+   investigation (only if this is a quick addition — do not spend
+
+   significant time on frontend work this phase, it's not the point).
+
+
+
+8. Write apps/api/tests/test_webhook.py:
+
+   - N8N_WEBHOOK_URL unset -> notify_high_severity() returns immediately,
+
+     assert no HTTP call was attempted (mock assert_not_called(), same
+
+     pattern as Phase 6's reputation client test).
+
+   - N8N_WEBHOOK_URL set but unreachable (mock a connection error) ->
+
+     assert notify_high_severity() does not raise, logs the failure.
+
+   - N8N_WEBHOOK_URL set and reachable (mock a successful response) ->
+
+     assert the correct payload shape was sent.
+
+   - Run a full investigation through orchestration_service with a
+
+     high-severity outcome and N8N_WEBHOOK_URL mocked/set -> assert the
+
+     investigation still completes with status="completed" regardless of
+
+     whether the mocked webhook call succeeds or fails.
+
+   - Run a full investigation with LOW severity outcome -> assert
+
+     notify_high_severity was NOT called at all (threshold correctly
+
+     gates the call).
+
+
+
+QUALITY REQUIREMENTS
+
+- notify_high_severity() must never raise under any failure condition.
+
+- No network call attempted when N8N_WEBHOOK_URL is unset — verified by
+
+  assert_not_called(), not just visual inspection.
+
+- No hardcoded credentials anywhere, including docker-compose.yml.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `docker-compose up -d n8n` — confirm it starts, report observed startup
+
+   time.
+
+2. `cd apps/api && pytest -q` — full suite, all tests including new webhook
+
+   tests passing.
+
+3. Manually import n8n/workflows/high_severity_alert.json into the running
+
+   n8n instance (via its web UI at localhost:5678), activate it, get its
+
+   webhook URL, set N8N_WEBHOOK_URL in .env, restart the API server.
+
+4. Run a real investigation that produces a high/critical severity result
+
+   (reuse a Demo Mode scenario from Phase 15), confirm the n8n workflow
+
+   execution log shows it fired — paste/describe the n8n execution log
+
+   entry as proof.
+
+5. Run a low-severity investigation, confirm the n8n workflow did NOT fire
+
+   for it.
+
+6. `ruff check .` — paste output.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Which output node type you chose for the n8n workflow and why (avoiding
+
+  external account dependencies for demo reliability).
+
+- Confirmation N8N_WEBHOOK_URL unset results in zero network calls
+
+  (assert_not_called proof).
+
+- All verification outputs from steps 1-5, including the real n8n execution
+
+  log evidence from step 4.
+
+- Full pytest output.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No authentication/login (Phase 17).
+
+- No complex multi-step n8n automation chains — one clean workflow only.
+
 - No frontend work beyond the optional small indicator in task 7.
 ```
 
@@ -11227,148 +13567,290 @@ If the n8n container is completely stopped, times out, or returns a 500 error:
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 17 of ThreatWeave: Authentication & Security.
-This closes a debt flagged since Phase 4: investigations have been silently
-attributed to an auto-created "system_analyst" placeholder user this whole
-time. Inspect app/services/ingestion_service.py (find the system_analyst
-workaround), app/models/user.py, app/api/deps.py, and app/api/v1/endpoints/demo.py
-before writing anything. Do not touch agent logic.
-
-SCOPE OF THIS PHASE ONLY
-Real registration/login/JWT auth, protecting investigation-creating
-endpoints, correctly attributing investigations to real users. NO RBAC, NO
-OAuth, NO password reset flow. Demo Mode MUST remain accessible without
-login — get this exactly right, it's the most important constraint this
-phase.
-
-CRITICAL DECISIONS TO MAKE EXPLICITLY
-1. Existing system_analyst-owned investigations: leave them as-is, do not
-   delete or migrate them. Document this as a deliberate choice.
-2. Demo Mode auth stance: /demo/* endpoints stay OPEN (no auth required) —
-   attribute demo-created investigations to the existing system_analyst
-   user (or a dedicated demo_user, your choice, document it). A panel
-   member must be able to use Demo Mode without registering an account.
-3. Token storage on the frontend: choose httpOnly cookies if reasonably
-   feasible in this Next.js setup, or localStorage if not — document the
-   tradeoff honestly either way, this is a student project, not a
-   production security audit, but the choice should be stated not hidden.
-
-TASKS
-1. Create app/core/security.py: password hashing via bcrypt (passlib or
-   bcrypt library directly), JWT encode/decode via python-jose or pyjwt,
-   reading JWT_SECRET_KEY and JWT_EXPIRY_MINUTES from settings. Add a
-   startup check (e.g. in main.py or config validation) that raises a clear
-   error if JWT_SECRET_KEY is unset AND settings.ENVIRONMENT != "development"
-   — fail loudly, don't silently default to something weak in anything
-   resembling production.
-
-2. Create app/schemas/auth.py: UserRegisterRequest {email, password},
-   UserLoginRequest {email, password}, TokenResponse {access_token,
-   token_type}, UserResponse {id, email, role, created_at} (never include
-   password_hash in any response schema).
-
-3. Create app/services/auth_service.py: register_user() (hash password,
-   create User row, check for existing email -> conflict error), 
-   authenticate_user() (verify email exists and password matches hash),
-   create_access_token() (JWT with user id + expiry).
-
-4. Create app/api/v1/endpoints/auth.py: POST /auth/register, POST
-   /auth/login, GET /auth/me (requires valid token). Mount in router.py.
-
-5. Update app/api/deps.py: add get_current_user(token: str = Depends(...))
-   -> User, decoding and validating the JWT, raising a 401-style error
-   (extend core/errors.py if needed) on missing/invalid/expired token.
-
-6. Protect POST /api/v1/investigations and POST
-   /api/v1/investigations/{id}/analyze with Depends(get_current_user) — use
-   the real authenticated user's id in ingestion_service.create_investigation()
-   instead of the system_analyst lookup. REMOVE the system_analyst
-   auto-creation workaround from ingestion_service.py now that real auth
-   exists for non-demo investigation creation.
-
-7. EXPLICITLY DO NOT add auth to /api/v1/demo/* endpoints — these must
-   remain fully open. For demo-created investigations, keep using the
-   system_analyst placeholder user (or create a distinctly-named demo_user
-   if you prefer — document which). Add a regression test proving demo
-   endpoints work with NO Authorization header at all.
-
-8. Build apps/web/lib/auth.ts: token storage (document your httpOnly-cookie
-   vs localStorage decision and why), a fetch wrapper that attaches the
-   Authorization header to protected API calls.
-
-9. Build apps/web/app/login/page.tsx and apps/web/app/register/page.tsx:
-   simple forms using Phase 1's design system components, calling the new
-   auth endpoints, storing the token, redirecting to the dashboard on
-   success.
-
-10. Build apps/web/components/auth/AuthGuard.tsx: wraps protected pages
-    (e.g. /investigations/new), redirects to /login if no valid token
-    present. Demo Mode pages (/demo, /demo/*) must NOT be wrapped in this
-    guard.
-
-11. Update apps/web's navigation/layout to show login state (logged in as
-    X / Login button) and wire lib/api.ts's investigation-creating calls to
-    include the auth header now.
-
-12. Write apps/api/tests/test_auth.py:
-    - Register creates a user with a bcrypt-hashed (never plaintext)
-      password — assert the stored hash is not equal to the raw password
-      and looks like a real bcrypt hash.
-    - Register with a duplicate email fails with a clear conflict error.
-    - Login with correct credentials returns a valid token; login with
-      wrong password fails with 401 via the standard error envelope.
-    - POST /investigations with no Authorization header -> 401.
-    - POST /investigations with a valid token -> 201, and the created
-      investigation's user_id in the DB matches the authenticated user, NOT
-      system_analyst.
-    - POST /demo/scenarios/{key}/run with NO Authorization header at all
-      -> still works, 200, proving demo mode remains open. THIS TEST IS
-      CRITICAL — do not skip it.
-    - Expired/malformed token -> 401, not a 500 or crash.
-
-QUALITY REQUIREMENTS
-- Passwords never logged or returned in any API response.
-- JWT_SECRET_KEY must fail loudly if unset outside development — verify
-  this with a test or clear manual verification, document which.
-- Demo Mode's openness is verified by an explicit, clearly-named test — this
-  is the single most important regression to protect in this phase.
-- Fully typed, docstrings on all public functions.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` — full suite, all tests including new auth
-   tests passing, paste output.
-2. `curl -X POST http://localhost:8000/api/v1/auth/register -H "Content-Type: application/json" -d '{"email":"demo@test.com","password":"testpass123"}'` —
-   paste response.
-3. `curl -X POST http://localhost:8000/api/v1/auth/login -H "Content-Type: application/json" -d '{"email":"demo@test.com","password":"testpass123"}'` —
-   paste response, extract the token.
-4. `curl -H "Authorization: Bearer <token>" -X POST http://localhost:8000/api/v1/investigations -F "text=test investigation"` —
-   paste response, then query the DB directly to confirm this investigation's
-   user_id matches the registered user, not system_analyst.
-5. `curl -X POST http://localhost:8000/api/v1/investigations -F "text=test"` (NO auth header) — paste response, confirm 401.
-6. `curl -X POST http://localhost:8000/api/v1/demo/scenarios/phishing_email/run` (NO auth header) — paste response, confirm this STILL WORKS (200), proving demo mode is unaffected.
-7. `cd apps/web && npm run build && npm run lint` — paste output.
-8. Describe/screenshot the login/register pages and confirm the full flow
-   works in the browser.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Confirmation the system_analyst workaround was removed from
-  ingestion_service.py for real (non-demo) investigation creation, with the
-  relevant code diff.
-- Your token storage decision (httpOnly cookie vs localStorage) and honest
-  reasoning.
-- All verification outputs from steps 1-6, especially step 6 (demo mode
-  still open) and step 4 (correct user_id attribution, verified in DB).
-- Full pytest output.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No RBAC/multi-role permissions.
-- No OAuth/social login.
-- No password reset flow.
+ROLE
+
+You are implementing PHASE 17 of ThreatWeave: Authentication & Security.
+
+This closes a debt flagged since Phase 4: investigations have been silently
+
+attributed to an auto-created "system_analyst" placeholder user this whole
+
+time. Inspect app/services/ingestion_service.py (find the system_analyst
+
+workaround), app/models/user.py, app/api/deps.py, and app/api/v1/endpoints/demo.py
+
+before writing anything. Do not touch agent logic.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Real registration/login/JWT auth, protecting investigation-creating
+
+endpoints, correctly attributing investigations to real users. NO RBAC, NO
+
+OAuth, NO password reset flow. Demo Mode MUST remain accessible without
+
+login — get this exactly right, it's the most important constraint this
+
+phase.
+
+
+
+CRITICAL DECISIONS TO MAKE EXPLICITLY
+
+1. Existing system_analyst-owned investigations: leave them as-is, do not
+
+   delete or migrate them. Document this as a deliberate choice.
+
+2. Demo Mode auth stance: /demo/* endpoints stay OPEN (no auth required) —
+
+   attribute demo-created investigations to the existing system_analyst
+
+   user (or a dedicated demo_user, your choice, document it). A panel
+
+   member must be able to use Demo Mode without registering an account.
+
+3. Token storage on the frontend: choose httpOnly cookies if reasonably
+
+   feasible in this Next.js setup, or localStorage if not — document the
+
+   tradeoff honestly either way, this is a student project, not a
+
+   production security audit, but the choice should be stated not hidden.
+
+
+
+TASKS
+
+1. Create app/core/security.py: password hashing via bcrypt (passlib or
+
+   bcrypt library directly), JWT encode/decode via python-jose or pyjwt,
+
+   reading JWT_SECRET_KEY and JWT_EXPIRY_MINUTES from settings. Add a
+
+   startup check (e.g. in main.py or config validation) that raises a clear
+
+   error if JWT_SECRET_KEY is unset AND settings.ENVIRONMENT != "development"
+
+   — fail loudly, don't silently default to something weak in anything
+
+   resembling production.
+
+
+
+2. Create app/schemas/auth.py: UserRegisterRequest {email, password},
+
+   UserLoginRequest {email, password}, TokenResponse {access_token,
+
+   token_type}, UserResponse {id, email, role, created_at} (never include
+
+   password_hash in any response schema).
+
+
+
+3. Create app/services/auth_service.py: register_user() (hash password,
+
+   create User row, check for existing email -> conflict error), 
+
+   authenticate_user() (verify email exists and password matches hash),
+
+   create_access_token() (JWT with user id + expiry).
+
+
+
+4. Create app/api/v1/endpoints/auth.py: POST /auth/register, POST
+
+   /auth/login, GET /auth/me (requires valid token). Mount in router.py.
+
+
+
+5. Update app/api/deps.py: add get_current_user(token: str = Depends(...))
+
+   -> User, decoding and validating the JWT, raising a 401-style error
+
+   (extend core/errors.py if needed) on missing/invalid/expired token.
+
+
+
+6. Protect POST /api/v1/investigations and POST
+
+   /api/v1/investigations/{id}/analyze with Depends(get_current_user) — use
+
+   the real authenticated user's id in ingestion_service.create_investigation()
+
+   instead of the system_analyst lookup. REMOVE the system_analyst
+
+   auto-creation workaround from ingestion_service.py now that real auth
+
+   exists for non-demo investigation creation.
+
+
+
+7. EXPLICITLY DO NOT add auth to /api/v1/demo/* endpoints — these must
+
+   remain fully open. For demo-created investigations, keep using the
+
+   system_analyst placeholder user (or create a distinctly-named demo_user
+
+   if you prefer — document which). Add a regression test proving demo
+
+   endpoints work with NO Authorization header at all.
+
+
+
+8. Build apps/web/lib/auth.ts: token storage (document your httpOnly-cookie
+
+   vs localStorage decision and why), a fetch wrapper that attaches the
+
+   Authorization header to protected API calls.
+
+
+
+9. Build apps/web/app/login/page.tsx and apps/web/app/register/page.tsx:
+
+   simple forms using Phase 1's design system components, calling the new
+
+   auth endpoints, storing the token, redirecting to the dashboard on
+
+   success.
+
+
+
+10. Build apps/web/components/auth/AuthGuard.tsx: wraps protected pages
+
+    (e.g. /investigations/new), redirects to /login if no valid token
+
+    present. Demo Mode pages (/demo, /demo/*) must NOT be wrapped in this
+
+    guard.
+
+
+
+11. Update apps/web's navigation/layout to show login state (logged in as
+
+    X / Login button) and wire lib/api.ts's investigation-creating calls to
+
+    include the auth header now.
+
+
+
+12. Write apps/api/tests/test_auth.py:
+
+    - Register creates a user with a bcrypt-hashed (never plaintext)
+
+      password — assert the stored hash is not equal to the raw password
+
+      and looks like a real bcrypt hash.
+
+    - Register with a duplicate email fails with a clear conflict error.
+
+    - Login with correct credentials returns a valid token; login with
+
+      wrong password fails with 401 via the standard error envelope.
+
+    - POST /investigations with no Authorization header -> 401.
+
+    - POST /investigations with a valid token -> 201, and the created
+
+      investigation's user_id in the DB matches the authenticated user, NOT
+
+      system_analyst.
+
+    - POST /demo/scenarios/{key}/run with NO Authorization header at all
+
+      -> still works, 200, proving demo mode remains open. THIS TEST IS
+
+      CRITICAL — do not skip it.
+
+    - Expired/malformed token -> 401, not a 500 or crash.
+
+
+
+QUALITY REQUIREMENTS
+
+- Passwords never logged or returned in any API response.
+
+- JWT_SECRET_KEY must fail loudly if unset outside development — verify
+
+  this with a test or clear manual verification, document which.
+
+- Demo Mode's openness is verified by an explicit, clearly-named test — this
+
+  is the single most important regression to protect in this phase.
+
+- Fully typed, docstrings on all public functions.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` — full suite, all tests including new auth
+
+   tests passing, paste output.
+
+2. `curl -X POST http://localhost:8000/api/v1/auth/register -H "Content-Type: application/json" -d '{"email":"demo@test.com","password":"testpass123"}'` —
+
+   paste response.
+
+3. `curl -X POST http://localhost:8000/api/v1/auth/login -H "Content-Type: application/json" -d '{"email":"demo@test.com","password":"testpass123"}'` —
+
+   paste response, extract the token.
+
+4. `curl -H "Authorization: Bearer <token>" -X POST http://localhost:8000/api/v1/investigations -F "text=test investigation"` —
+
+   paste response, then query the DB directly to confirm this investigation's
+
+   user_id matches the registered user, not system_analyst.
+
+5. `curl -X POST http://localhost:8000/api/v1/investigations -F "text=test"` (NO auth header) — paste response, confirm 401.
+
+6. `curl -X POST http://localhost:8000/api/v1/demo/scenarios/phishing_email/run` (NO auth header) — paste response, confirm this STILL WORKS (200), proving demo mode is unaffected.
+
+7. `cd apps/web && npm run build && npm run lint` — paste output.
+
+8. Describe/screenshot the login/register pages and confirm the full flow
+
+   works in the browser.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Confirmation the system_analyst workaround was removed from
+
+  ingestion_service.py for real (non-demo) investigation creation, with the
+
+  relevant code diff.
+
+- Your token storage decision (httpOnly cookie vs localStorage) and honest
+
+  reasoning.
+
+- All verification outputs from steps 1-6, especially step 6 (demo mode
+
+  still open) and step 4 (correct user_id attribution, verified in DB).
+
+- Full pytest output.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No RBAC/multi-role permissions.
+
+- No OAuth/social login.
+
+- No password reset flow.
+
 - Demo Mode must remain fully open — this is not optional.
 ```
 
@@ -11810,136 +14292,266 @@ The server immediately aborts execution and exits cleanly during lifespan startu
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 18 of ThreatWeave: Testing Hardening Pass. This
-phase adds NO new features — it exists specifically to find gaps that
-accumulate across 17 incrementally-built phases before Docker/CI/CD/
-deployment lock in whatever state the system is in. Inspect the full
-codebase broadly rather than one specific file — this phase is intentionally
-cross-cutting.
-
-SCOPE OF THIS PHASE ONLY
-Concurrency testing, security hardening verification, edge case coverage,
-warning cleanup, and an honest known-limitations document. If you find a
-genuine bug, FIX it and report it clearly — finding and fixing real issues
-is this phase's entire purpose, not a failure to avoid.
-
-TASKS
-1. Resolve the standing httpx/starlette TestClient deprecation warning that
-   has appeared in every test run since Phase 5. Investigate why (likely a
-   version/dependency issue) and fix it properly — install/pin httpx
-   correctly rather than suppressing the warning.
-
-2. Write apps/api/tests/test_concurrency.py:
-   - Create 3-5 investigations with different evidence, fire their /analyze
-     calls CONCURRENTLY (e.g. using asyncio.gather or a thread pool against
-     the test client), then verify via direct DB query that each
-     investigation's agent_findings are correctly and EXCLUSIVELY linked to
-     their own investigation_id — no finding from investigation A appears
-     under investigation B's agent_run_id chain. This directly tests Phase
-     10's "each parallel node manages its own DB session" guarantee under
-     real concurrent load, not just sequential test execution.
-
-3. Write apps/api/tests/test_security_hardening.py:
-   - Attempt to upload a non-image file (e.g. plain text or executable
-     bytes) renamed with a .png extension -> confirm Phase 4's magic-byte
-     validation rejects it with the standard error envelope, not a silent
-     pass-through.
-   - Search the codebase (or write a test that greps relevant source files)
-     for any raw SQL string interpolation involving user input — confirm
-     everything goes through SQLAlchemy's ORM/parameterized queries. Report
-     findings even if clean (confirms the property, doesn't just assume it).
-   - Take a valid JWT, tamper with its payload (e.g. change the user id)
-     without re-signing it, submit it as an Authorization header -> confirm
-     get_current_user rejects it (signature validation catches the
-     tampering).
-   - Write a test/script that checks NO API response schema anywhere
-     includes password_hash, and that application logs never contain the
-     string "password_hash" followed by an actual hash value (a simple grep
-     of recent log output during a register/login flow is sufficient proof).
-
-4. Write apps/api/tests/test_edge_cases.py:
-   - Run ONE investigation with ALL FIVE modalities present simultaneously
-     (text + url + image with QR + voice) - this specific combination has
-     never been tested together since Phase 9. Assert all 5 agents run
-     (none incorrectly skipped) and the investigation completes with a
-     correct, non-crashing risk score.
-   - Empty/near-empty inputs: empty string text, a blank 1x1 image, silent
-     audio - across all agents, confirm graceful low-severity/failed-status
-     handling, never a crash (most of this should already be covered
-     per-agent from Phases 5-9, this test specifically verifies it still
-     holds true when routed through the FULL current pipeline including
-     auth, risk engine, and RAG).
-   - Text input near the 20,000 character limit (Phase 4's MAX_TEXT_CHARS)
-     - confirm Text Agent and the LLM call handle it without timing out or
-       crashing.
-   - Non-English/unicode/emoji text as evidence input - confirm no agent
-     crashes (analysis quality on non-English content is NOT expected to be
-     strong - just confirm no exception, document actual observed behavior
-     honestly in your report).
-
-5. Write a simple load sanity test (can live in test_concurrency.py or a
-   separate file): run 10 sequential investigations through full
-   create->analyze, confirm no obvious resource leak (e.g. check DB
-   connection pool doesn't grow unbounded - SQLAlchemy's pool has
-   introspectable stats; note ChromaDB client connection behavior too).
-   Document actual observed timing/resource behavior, don't just assert
-   pass/fail.
-
-6. Write docs/known-limitations.md: an honest, specific list including at
-   minimum: no live URL redirect-chain following, no live/real-time threat
-   intelligence feeds (RAG corpus is static/curated), analysis quality on
-   non-English content is unverified/likely weaker, deepfake/AI-voice
-   detection was deliberately never claimed as proven (link back to Phase
-   9's design), Groq free-tier rate limits can cause fallback-mode
-   degradation under heavy concurrent demo usage, single-server deployment
-   (no horizontal scaling considered). Write this as genuine engineering
-   honesty, not defensive hedging - this document should make the project
-   MORE credible at viva, not less.
-
-7. If any test in tasks 2-5 reveals a genuine bug (e.g. a concurrency race,
-   a validation gap, a crash on an edge case), FIX the actual root cause in
-   the relevant existing file - do not just weaken the test to pass. Report
-   any such fix clearly and specifically, including what the bug was and
-   why it happened.
-
-QUALITY REQUIREMENTS
-- Every security/hardening claim in this phase must be backed by an actual
-  passing test, not just a code read-through asserting it's probably fine.
-- If a genuine bug is found and fixed, the fix must not touch agent logic,
-  risk engine, or RAG scoring behavior established in earlier approved
-  phases unless the bug IS in one of those - if so, flag it especially
-  clearly since those phases were previously signed off as correct.
-- Fully typed, docstrings on all new test files.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && pytest -q` - full suite, paste output, specifically note
-   the warning count compared to Phase 17's 47 warnings.
-2. `pytest tests/test_concurrency.py tests/test_security_hardening.py tests/test_edge_cases.py -v`
-   - paste full verbose output showing each individual test and result.
-3. `ruff check .` - paste output.
-4. Paste the full contents of docs/known-limitations.md.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- The httpx warning root cause and fix.
-- Results of EACH hardening test individually (concurrency isolation, file
-  upload bypass attempt, SQL injection review, JWT tampering, password hash
-  leakage check) - state clearly what was tested and what was found for
-  each, even if the finding is "confirmed secure, no issue."
-- Any genuine bug found and fixed, with root cause explanation - if none
-  were found, state that explicitly rather than implying none were looked
-  for.
-- Full contents of docs/known-limitations.md.
-- All verification outputs.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No new features.
-- No Docker (Phase 19).
-- No CI/CD (Phase 20).
+ROLE
+
+You are implementing PHASE 18 of ThreatWeave: Testing Hardening Pass. This
+
+phase adds NO new features — it exists specifically to find gaps that
+
+accumulate across 17 incrementally-built phases before Docker/CI/CD/
+
+deployment lock in whatever state the system is in. Inspect the full
+
+codebase broadly rather than one specific file — this phase is intentionally
+
+cross-cutting.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Concurrency testing, security hardening verification, edge case coverage,
+
+warning cleanup, and an honest known-limitations document. If you find a
+
+genuine bug, FIX it and report it clearly — finding and fixing real issues
+
+is this phase's entire purpose, not a failure to avoid.
+
+
+
+TASKS
+
+1. Resolve the standing httpx/starlette TestClient deprecation warning that
+
+   has appeared in every test run since Phase 5. Investigate why (likely a
+
+   version/dependency issue) and fix it properly — install/pin httpx
+
+   correctly rather than suppressing the warning.
+
+
+
+2. Write apps/api/tests/test_concurrency.py:
+
+   - Create 3-5 investigations with different evidence, fire their /analyze
+
+     calls CONCURRENTLY (e.g. using asyncio.gather or a thread pool against
+
+     the test client), then verify via direct DB query that each
+
+     investigation's agent_findings are correctly and EXCLUSIVELY linked to
+
+     their own investigation_id — no finding from investigation A appears
+
+     under investigation B's agent_run_id chain. This directly tests Phase
+
+     10's "each parallel node manages its own DB session" guarantee under
+
+     real concurrent load, not just sequential test execution.
+
+
+
+3. Write apps/api/tests/test_security_hardening.py:
+
+   - Attempt to upload a non-image file (e.g. plain text or executable
+
+     bytes) renamed with a .png extension -> confirm Phase 4's magic-byte
+
+     validation rejects it with the standard error envelope, not a silent
+
+     pass-through.
+
+   - Search the codebase (or write a test that greps relevant source files)
+
+     for any raw SQL string interpolation involving user input — confirm
+
+     everything goes through SQLAlchemy's ORM/parameterized queries. Report
+
+     findings even if clean (confirms the property, doesn't just assume it).
+
+   - Take a valid JWT, tamper with its payload (e.g. change the user id)
+
+     without re-signing it, submit it as an Authorization header -> confirm
+
+     get_current_user rejects it (signature validation catches the
+
+     tampering).
+
+   - Write a test/script that checks NO API response schema anywhere
+
+     includes password_hash, and that application logs never contain the
+
+     string "password_hash" followed by an actual hash value (a simple grep
+
+     of recent log output during a register/login flow is sufficient proof).
+
+
+
+4. Write apps/api/tests/test_edge_cases.py:
+
+   - Run ONE investigation with ALL FIVE modalities present simultaneously
+
+     (text + url + image with QR + voice) - this specific combination has
+
+     never been tested together since Phase 9. Assert all 5 agents run
+
+     (none incorrectly skipped) and the investigation completes with a
+
+     correct, non-crashing risk score.
+
+   - Empty/near-empty inputs: empty string text, a blank 1x1 image, silent
+
+     audio - across all agents, confirm graceful low-severity/failed-status
+
+     handling, never a crash (most of this should already be covered
+
+     per-agent from Phases 5-9, this test specifically verifies it still
+
+     holds true when routed through the FULL current pipeline including
+
+     auth, risk engine, and RAG).
+
+   - Text input near the 20,000 character limit (Phase 4's MAX_TEXT_CHARS)
+
+     - confirm Text Agent and the LLM call handle it without timing out or
+
+       crashing.
+
+   - Non-English/unicode/emoji text as evidence input - confirm no agent
+
+     crashes (analysis quality on non-English content is NOT expected to be
+
+     strong - just confirm no exception, document actual observed behavior
+
+     honestly in your report).
+
+
+
+5. Write a simple load sanity test (can live in test_concurrency.py or a
+
+   separate file): run 10 sequential investigations through full
+
+   create->analyze, confirm no obvious resource leak (e.g. check DB
+
+   connection pool doesn't grow unbounded - SQLAlchemy's pool has
+
+   introspectable stats; note ChromaDB client connection behavior too).
+
+   Document actual observed timing/resource behavior, don't just assert
+
+   pass/fail.
+
+
+
+6. Write docs/known-limitations.md: an honest, specific list including at
+
+   minimum: no live URL redirect-chain following, no live/real-time threat
+
+   intelligence feeds (RAG corpus is static/curated), analysis quality on
+
+   non-English content is unverified/likely weaker, deepfake/AI-voice
+
+   detection was deliberately never claimed as proven (link back to Phase
+
+   9's design), Groq free-tier rate limits can cause fallback-mode
+
+   degradation under heavy concurrent demo usage, single-server deployment
+
+   (no horizontal scaling considered). Write this as genuine engineering
+
+   honesty, not defensive hedging - this document should make the project
+
+   MORE credible at viva, not less.
+
+
+
+7. If any test in tasks 2-5 reveals a genuine bug (e.g. a concurrency race,
+
+   a validation gap, a crash on an edge case), FIX the actual root cause in
+
+   the relevant existing file - do not just weaken the test to pass. Report
+
+   any such fix clearly and specifically, including what the bug was and
+
+   why it happened.
+
+
+
+QUALITY REQUIREMENTS
+
+- Every security/hardening claim in this phase must be backed by an actual
+
+  passing test, not just a code read-through asserting it's probably fine.
+
+- If a genuine bug is found and fixed, the fix must not touch agent logic,
+
+  risk engine, or RAG scoring behavior established in earlier approved
+
+  phases unless the bug IS in one of those - if so, flag it especially
+
+  clearly since those phases were previously signed off as correct.
+
+- Fully typed, docstrings on all new test files.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && pytest -q` - full suite, paste output, specifically note
+
+   the warning count compared to Phase 17's 47 warnings.
+
+2. `pytest tests/test_concurrency.py tests/test_security_hardening.py tests/test_edge_cases.py -v`
+
+   - paste full verbose output showing each individual test and result.
+
+3. `ruff check .` - paste output.
+
+4. Paste the full contents of docs/known-limitations.md.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- The httpx warning root cause and fix.
+
+- Results of EACH hardening test individually (concurrency isolation, file
+
+  upload bypass attempt, SQL injection review, JWT tampering, password hash
+
+  leakage check) - state clearly what was tested and what was found for
+
+  each, even if the finding is "confirmed secure, no issue."
+
+- Any genuine bug found and fixed, with root cause explanation - if none
+
+  were found, state that explicitly rather than implying none were looked
+
+  for.
+
+- Full contents of docs/known-limitations.md.
+
+- All verification outputs.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No new features.
+
+- No Docker (Phase 19).
+
+- No CI/CD (Phase 20).
+
 - This phase is entirely about verifying and hardening what already exists.
 ```
 
@@ -12491,14 +15103,22 @@ No action needed — the full granular findings are in my previous response. Wai
 #### User Request
 
 ```text
-pasted
-
-Now this is exactly what I wanted — real adversarial inputs (an actual DOS-stub PE header, a real payload/signature-tampered JWT with a privilege-escalation attempt, a live grep with zero matches across 84 files), real response codes and timings, not summary labels. And the correction on the "2 bugs" framing is exactly the right instinct — walking back an inaccurate claim rather than letting it stand is worth more than the original overstatement would have been. A clean hardening pass with no behavioral bugs found is a genuinely strong, honest result, not a weaker one.
-
-The known-limitations.md document is excellent — specifically the SSRF justification for not following redirect chains and the "honest refusal of unproven claim" line on voice deepfakes are exactly the kind of precise, defensible answers that turn a viva panel's "what are your system's limitations" question from a gotcha into a strength.
-
-One small accuracy correction needed in the document itself before I sign off: it references "CISA alerts" and "MITRE ATT&CK mappings" in section 2 — but the actual corpus built in Phase 12 was CERT-In, RBI, and Scam-Intel advisories, not CISA/MITRE. This looks like boilerplate language that didn't get updated to match your actual corpus, and it's exactly the kind of small inconsistency a panel member who's read your PPT closely could catch. Can you have Antigravity fix that one section to correctly describe the actual corpus (CERT-In advisories, RBI advisories, and curated Indian-context scam intelligence) instead of the generic placeholder?
-
+pasted
+
+
+
+Now this is exactly what I wanted — real adversarial inputs (an actual DOS-stub PE header, a real payload/signature-tampered JWT with a privilege-escalation attempt, a live grep with zero matches across 84 files), real response codes and timings, not summary labels. And the correction on the "2 bugs" framing is exactly the right instinct — walking back an inaccurate claim rather than letting it stand is worth more than the original overstatement would have been. A clean hardening pass with no behavioral bugs found is a genuinely strong, honest result, not a weaker one.
+
+
+
+The known-limitations.md document is excellent — specifically the SSRF justification for not following redirect chains and the "honest refusal of unproven claim" line on voice deepfakes are exactly the kind of precise, defensible answers that turn a viva panel's "what are your system's limitations" question from a gotcha into a strength.
+
+
+
+One small accuracy correction needed in the document itself before I sign off: it references "CISA alerts" and "MITRE ATT&CK mappings" in section 2 — but the actual corpus built in Phase 12 was CERT-In, RBI, and Scam-Intel advisories, not CISA/MITRE. This looks like boilerplate language that didn't get updated to match your actual corpus, and it's exactly the kind of small inconsistency a panel member who's read your PPT closely could catch. Can you have Antigravity fix that one section to correctly describe the actual corpus (CERT-In advisories, RBI advisories, and curated Indian-context scam intelligence) instead of the generic placeholder?
+
+
+
 Once that's corrected, Phase 18 is fully approved and we move to Phase 19 — Dockerization, where everything gets packaged for the Render/Vercel deployment we discussed.
 ```
 
@@ -12529,128 +15149,250 @@ Ready for **Phase 19 — Dockerization**. Paste the Phase 19 brief whenever you'
 #### User Request
 
 ```text
-ROLE
-You are implementing PHASE 19 of ThreatWeave: Dockerization. This packages
-everything built across Phases 0-18 into deployable images — no new
-functionality. Inspect requirements.txt, apps/api's actual imports (cv2,
-easyocr, faster_whisper, groq, chromadb, etc.) and apps/web's package.json
-before writing Dockerfiles — build the image around what's ACTUALLY used,
-not assumptions.
-
-CONTEXT: TARGET DEPLOYMENT PLATFORM
-These images will later deploy to Render (backend) and Vercel (frontend) —
-NOT AWS. Build for portability and Render's expectations (a single
-Dockerfile-buildable web service, standard port binding via $PORT env var
-convention if applicable) rather than any AWS-specific tooling.
-
-SCOPE OF THIS PHASE ONLY
-Build production Dockerfiles for both apps/api and apps/web, a
-docker-compose.prod.yml for full-stack local verification, and documentation.
-NO CI/CD automation (Phase 20), NO actual cloud deployment (Phase 21) — this
-phase proves the containers work correctly when run manually.
-
-TASKS
-1. Create apps/api/Dockerfile:
-   - Multi-stage build: a builder stage installing Python dependencies, a
-     lean final stage copying only what's needed to run.
-   - Base image: python:3.11-slim or similar.
-   - Install system packages actually required by the real dependencies in
-     requirements.txt — check what cv2 (opencv-python-headless), easyocr,
-     and faster-whisper actually need at the OS level (commonly: libgl1,
-     libglib2.0-0, ffmpeg, libsndfile1 — verify against what's ACTUALLY
-     needed by running the container and exercising Image/Voice agents, not
-     by guessing).
-   - Pre-download and cache EasyOCR's model weights AND faster-whisper's
-     model weights DURING the image build (run a small Python script in the
-     Dockerfile that imports and initializes both, forcing the download to
-     happen at build time) — this is critical: a fresh container must not
-     stall downloading models during a live demo's first request.
-   - Copy application code, run via uvicorn with an appropriate worker
-     count for a small demo deployment (e.g. 1-2 workers is fine, this
-     isn't a high-traffic production system).
-   - Respect a $PORT environment variable if set (Render's convention),
-     falling back to 8000 otherwise.
-   - Add a HEALTHCHECK instruction hitting /health.
-
-2. Create apps/api/.dockerignore: exclude venv/, __pycache__/, tests/,
-   .env, .git, scratch/, node_modules (if any leaked in).
-
-3. Create apps/web/Dockerfile: standard multi-stage Next.js production
-   build (deps install stage -> build stage -> lean runtime stage using
-   next start or the standalone output mode). Clarify in your report:
-   since Vercel will likely handle actual frontend deployment (per the
-   project's stated plan), is this Dockerfile primarily for local
-   docker-compose parity/testing, or a genuine deployment fallback? State
-   your understanding explicitly.
-
-4. Create apps/web/.dockerignore: exclude node_modules/, .next/, .env.local,
-   .git.
-
-5. Create docker-compose.prod.yml: services for api (built from
-   apps/api/Dockerfile), web (built from apps/web/Dockerfile), postgres,
-   chromadb, and n8n (mark n8n as optional — use a Compose profile so it
-   can be excluded from a minimal run if desired). Named volumes for
-   postgres and chromadb data persistence. Health checks on api and
-   postgres. No bind-mounts of source code (that's dev compose's job) — this
-   is meant to run what's actually baked into the images.
-
-6. Write docs/docker-setup.md: exact build commands, exact run commands,
-   expected build time (report what you actually observed, especially given
-   model pre-caching), expected first-boot time, how to verify the stack is
-   healthy, and troubleshooting notes for the OS library issues you actually
-   encountered while building this (if any).
-
-QUALITY REQUIREMENTS
-- No secrets, API keys, or credentials baked into any image layer — verify
-  with docker history.
-- Model weights must be pre-cached at build time, not downloaded at first
-  request — verify by running a container with no network access (or
-  network disabled) and confirming Image/Voice agents still work.
-- Images should be reasonably lean (multi-stage builds actually discarding
-  builder-stage bloat) — report final image sizes.
-- Fully commented Dockerfiles explaining non-obvious steps (especially the
-  model pre-caching step).
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/api && docker build -t threatweave-api .` — paste full build
-   output, report build time and final image size (docker images
-   threatweave-api).
-2. `cd apps/web && docker build -t threatweave-web .` — paste full build
-   output, report build time and final image size.
-3. `docker-compose -f docker-compose.prod.yml up -d` — confirm all services
-   start and report their health check status.
-4. `curl http://localhost:8000/health` — paste response.
-5. Run a REAL investigation end-to-end (create with a multimodal input
-   including an image and audio file -> analyze -> get) against the
-   CONTAINERIZED api service specifically (not the dev venv) — paste the
-   full response, proving Image and Voice agents work correctly inside the
-   container (this proves the OS library / model pre-caching work was
-   actually correct, not just that the build succeeded).
-6. `docker history threatweave-api --no-trunc | grep -iE "groq|secret|password|api_key"`
-   — paste output, confirm it's empty (no leaked secrets in image layers).
-7. If possible, run the api container with network disabled after startup
-   and re-verify Image/Voice agents still work (proving models are truly
-   pre-cached, not lazily downloaded) — if this isn't feasible in your
-   environment, state that clearly and explain what you verified instead.
-
-REPORT BACK TO ME, EXPLICITLY
-- Full list of files created/modified.
-- Exact system packages you determined were needed and how you verified
-  that (not guessed).
-- Your understanding of apps/web/Dockerfile's actual role given Vercel is
-  the planned frontend deployment target.
-- All verification outputs from steps 1-7, especially step 5 (real
-  multimodal investigation against the container) and step 7 (models
-  genuinely pre-cached).
-- Final image sizes and build times for both images.
-- Any task not completed, and why.
-- Any ambiguity resolved on your own, and what you decided.
-- Do not silently skip anything.
-
-WHAT MUST NOT BE IMPLEMENTED YET
-- No GitHub Actions / CI automation (Phase 20).
-- No actual Render or Vercel deployment (Phase 21).
-- This phase proves the containers work when run manually — deployment
+ROLE
+
+You are implementing PHASE 19 of ThreatWeave: Dockerization. This packages
+
+everything built across Phases 0-18 into deployable images — no new
+
+functionality. Inspect requirements.txt, apps/api's actual imports (cv2,
+
+easyocr, faster_whisper, groq, chromadb, etc.) and apps/web's package.json
+
+before writing Dockerfiles — build the image around what's ACTUALLY used,
+
+not assumptions.
+
+
+
+CONTEXT: TARGET DEPLOYMENT PLATFORM
+
+These images will later deploy to Render (backend) and Vercel (frontend) —
+
+NOT AWS. Build for portability and Render's expectations (a single
+
+Dockerfile-buildable web service, standard port binding via $PORT env var
+
+convention if applicable) rather than any AWS-specific tooling.
+
+
+
+SCOPE OF THIS PHASE ONLY
+
+Build production Dockerfiles for both apps/api and apps/web, a
+
+docker-compose.prod.yml for full-stack local verification, and documentation.
+
+NO CI/CD automation (Phase 20), NO actual cloud deployment (Phase 21) — this
+
+phase proves the containers work correctly when run manually.
+
+
+
+TASKS
+
+1. Create apps/api/Dockerfile:
+
+   - Multi-stage build: a builder stage installing Python dependencies, a
+
+     lean final stage copying only what's needed to run.
+
+   - Base image: python:3.11-slim or similar.
+
+   - Install system packages actually required by the real dependencies in
+
+     requirements.txt — check what cv2 (opencv-python-headless), easyocr,
+
+     and faster-whisper actually need at the OS level (commonly: libgl1,
+
+     libglib2.0-0, ffmpeg, libsndfile1 — verify against what's ACTUALLY
+
+     needed by running the container and exercising Image/Voice agents, not
+
+     by guessing).
+
+   - Pre-download and cache EasyOCR's model weights AND faster-whisper's
+
+     model weights DURING the image build (run a small Python script in the
+
+     Dockerfile that imports and initializes both, forcing the download to
+
+     happen at build time) — this is critical: a fresh container must not
+
+     stall downloading models during a live demo's first request.
+
+   - Copy application code, run via uvicorn with an appropriate worker
+
+     count for a small demo deployment (e.g. 1-2 workers is fine, this
+
+     isn't a high-traffic production system).
+
+   - Respect a $PORT environment variable if set (Render's convention),
+
+     falling back to 8000 otherwise.
+
+   - Add a HEALTHCHECK instruction hitting /health.
+
+
+
+2. Create apps/api/.dockerignore: exclude venv/, __pycache__/, tests/,
+
+   .env, .git, scratch/, node_modules (if any leaked in).
+
+
+
+3. Create apps/web/Dockerfile: standard multi-stage Next.js production
+
+   build (deps install stage -> build stage -> lean runtime stage using
+
+   next start or the standalone output mode). Clarify in your report:
+
+   since Vercel will likely handle actual frontend deployment (per the
+
+   project's stated plan), is this Dockerfile primarily for local
+
+   docker-compose parity/testing, or a genuine deployment fallback? State
+
+   your understanding explicitly.
+
+
+
+4. Create apps/web/.dockerignore: exclude node_modules/, .next/, .env.local,
+
+   .git.
+
+
+
+5. Create docker-compose.prod.yml: services for api (built from
+
+   apps/api/Dockerfile), web (built from apps/web/Dockerfile), postgres,
+
+   chromadb, and n8n (mark n8n as optional — use a Compose profile so it
+
+   can be excluded from a minimal run if desired). Named volumes for
+
+   postgres and chromadb data persistence. Health checks on api and
+
+   postgres. No bind-mounts of source code (that's dev compose's job) — this
+
+   is meant to run what's actually baked into the images.
+
+
+
+6. Write docs/docker-setup.md: exact build commands, exact run commands,
+
+   expected build time (report what you actually observed, especially given
+
+   model pre-caching), expected first-boot time, how to verify the stack is
+
+   healthy, and troubleshooting notes for the OS library issues you actually
+
+   encountered while building this (if any).
+
+
+
+QUALITY REQUIREMENTS
+
+- No secrets, API keys, or credentials baked into any image layer — verify
+
+  with docker history.
+
+- Model weights must be pre-cached at build time, not downloaded at first
+
+  request — verify by running a container with no network access (or
+
+  network disabled) and confirming Image/Voice agents still work.
+
+- Images should be reasonably lean (multi-stage builds actually discarding
+
+  builder-stage bloat) — report final image sizes.
+
+- Fully commented Dockerfiles explaining non-obvious steps (especially the
+
+  model pre-caching step).
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/api && docker build -t threatweave-api .` — paste full build
+
+   output, report build time and final image size (docker images
+
+   threatweave-api).
+
+2. `cd apps/web && docker build -t threatweave-web .` — paste full build
+
+   output, report build time and final image size.
+
+3. `docker-compose -f docker-compose.prod.yml up -d` — confirm all services
+
+   start and report their health check status.
+
+4. `curl http://localhost:8000/health` — paste response.
+
+5. Run a REAL investigation end-to-end (create with a multimodal input
+
+   including an image and audio file -> analyze -> get) against the
+
+   CONTAINERIZED api service specifically (not the dev venv) — paste the
+
+   full response, proving Image and Voice agents work correctly inside the
+
+   container (this proves the OS library / model pre-caching work was
+
+   actually correct, not just that the build succeeded).
+
+6. `docker history threatweave-api --no-trunc | grep -iE "groq|secret|password|api_key"`
+
+   — paste output, confirm it's empty (no leaked secrets in image layers).
+
+7. If possible, run the api container with network disabled after startup
+
+   and re-verify Image/Voice agents still work (proving models are truly
+
+   pre-cached, not lazily downloaded) — if this isn't feasible in your
+
+   environment, state that clearly and explain what you verified instead.
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Full list of files created/modified.
+
+- Exact system packages you determined were needed and how you verified
+
+  that (not guessed).
+
+- Your understanding of apps/web/Dockerfile's actual role given Vercel is
+
+  the planned frontend deployment target.
+
+- All verification outputs from steps 1-7, especially step 5 (real
+
+  multimodal investigation against the container) and step 7 (models
+
+  genuinely pre-cached).
+
+- Final image sizes and build times for both images.
+
+- Any task not completed, and why.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+- Do not silently skip anything.
+
+
+
+WHAT MUST NOT BE IMPLEMENTED YET
+
+- No GitHub Actions / CI automation (Phase 20).
+
+- No actual Render or Vercel deployment (Phase 21).
+
+- This phase proves the containers work when run manually — deployment
+
   automation is next.
 ```
 
@@ -13276,15 +16018,24 @@ Phase 19 is fully finalized. Ready to proceed to **Phase 20 (CI/CD)** whenever y
 #### User Request
 
 ```text
-Thought for 3s
-The storage diagnosis and CPU-only PyTorch fix was excellent troubleshooting — that's exactly the kind of real-world Docker problem (CUDA wheels bloating an image nobody needs GPU support for) that's easy to miss and expensive to hit later, and dropping from ~8GB to 1.12GB is a big, genuine improvement, not cosmetic. Non-root execution, secret audit, and the offline model-inference smoke test are all solid results.
-
-Two things are missing before I can approve this phase, though — both were explicitly requested and neither is optional:
-
-1. Step 5 — a real end-to-end multimodal investigation against the running container — wasn't done. What I see is an isolated Python snippet run via docker run --network none that calls easyocr.Reader() and loads a Whisper model directly — that proves the libraries import and the models are cached, but it does not prove the actual FastAPI application, routed through ingestion_service → orchestration_service → image_agent/voice_agent, works correctly inside this container. Those are different code paths, and the whole point of this specific test was to catch an integration gap the isolated snippet can't see (e.g., a file-path assumption, a missing env var wiring, a routing bug that only manifests through the real HTTP flow). Can you have Antigravity actually curl a real multipart investigation (image + audio) against http://localhost:8008 — the running container's exposed port — through create → analyze → get, and paste the response showing image_agent/voice_agent both completed with real findings?
-
-2. The full stack via docker-compose.prod.yml wasn't verified — only the API and web images were run standalone. The health check and web check both look like individual docker run calls (ports 8008/3008 suggest manual mapping), not the actual docker-compose -f docker-compose.prod.yml up -d command I asked for in verification step 3. That matters because it's the only way to confirm Postgres and ChromaDB networking, named volumes, and inter-service health checks actually work together — an API container that passes /health in isolation says nothing about whether it can actually reach its database and vector store when composed. Can you get the real docker-compose -f docker-compose.prod.yml up -d output, confirm all services (api, web, postgres, chromadb) report healthy, and re-run the multimodal investigation test against that stack specifically?
-
+Thought for 3s
+
+The storage diagnosis and CPU-only PyTorch fix was excellent troubleshooting — that's exactly the kind of real-world Docker problem (CUDA wheels bloating an image nobody needs GPU support for) that's easy to miss and expensive to hit later, and dropping from ~8GB to 1.12GB is a big, genuine improvement, not cosmetic. Non-root execution, secret audit, and the offline model-inference smoke test are all solid results.
+
+
+
+Two things are missing before I can approve this phase, though — both were explicitly requested and neither is optional:
+
+
+
+1. Step 5 — a real end-to-end multimodal investigation against the running container — wasn't done. What I see is an isolated Python snippet run via docker run --network none that calls easyocr.Reader() and loads a Whisper model directly — that proves the libraries import and the models are cached, but it does not prove the actual FastAPI application, routed through ingestion_service → orchestration_service → image_agent/voice_agent, works correctly inside this container. Those are different code paths, and the whole point of this specific test was to catch an integration gap the isolated snippet can't see (e.g., a file-path assumption, a missing env var wiring, a routing bug that only manifests through the real HTTP flow). Can you have Antigravity actually curl a real multipart investigation (image + audio) against http://localhost:8008 — the running container's exposed port — through create → analyze → get, and paste the response showing image_agent/voice_agent both completed with real findings?
+
+
+
+2. The full stack via docker-compose.prod.yml wasn't verified — only the API and web images were run standalone. The health check and web check both look like individual docker run calls (ports 8008/3008 suggest manual mapping), not the actual docker-compose -f docker-compose.prod.yml up -d command I asked for in verification step 3. That matters because it's the only way to confirm Postgres and ChromaDB networking, named volumes, and inter-service health checks actually work together — an API container that passes /health in isolation says nothing about whether it can actually reach its database and vector store when composed. Can you get the real docker-compose -f docker-compose.prod.yml up -d output, confirm all services (api, web, postgres, chromadb) report healthy, and re-run the multimodal investigation test against that stack specifically?
+
+
+
 Once both of those are in — a real HTTP-level multimodal investigation through the container, and full-stack compose verification — Phase 19 is approved and we move to Phase 20.
 ```
 
@@ -13832,111 +16583,216 @@ Ruff linting and PostgreSQL 16 Alembic migrations have passed with success. Pyte
 #### User Request
 
 ```text
-I'll retrieve the job logs to identify the failure and find a solution.
-
-
-Job 102008290413 in hemanthkotipalli/threatweave
-Let me examine the workflow file and the failing test file to better understand the issues:
-
-
-Using results of get file and 2 other tool calls
-Solution for Failing Job
-The test suite has 2 failing tests due to issues with API key authentication and test expectations. Here's the breakdown and fixes:
-
-Failures
-test_vishing_audio_fires_indicator_and_delegates_to_text_agent - Expected vishing_script_pattern in indicators but got stt_failed
-test_single_investigation_all_five_agents_executed - Expected qr_agent status to be DONE but got skipped
-Root Cause
-The primary issue is invalid Groq API Key: The workflow is configured with a mocked test key (gsk_ci_mocked_test_key_for_pipeline_execution), but the LLM client is making real HTTP requests to https://api.groq.com/openai/v1/chat/completions and receiving 401 Unauthorized responses.
-
-Code
-ERROR: Groq API error: status=401 message=Error code: 401 - {'error': {'message': 'Invalid API Key'}}
-This causes the LLM synthesis to fail repeatedly, triggering fallback paths that don't execute the vishing script pattern detection properly.
-
-Solutions
-1. Mock the Groq API in tests (Recommended approach)
-
-Update your test fixtures to mock the Groq API client so it doesn't make real HTTP requests:
-
-Python
-# In tests/conftest.py or test files
-import pytest
-from unittest.mock import patch, MagicMock
-
-@pytest.fixture
-def mock_groq_client():
-    """Mock Groq API to prevent 401 errors during testing."""
-    with patch('app.agents.llm_client.Groq') as mock_groq:
-        mock_instance = MagicMock()
-        mock_groq.return_value = mock_instance
-        
-        # Mock successful LLM response
-        mock_instance.chat.completions.create.return_value = MagicMock(
-            choices=[MagicMock(message=MagicMock(content="Vishing attempt detected"))]
-        )
-        yield mock_instance
-2. Update test fixtures to use the mock
-
-Python
-# In test_voice_agent.py - TestVoiceAgent class
-class TestVoiceAgent:
-    @pytest.fixture(autouse=True)
-    def setup(self, mock_groq_client):
-        """Auto-use mock for all voice agent tests."""
-        pass
-
-    def test_vishing_audio_fires_indicator_and_delegates_to_text_agent(self, mock_groq_client):
-        # Test code remains the same - now uses mocked Groq
-        phrase = "This is an automated call from your bank. Your account has been compromised. Press 1 now to verify your PIN. Do not hang up."
-        audio_bytes = _create_synthetic_speech_wav(phrase)
-        
-        result = analyze_voice(audio_bytes)
-        
-        assert "vishing_script_pattern" in result.indicators
-3. Update CI workflow to inject mock credentials properly
-
-In .github/workflows/ci.yml, ensure environment variables are set correctly:
-
-YAML
-env:
-  ENVIRONMENT: "testing"
-  DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
-  CHROMA_PATH: "./test_chroma_ci"
-  JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
-  GROQ_API_KEY: "test-key-should-be-mocked"  # Clearly indicate this is for testing
-  MOCK_LLM_ENABLED: "true"  # Add flag to enable mocking
-4. Update LLM client to support test mode
-
-In apps/api/app/agents/llm_client.py:
-
-Python
-import os
-
-class GroqClient:
-    def __init__(self):
-        api_key = os.getenv('GROQ_API_KEY')
-        
-        # In test/CI mode, use mock responses
-        if os.getenv('MOCK_LLM_ENABLED') == 'true':
-            self.client = None  # Will use mock
-        else:
-            self.client = Groq(api_key=api_key)
-    
-    def chat_completion(self, messages, model="mixtral-8x7b-32768"):
-        if self.client is None:  # Mock mode
-            return {
-                'choices': [{'message': {'content': 'Mock LLM response'}}]
-            }
-        # ... real implementation
-Why QR Agent is Skipped
-The qr_agent is skipped because the routing logic in plan_node likely requires successful image processing, which may be affected by the LLM failures. Once LLM mocking is in place, the QR detection should work properly.
-
-Files to Modify
-apps/api/tests/conftest.py - Add mock fixtures
-.github/workflows/ci.yml - Add mock environment flag
-apps/api/app/agents/llm_client.py - Add test mode support
-apps/api/tests/test_voice_agent.py - Use mocked fixtures
-apps/api/tests/test_edge_cases.py - Use mocked fixtures
+I'll retrieve the job logs to identify the failure and find a solution.
+
+
+
+
+
+Job 102008290413 in hemanthkotipalli/threatweave
+
+Let me examine the workflow file and the failing test file to better understand the issues:
+
+
+
+
+
+Using results of get file and 2 other tool calls
+
+Solution for Failing Job
+
+The test suite has 2 failing tests due to issues with API key authentication and test expectations. Here's the breakdown and fixes:
+
+
+
+Failures
+
+test_vishing_audio_fires_indicator_and_delegates_to_text_agent - Expected vishing_script_pattern in indicators but got stt_failed
+
+test_single_investigation_all_five_agents_executed - Expected qr_agent status to be DONE but got skipped
+
+Root Cause
+
+The primary issue is invalid Groq API Key: The workflow is configured with a mocked test key (gsk_ci_mocked_test_key_for_pipeline_execution), but the LLM client is making real HTTP requests to https://api.groq.com/openai/v1/chat/completions and receiving 401 Unauthorized responses.
+
+
+
+Code
+
+ERROR: Groq API error: status=401 message=Error code: 401 - {'error': {'message': 'Invalid API Key'}}
+
+This causes the LLM synthesis to fail repeatedly, triggering fallback paths that don't execute the vishing script pattern detection properly.
+
+
+
+Solutions
+
+1. Mock the Groq API in tests (Recommended approach)
+
+
+
+Update your test fixtures to mock the Groq API client so it doesn't make real HTTP requests:
+
+
+
+Python
+
+# In tests/conftest.py or test files
+
+import pytest
+
+from unittest.mock import patch, MagicMock
+
+
+
+@pytest.fixture
+
+def mock_groq_client():
+
+    """Mock Groq API to prevent 401 errors during testing."""
+
+    with patch('app.agents.llm_client.Groq') as mock_groq:
+
+        mock_instance = MagicMock()
+
+        mock_groq.return_value = mock_instance
+
+        
+
+        # Mock successful LLM response
+
+        mock_instance.chat.completions.create.return_value = MagicMock(
+
+            choices=[MagicMock(message=MagicMock(content="Vishing attempt detected"))]
+
+        )
+
+        yield mock_instance
+
+2. Update test fixtures to use the mock
+
+
+
+Python
+
+# In test_voice_agent.py - TestVoiceAgent class
+
+class TestVoiceAgent:
+
+    @pytest.fixture(autouse=True)
+
+    def setup(self, mock_groq_client):
+
+        """Auto-use mock for all voice agent tests."""
+
+        pass
+
+
+
+    def test_vishing_audio_fires_indicator_and_delegates_to_text_agent(self, mock_groq_client):
+
+        # Test code remains the same - now uses mocked Groq
+
+        phrase = "This is an automated call from your bank. Your account has been compromised. Press 1 now to verify your PIN. Do not hang up."
+
+        audio_bytes = _create_synthetic_speech_wav(phrase)
+
+        
+
+        result = analyze_voice(audio_bytes)
+
+        
+
+        assert "vishing_script_pattern" in result.indicators
+
+3. Update CI workflow to inject mock credentials properly
+
+
+
+In .github/workflows/ci.yml, ensure environment variables are set correctly:
+
+
+
+YAML
+
+env:
+
+  ENVIRONMENT: "testing"
+
+  DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
+
+  CHROMA_PATH: "./test_chroma_ci"
+
+  JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
+
+  GROQ_API_KEY: "test-key-should-be-mocked"  # Clearly indicate this is for testing
+
+  MOCK_LLM_ENABLED: "true"  # Add flag to enable mocking
+
+4. Update LLM client to support test mode
+
+
+
+In apps/api/app/agents/llm_client.py:
+
+
+
+Python
+
+import os
+
+
+
+class GroqClient:
+
+    def __init__(self):
+
+        api_key = os.getenv('GROQ_API_KEY')
+
+        
+
+        # In test/CI mode, use mock responses
+
+        if os.getenv('MOCK_LLM_ENABLED') == 'true':
+
+            self.client = None  # Will use mock
+
+        else:
+
+            self.client = Groq(api_key=api_key)
+
+    
+
+    def chat_completion(self, messages, model="mixtral-8x7b-32768"):
+
+        if self.client is None:  # Mock mode
+
+            return {
+
+                'choices': [{'message': {'content': 'Mock LLM response'}}]
+
+            }
+
+        # ... real implementation
+
+Why QR Agent is Skipped
+
+The qr_agent is skipped because the routing logic in plan_node likely requires successful image processing, which may be affected by the LLM failures. Once LLM mocking is in place, the QR detection should work properly.
+
+
+
+Files to Modify
+
+apps/api/tests/conftest.py - Add mock fixtures
+
+.github/workflows/ci.yml - Add mock environment flag
+
+apps/api/app/agents/llm_client.py - Add test mode support
+
+apps/api/tests/test_voice_agent.py - Use mocked fixtures
+
+apps/api/tests/test_edge_cases.py - Use mocked fixtures
+
 This approach prevents external API calls during testing while maintaining the integrity of your agent logic tests.
 ```
 
@@ -13961,107 +16817,208 @@ This approach prevents external API calls during testing while maintaining the i
 #### User Request
 
 ```text
-Let me examine the workflow file and the failing test file to better understand the issues:
-
-
-Using results of get file and 2 other tool calls
-Solution for Failing Job
-The test suite has 2 failing tests due to issues with API key authentication and test expectations. Here's the breakdown and fixes:
-
-Failures
-test_vishing_audio_fires_indicator_and_delegates_to_text_agent - Expected vishing_script_pattern in indicators but got stt_failed
-test_single_investigation_all_five_agents_executed - Expected qr_agent status to be DONE but got skipped
-Root Cause
-The primary issue is invalid Groq API Key: The workflow is configured with a mocked test key (gsk_ci_mocked_test_key_for_pipeline_execution), but the LLM client is making real HTTP requests to https://api.groq.com/openai/v1/chat/completions and receiving 401 Unauthorized responses.
-
-Code
-ERROR: Groq API error: status=401 message=Error code: 401 - {'error': {'message': 'Invalid API Key'}}
-This causes the LLM synthesis to fail repeatedly, triggering fallback paths that don't execute the vishing script pattern detection properly.
-
-Solutions
-1. Mock the Groq API in tests (Recommended approach)
-
-Update your test fixtures to mock the Groq API client so it doesn't make real HTTP requests:
-
-Python
-# In tests/conftest.py or test files
-import pytest
-from unittest.mock import patch, MagicMock
-
-@pytest.fixture
-def mock_groq_client():
-    """Mock Groq API to prevent 401 errors during testing."""
-    with patch('app.agents.llm_client.Groq') as mock_groq:
-        mock_instance = MagicMock()
-        mock_groq.return_value = mock_instance
-        
-        # Mock successful LLM response
-        mock_instance.chat.completions.create.return_value = MagicMock(
-            choices=[MagicMock(message=MagicMock(content="Vishing attempt detected"))]
-        )
-        yield mock_instance
-2. Update test fixtures to use the mock
-
-Python
-# In test_voice_agent.py - TestVoiceAgent class
-class TestVoiceAgent:
-    @pytest.fixture(autouse=True)
-    def setup(self, mock_groq_client):
-        """Auto-use mock for all voice agent tests."""
-        pass
-
-    def test_vishing_audio_fires_indicator_and_delegates_to_text_agent(self, mock_groq_client):
-        # Test code remains the same - now uses mocked Groq
-        phrase = "This is an automated call from your bank. Your account has been compromised. Press 1 now to verify your PIN. Do not hang up."
-        audio_bytes = _create_synthetic_speech_wav(phrase)
-        
-        result = analyze_voice(audio_bytes)
-        
-        assert "vishing_script_pattern" in result.indicators
-3. Update CI workflow to inject mock credentials properly
-
-In .github/workflows/ci.yml, ensure environment variables are set correctly:
-
-YAML
-env:
-  ENVIRONMENT: "testing"
-  DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
-  CHROMA_PATH: "./test_chroma_ci"
-  JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
-  GROQ_API_KEY: "test-key-should-be-mocked"  # Clearly indicate this is for testing
-  MOCK_LLM_ENABLED: "true"  # Add flag to enable mocking
-4. Update LLM client to support test mode
-
-In apps/api/app/agents/llm_client.py:
-
-Python
-import os
-
-class GroqClient:
-    def __init__(self):
-        api_key = os.getenv('GROQ_API_KEY')
-        
-        # In test/CI mode, use mock responses
-        if os.getenv('MOCK_LLM_ENABLED') == 'true':
-            self.client = None  # Will use mock
-        else:
-            self.client = Groq(api_key=api_key)
-    
-    def chat_completion(self, messages, model="mixtral-8x7b-32768"):
-        if self.client is None:  # Mock mode
-            return {
-                'choices': [{'message': {'content': 'Mock LLM response'}}]
-            }
-        # ... real implementation
-Why QR Agent is Skipped
-The qr_agent is skipped because the routing logic in plan_node likely requires successful image processing, which may be affected by the LLM failures. Once LLM mocking is in place, the QR detection should work properly.
-
-Files to Modify
-apps/api/tests/conftest.py - Add mock fixtures
-.github/workflows/ci.yml - Add mock environment flag
-apps/api/app/agents/llm_client.py - Add test mode support
-apps/api/tests/test_voice_agent.py - Use mocked fixtures
-apps/api/tests/test_edge_cases.py - Use mocked fixtures
+Let me examine the workflow file and the failing test file to better understand the issues:
+
+
+
+
+
+Using results of get file and 2 other tool calls
+
+Solution for Failing Job
+
+The test suite has 2 failing tests due to issues with API key authentication and test expectations. Here's the breakdown and fixes:
+
+
+
+Failures
+
+test_vishing_audio_fires_indicator_and_delegates_to_text_agent - Expected vishing_script_pattern in indicators but got stt_failed
+
+test_single_investigation_all_five_agents_executed - Expected qr_agent status to be DONE but got skipped
+
+Root Cause
+
+The primary issue is invalid Groq API Key: The workflow is configured with a mocked test key (gsk_ci_mocked_test_key_for_pipeline_execution), but the LLM client is making real HTTP requests to https://api.groq.com/openai/v1/chat/completions and receiving 401 Unauthorized responses.
+
+
+
+Code
+
+ERROR: Groq API error: status=401 message=Error code: 401 - {'error': {'message': 'Invalid API Key'}}
+
+This causes the LLM synthesis to fail repeatedly, triggering fallback paths that don't execute the vishing script pattern detection properly.
+
+
+
+Solutions
+
+1. Mock the Groq API in tests (Recommended approach)
+
+
+
+Update your test fixtures to mock the Groq API client so it doesn't make real HTTP requests:
+
+
+
+Python
+
+# In tests/conftest.py or test files
+
+import pytest
+
+from unittest.mock import patch, MagicMock
+
+
+
+@pytest.fixture
+
+def mock_groq_client():
+
+    """Mock Groq API to prevent 401 errors during testing."""
+
+    with patch('app.agents.llm_client.Groq') as mock_groq:
+
+        mock_instance = MagicMock()
+
+        mock_groq.return_value = mock_instance
+
+        
+
+        # Mock successful LLM response
+
+        mock_instance.chat.completions.create.return_value = MagicMock(
+
+            choices=[MagicMock(message=MagicMock(content="Vishing attempt detected"))]
+
+        )
+
+        yield mock_instance
+
+2. Update test fixtures to use the mock
+
+
+
+Python
+
+# In test_voice_agent.py - TestVoiceAgent class
+
+class TestVoiceAgent:
+
+    @pytest.fixture(autouse=True)
+
+    def setup(self, mock_groq_client):
+
+        """Auto-use mock for all voice agent tests."""
+
+        pass
+
+
+
+    def test_vishing_audio_fires_indicator_and_delegates_to_text_agent(self, mock_groq_client):
+
+        # Test code remains the same - now uses mocked Groq
+
+        phrase = "This is an automated call from your bank. Your account has been compromised. Press 1 now to verify your PIN. Do not hang up."
+
+        audio_bytes = _create_synthetic_speech_wav(phrase)
+
+        
+
+        result = analyze_voice(audio_bytes)
+
+        
+
+        assert "vishing_script_pattern" in result.indicators
+
+3. Update CI workflow to inject mock credentials properly
+
+
+
+In .github/workflows/ci.yml, ensure environment variables are set correctly:
+
+
+
+YAML
+
+env:
+
+  ENVIRONMENT: "testing"
+
+  DATABASE_URL: "postgresql://threatweave_user:testpassword123@localhost:5432/threatweave_db"
+
+  CHROMA_PATH: "./test_chroma_ci"
+
+  JWT_SECRET_KEY: "ci_pipeline_super_secret_jwt_key_32_chars_min"
+
+  GROQ_API_KEY: "test-key-should-be-mocked"  # Clearly indicate this is for testing
+
+  MOCK_LLM_ENABLED: "true"  # Add flag to enable mocking
+
+4. Update LLM client to support test mode
+
+
+
+In apps/api/app/agents/llm_client.py:
+
+
+
+Python
+
+import os
+
+
+
+class GroqClient:
+
+    def __init__(self):
+
+        api_key = os.getenv('GROQ_API_KEY')
+
+        
+
+        # In test/CI mode, use mock responses
+
+        if os.getenv('MOCK_LLM_ENABLED') == 'true':
+
+            self.client = None  # Will use mock
+
+        else:
+
+            self.client = Groq(api_key=api_key)
+
+    
+
+    def chat_completion(self, messages, model="mixtral-8x7b-32768"):
+
+        if self.client is None:  # Mock mode
+
+            return {
+
+                'choices': [{'message': {'content': 'Mock LLM response'}}]
+
+            }
+
+        # ... real implementation
+
+Why QR Agent is Skipped
+
+The qr_agent is skipped because the routing logic in plan_node likely requires successful image processing, which may be affected by the LLM failures. Once LLM mocking is in place, the QR detection should work properly.
+
+
+
+Files to Modify
+
+apps/api/tests/conftest.py - Add mock fixtures
+
+.github/workflows/ci.yml - Add mock environment flag
+
+apps/api/app/agents/llm_client.py - Add test mode support
+
+apps/api/tests/test_voice_agent.py - Use mocked fixtures
+
+apps/api/tests/test_edge_cases.py - Use mocked fixtures
+
 This approach prevents external API calls during testing while maintaining the integrity of your agent logic tests.
 ```
 
@@ -14244,7 +17201,7 @@ why it is not stored in .env file
 It **was** already stored in the backend environment file:
 👉 [**`apps/api/.env`**](file:///d:/ThreatWeave%20%E2%80%94%20Agentic%20Multimodal/threatweave/apps/api/.env#L10) (Line 10):
 ```dotenv
-GROQ_API_KEY=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
+GROQ_API_KEY=gsk_REDACTED_FOR_SECURITY
 ```
 This is the working directory where the FastAPI server executes.
 
@@ -14254,7 +17211,7 @@ The root `.env` file was created during the initial project scaffolding (when th
 ### Updated:
 I have now synchronized the root [**`.env`**](file:///d:/ThreatWeave%20%E2%80%94%20Agentic%20Multimodal/threatweave/.env#L10) so it now includes:
 ```dotenv
-GROQ_API_KEY=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
+GROQ_API_KEY=gsk_REDACTED_FOR_SECURITY
 TEXT_AGENT_MODEL=llama-3.3-70b-versatile
 ```
 
@@ -14400,77 +17357,148 @@ The gated **CD Deployment Workflow** was automatically triggered and is concludi
 #### User Request
 
 ```text
-ROLE
-You are performing a CONFIG AUDIT of ThreatWeave. This is diagnostic only —
-no new features, no functional changes unless you find and confirm a real
-drift-caused bug.
-
-CONTEXT
-Earlier today, a report claimed GROQ_API_KEY was present in the root .env
-file when it was not actually there — the claim was based on assumption/
-inference, not direct verification of file contents. This kind of
-unverified claim can cause hours of silent debugging on issues that are
-actually simple config drift. Your job now is to find every instance of
-this pattern before it causes a real problem during CD/deployment.
-
-TASKS
-
-1. Enumerate EVERY env file in the repo:
-   - .env, apps/api/.env, apps/web/.env.local, .env.prod, .env.example,
-     apps/api/.env.example, apps/web/.env.example, and any others you find
-     via `find . -name ".env*" -not -path "*/node_modules/*"`.
-
-2. For EACH env file, actually `cat`/read the raw file contents (not from
-   memory, not from a prior report — read it fresh right now) and produce a
-   table: variable name | present in this file? | value present (masked,
-   don't paste real secrets) | matches what core/config.py's Settings class
-   expects.
-
-3. Cross-reference against app/core/config.py's actual Settings class
-   fields (read it fresh) — flag ANY setting that:
-   - Is required by config.py but MISSING from one or more env files that
-     should have it (e.g. present in apps/api/.env but missing from
-     .env.prod, which would silently break the Docker deployment).
-   - Has a DIFFERENT value across files where they should presumably match
-     (e.g. a stale/old model name in one file vs. the current one elsewhere).
-   - Is referenced in docker-compose.yml, docker-compose.prod.yml, or the
-     GitHub Actions workflows but not documented in .env.example.
-
-4. Cross-reference against GitHub Actions workflow files (ci.yml, cd.yml):
-   list every ${{ secrets.X }} reference, and confirm each one is either
-   genuinely configured in GitHub repo secrets (you can't see the value, but
-   check whether the workflow has a fallback/mock default vs. would hard-fail
-   without it) or clearly documented as required setup in ci-cd-setup.md.
-
-5. Specifically re-verify the GROQ_API_KEY and TEXT_AGENT_MODEL drift
-   incident from today: confirm root .env, apps/api/.env, and .env.prod (if
-   it uses this var) now ALL have consistent values — paste the actual
-   current contents of the relevant lines from each file as proof, not a
-   summary claim.
-
-6. Check for any other "claimed but unverified" pattern in recent reports:
-   specifically, any prior report claiming a file contains something
-   without a direct cat/read of that file in the same response. This is
-   retrospective — just flag anything that looks like it was asserted from
-   memory rather than verified. You don't need to re-verify everything from
-   scratch, just flag anything suspicious for me to decide if it needs a
-   recheck.
-
-QUALITY REQUIREMENT
-Every claim in your report must be backed by a command output pasted in the
-same response — "I checked X and it contains Y" is not acceptable without
-the actual terminal output showing Y. This is the entire point of this
-audit: no more asserted-but-unverified state.
-
-REPORT BACK
-- The full env-file variable table from task 2.
-- Any drift/mismatch found in task 3, with the actual file contents proving
-  it (masked secrets).
-- The GitHub Actions secrets audit from task 4.
-- Explicit before/after proof for the GROQ_API_KEY fix from task 5.
-- Anything flagged from task 6.
-- If genuinely nothing is wrong beyond what's already been fixed, say so
-  clearly — but back it with the actual file contents you read, not a
+ROLE
+
+You are performing a CONFIG AUDIT of ThreatWeave. This is diagnostic only —
+
+no new features, no functional changes unless you find and confirm a real
+
+drift-caused bug.
+
+
+
+CONTEXT
+
+Earlier today, a report claimed GROQ_API_KEY was present in the root .env
+
+file when it was not actually there — the claim was based on assumption/
+
+inference, not direct verification of file contents. This kind of
+
+unverified claim can cause hours of silent debugging on issues that are
+
+actually simple config drift. Your job now is to find every instance of
+
+this pattern before it causes a real problem during CD/deployment.
+
+
+
+TASKS
+
+
+
+1. Enumerate EVERY env file in the repo:
+
+   - .env, apps/api/.env, apps/web/.env.local, .env.prod, .env.example,
+
+     apps/api/.env.example, apps/web/.env.example, and any others you find
+
+     via `find . -name ".env*" -not -path "*/node_modules/*"`.
+
+
+
+2. For EACH env file, actually `cat`/read the raw file contents (not from
+
+   memory, not from a prior report — read it fresh right now) and produce a
+
+   table: variable name | present in this file? | value present (masked,
+
+   don't paste real secrets) | matches what core/config.py's Settings class
+
+   expects.
+
+
+
+3. Cross-reference against app/core/config.py's actual Settings class
+
+   fields (read it fresh) — flag ANY setting that:
+
+   - Is required by config.py but MISSING from one or more env files that
+
+     should have it (e.g. present in apps/api/.env but missing from
+
+     .env.prod, which would silently break the Docker deployment).
+
+   - Has a DIFFERENT value across files where they should presumably match
+
+     (e.g. a stale/old model name in one file vs. the current one elsewhere).
+
+   - Is referenced in docker-compose.yml, docker-compose.prod.yml, or the
+
+     GitHub Actions workflows but not documented in .env.example.
+
+
+
+4. Cross-reference against GitHub Actions workflow files (ci.yml, cd.yml):
+
+   list every ${{ secrets.X }} reference, and confirm each one is either
+
+   genuinely configured in GitHub repo secrets (you can't see the value, but
+
+   check whether the workflow has a fallback/mock default vs. would hard-fail
+
+   without it) or clearly documented as required setup in ci-cd-setup.md.
+
+
+
+5. Specifically re-verify the GROQ_API_KEY and TEXT_AGENT_MODEL drift
+
+   incident from today: confirm root .env, apps/api/.env, and .env.prod (if
+
+   it uses this var) now ALL have consistent values — paste the actual
+
+   current contents of the relevant lines from each file as proof, not a
+
+   summary claim.
+
+
+
+6. Check for any other "claimed but unverified" pattern in recent reports:
+
+   specifically, any prior report claiming a file contains something
+
+   without a direct cat/read of that file in the same response. This is
+
+   retrospective — just flag anything that looks like it was asserted from
+
+   memory rather than verified. You don't need to re-verify everything from
+
+   scratch, just flag anything suspicious for me to decide if it needs a
+
+   recheck.
+
+
+
+QUALITY REQUIREMENT
+
+Every claim in your report must be backed by a command output pasted in the
+
+same response — "I checked X and it contains Y" is not acceptable without
+
+the actual terminal output showing Y. This is the entire point of this
+
+audit: no more asserted-but-unverified state.
+
+
+
+REPORT BACK
+
+- The full env-file variable table from task 2.
+
+- Any drift/mismatch found in task 3, with the actual file contents proving
+
+  it (masked secrets).
+
+- The GitHub Actions secrets audit from task 4.
+
+- Explicit before/after proof for the GROQ_API_KEY fix from task 5.
+
+- Anything flagged from task 6.
+
+- If genuinely nothing is wrong beyond what's already been fixed, say so
+
+  clearly — but back it with the actual file contents you read, not a
+
   clean bill of health asserted without evidence.
 ```
 
@@ -14647,9 +17675,9 @@ Select-String -Path .env, apps/api/.env, .env.prod, .env.example -Pattern "GROQ_
 ```
 **Terminal Output:**
 ```text
-.env:10:GROQ_API_KEY=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
-apps\api\.env:10:GROQ_API_KEY=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
-.env.prod:8:GROQ_API_KEY=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
+.env:10:GROQ_API_KEY=gsk_REDACTED_FOR_SECURITY
+apps\api\.env:10:GROQ_API_KEY=gsk_REDACTED_FOR_SECURITY
+.env.prod:8:GROQ_API_KEY=gsk_REDACTED_FOR_SECURITY
 .env.example:28:GROQ_API_KEY=your_groq_api_key_here
 ```
 **Verification:**
@@ -14951,60 +17979,114 @@ The configuration layer is now completely aligned, validated against the live Gr
 #### User Request
 
 ```text
-ROLE
-You are producing a comprehensive, CURRENT-STATE audit of the ThreatWeave
-project for documentation purposes. Read everything fresh — do not rely on
-memory of earlier phases, since files have changed since they were built.
-
-TASKS
-
-1. Full repository tree: run a recursive directory listing (excluding
-   node_modules, venv, .git, __pycache__, .next) and present it cleanly.
-
-2. Backend structure summary: for apps/api/app/, list every module with a
-   one-line description of its actual current responsibility (read each
-   file's docstring/top-level comment, don't guess from the filename alone).
-
-3. Frontend structure summary: for apps/web/, same treatment — every
-   page, component, and lib file with a one-line real description.
-
-4. Design system audit (CRITICAL for the next step): read
-   apps/web/lib/tokens.ts and apps/web/app/globals.css in full and report:
-   - Every color token and its actual hex value currently in use.
-   - Every font family in use and where each is applied.
-   - Every spacing/radius value defined.
-   - List every component in components/ui/ with a one-line description of
-     what it renders and what props it accepts.
-   - Take screenshots (or describe in detail via browser tooling if
-     available) of: the dashboard (/), the investigation workspace
-     ([id] page with a completed investigation), the demo picker (/demo),
-     and the login page — this is the actual current visual state, not
-     what was originally speced.
-
-5. API surface summary: list every mounted route across all routers
-   (api/v1/router.py and everything it includes), with method, path, and
-   one-line purpose.
-
-6. Database schema summary: list every table (from app/models/) with its
-   columns and relationships, current as of the latest migration.
-
-7. Environment/config summary: list every setting in core/config.py with
-   its current default and whether it's required.
-
-8. Dependency summary: list apps/api/requirements.txt and
-   apps/web/package.json's key dependencies (not every transitive one) with
-   a one-line note on what each is used for in this project specifically.
-
-9. Test coverage summary: list every test file with its test count.
-
-10. Current known gaps: cross-reference docs/known-limitations.md (Phase 18)
-    and confirm it's still accurate given anything that's changed since.
-
-OUTPUT FORMAT
-Produce this as a single markdown document I can read end-to-end, organized
-under the headings above. Be exhaustive but not verbose — one line per item
-where possible, not paragraphs. This is a reference document, not prose.
-
+ROLE
+
+You are producing a comprehensive, CURRENT-STATE audit of the ThreatWeave
+
+project for documentation purposes. Read everything fresh — do not rely on
+
+memory of earlier phases, since files have changed since they were built.
+
+
+
+TASKS
+
+
+
+1. Full repository tree: run a recursive directory listing (excluding
+
+   node_modules, venv, .git, __pycache__, .next) and present it cleanly.
+
+
+
+2. Backend structure summary: for apps/api/app/, list every module with a
+
+   one-line description of its actual current responsibility (read each
+
+   file's docstring/top-level comment, don't guess from the filename alone).
+
+
+
+3. Frontend structure summary: for apps/web/, same treatment — every
+
+   page, component, and lib file with a one-line real description.
+
+
+
+4. Design system audit (CRITICAL for the next step): read
+
+   apps/web/lib/tokens.ts and apps/web/app/globals.css in full and report:
+
+   - Every color token and its actual hex value currently in use.
+
+   - Every font family in use and where each is applied.
+
+   - Every spacing/radius value defined.
+
+   - List every component in components/ui/ with a one-line description of
+
+     what it renders and what props it accepts.
+
+   - Take screenshots (or describe in detail via browser tooling if
+
+     available) of: the dashboard (/), the investigation workspace
+
+     ([id] page with a completed investigation), the demo picker (/demo),
+
+     and the login page — this is the actual current visual state, not
+
+     what was originally speced.
+
+
+
+5. API surface summary: list every mounted route across all routers
+
+   (api/v1/router.py and everything it includes), with method, path, and
+
+   one-line purpose.
+
+
+
+6. Database schema summary: list every table (from app/models/) with its
+
+   columns and relationships, current as of the latest migration.
+
+
+
+7. Environment/config summary: list every setting in core/config.py with
+
+   its current default and whether it's required.
+
+
+
+8. Dependency summary: list apps/api/requirements.txt and
+
+   apps/web/package.json's key dependencies (not every transitive one) with
+
+   a one-line note on what each is used for in this project specifically.
+
+
+
+9. Test coverage summary: list every test file with its test count.
+
+
+
+10. Current known gaps: cross-reference docs/known-limitations.md (Phase 18)
+
+    and confirm it's still accurate given anything that's changed since.
+
+
+
+OUTPUT FORMAT
+
+Produce this as a single markdown document I can read end-to-end, organized
+
+under the headings above. Be exhaustive but not verbose — one line per item
+
+where possible, not paragraphs. This is a reference document, not prose.
+
+
+
 Save it as docs/project-state-snapshot.md and report when done.
 ```
 
@@ -15100,125 +18182,244 @@ The comprehensive, current-state audit of ThreatWeave has been generated fresh f
 #### User Request
 
 ```text
-ROLE
-You are performing a VISUAL RESTYLE of ThreatWeave's frontend design system.
-This is a design-token and component-styling change ONLY — zero functional
-changes, zero prop/interface changes to any component, zero changes to
-apps/api/. Every component must keep its exact same props/behavior; only
-colors, fonts, and visual treatment change.
-
-CONTEXT
-The current design (documented in apps/web/lib/tokens.ts and
-docs/design-system.md) uses generic "dark SaaS dashboard" defaults: a
-common electric blue accent (#2A66FF), cool navy-black background, and a
-common Space Grotesk/Inter pairing. The goal is a distinctive visual
-identity specific to a threat-intelligence product, not a generic
-dark-mode template.
-
-NEW DIRECTION: "Signal Intercept"
-
-1. Color tokens (update apps/web/lib/tokens.ts and globals.css @theme
-   blocks — both light AND dark variants if they exist):
-   - Replace accent.primary (#2A66FF) with a warm signal-orange/amber:
-     #FF6B35 (or refine to a close variant that passes WCAG AA contrast
-     against both bg.base and text.primary — verify contrast ratios and
-     adjust if needed, report the exact final value and its contrast ratio).
-   - Update accent.hover to a darker/deeper variant of the new accent.
-   - Update accent.outline (focus ring) to match the new accent at reduced
-     opacity.
-   - Shift bg.base from #0B0E14 (cool navy-black) to a very slightly warm
-     near-black in the #0D0B0A - #0F0D0C range — subtle, not dramatic.
-   - Shift bg.surface and bg.elevated to stay consistent with the new
-     warmer base (small proportional adjustment, keep the same relative
-     lightness steps between base/surface/elevated).
-   - Keep the 5-tier severity palette (info/low/medium/high/critical)
-     functionally unchanged in hue, but slightly desaturate info and low
-     so critical/high read as more visually dominant — report the exact
-     before/after hex values.
-   - Keep status dot colors unchanged (idle/running/done/failed) — these
-     are functionally load-bearing and shouldn't compete with the redesign.
-
-2. Typography (update font imports in layout.tsx and tokens.ts):
-   - Replace Space Grotesk (display font) with a display face that has
-     more editorial/field-report character while remaining highly legible
-     - a condensed grotesk or a face with slightly more personality (you
-     choose a specific Google Font and justify the choice in your report;
-     avoid anything overly decorative — this still needs to render dense
-     data tables and headers clearly).
-   - Keep Inter for body text (it's genuinely the right choice for dense
-     UI copy - don't change this).
-   - Keep JetBrains Mono for IDs/technical data (also genuinely correct -
-     don't change this).
-
-3. Visual motif (add ONE distinctive recurring element, applied via CSS/
-   Tailwind utility classes, not new components):
-   - Add a subtle background texture to Card components - a very faint
-     (low-opacity, ~3-5%) grid or scanline pattern using CSS
-     background-image (not an image asset - pure CSS gradient/pattern) -
-     this should be nearly subliminal, adding texture without being
-     distracting or hurting readability.
-   - In the Investigation Workspace specifically
-     (app/investigations/[id]/page.tsx), when rendering multiple
-     EvidenceCards that share an indicator (cross-modal corroboration -
-     this data is already available from the risk breakdown/findings you
-     already render), add a subtle visual connector treatment (e.g. a thin
-     accent-colored line or matching indicator-colored tag) between cards
-     sharing that indicator - this visually reinforces the actual
-     cross-modal correlation thesis. Keep this SIMPLE - a shared colored
-     tag/badge on corroborating indicators is sufficient, don't build an
-     elaborate SVG connector system.
-
-4. Update apps/web/lib/tokens.ts as the single source of truth for all new
-   values - no component should have a hardcoded color outside this file
-   (same rule as the original design system).
-
-5. Update docs/design-system.md to reflect the new token values and the
-   design rationale.
-
-QUALITY REQUIREMENTS
-- Zero changes to any component's props, exported interface, or behavior -
-  only className/style/token values change.
-- Zero changes to any file under apps/api/.
-- All existing accessibility guarantees must hold: verify new accent color
-  meets WCAG AA contrast against text on both button and focus-ring use
-  cases - report actual contrast ratios.
-- prefers-reduced-motion and keyboard focus states must still work
-  identically to before.
-- Every page that currently renders (dashboard, workspace, demo picker,
-  login, register, history, reports) must be re-screenshotted after the
-  change to confirm nothing broke visually.
-
-VERIFICATION (run these and report exact output)
-1. `cd apps/web && npm run build` - must succeed, paste output.
-2. `npm run lint` - must report zero errors, paste output.
-3. Screenshot (or detailed description via browser tooling) of: dashboard,
-   investigation workspace with a completed cross-modal investigation
-   (to show the new corroboration-tag treatment), demo picker, login page -
-   before and after comparison if possible.
-4. Report the exact contrast ratio calculations for the new accent color
-   against its usage contexts (button text, focus rings, links).
-5. `cd apps/api && pytest -q` - confirm ZERO regressions since no backend
-   code should have been touched (this is a sanity check that scope was
-   respected).
-
-REPORT BACK TO ME, EXPLICITLY
-- Every token value changed, old vs new, in a table.
-- The display font you chose and why.
-- The corroboration-tag visual treatment you implemented, with a
-  description/screenshot of it in action on a real cross-modal
-  investigation.
-- WCAG contrast ratios for the new accent color.
-- Confirmation apps/api/ was not touched and all 197 backend tests still
-  pass unchanged.
-- All screenshots/descriptions from verification step 3.
-- Any ambiguity resolved on your own, and what you decided.
-
-WHAT MUST NOT CHANGE
-- No component props, interfaces, or behavior.
-- No backend code whatsoever.
-- No new components - style existing ones only, plus the one described
-  corroboration-tag treatment reusing existing Badge/SeverityTag components.
-- The 5-tier severity hue mapping and 4-tier status dot colors stay
+ROLE
+
+You are performing a VISUAL RESTYLE of ThreatWeave's frontend design system.
+
+This is a design-token and component-styling change ONLY — zero functional
+
+changes, zero prop/interface changes to any component, zero changes to
+
+apps/api/. Every component must keep its exact same props/behavior; only
+
+colors, fonts, and visual treatment change.
+
+
+
+CONTEXT
+
+The current design (documented in apps/web/lib/tokens.ts and
+
+docs/design-system.md) uses generic "dark SaaS dashboard" defaults: a
+
+common electric blue accent (#2A66FF), cool navy-black background, and a
+
+common Space Grotesk/Inter pairing. The goal is a distinctive visual
+
+identity specific to a threat-intelligence product, not a generic
+
+dark-mode template.
+
+
+
+NEW DIRECTION: "Signal Intercept"
+
+
+
+1. Color tokens (update apps/web/lib/tokens.ts and globals.css @theme
+
+   blocks — both light AND dark variants if they exist):
+
+   - Replace accent.primary (#2A66FF) with a warm signal-orange/amber:
+
+     #FF6B35 (or refine to a close variant that passes WCAG AA contrast
+
+     against both bg.base and text.primary — verify contrast ratios and
+
+     adjust if needed, report the exact final value and its contrast ratio).
+
+   - Update accent.hover to a darker/deeper variant of the new accent.
+
+   - Update accent.outline (focus ring) to match the new accent at reduced
+
+     opacity.
+
+   - Shift bg.base from #0B0E14 (cool navy-black) to a very slightly warm
+
+     near-black in the #0D0B0A - #0F0D0C range — subtle, not dramatic.
+
+   - Shift bg.surface and bg.elevated to stay consistent with the new
+
+     warmer base (small proportional adjustment, keep the same relative
+
+     lightness steps between base/surface/elevated).
+
+   - Keep the 5-tier severity palette (info/low/medium/high/critical)
+
+     functionally unchanged in hue, but slightly desaturate info and low
+
+     so critical/high read as more visually dominant — report the exact
+
+     before/after hex values.
+
+   - Keep status dot colors unchanged (idle/running/done/failed) — these
+
+     are functionally load-bearing and shouldn't compete with the redesign.
+
+
+
+2. Typography (update font imports in layout.tsx and tokens.ts):
+
+   - Replace Space Grotesk (display font) with a display face that has
+
+     more editorial/field-report character while remaining highly legible
+
+     - a condensed grotesk or a face with slightly more personality (you
+
+     choose a specific Google Font and justify the choice in your report;
+
+     avoid anything overly decorative — this still needs to render dense
+
+     data tables and headers clearly).
+
+   - Keep Inter for body text (it's genuinely the right choice for dense
+
+     UI copy - don't change this).
+
+   - Keep JetBrains Mono for IDs/technical data (also genuinely correct -
+
+     don't change this).
+
+
+
+3. Visual motif (add ONE distinctive recurring element, applied via CSS/
+
+   Tailwind utility classes, not new components):
+
+   - Add a subtle background texture to Card components - a very faint
+
+     (low-opacity, ~3-5%) grid or scanline pattern using CSS
+
+     background-image (not an image asset - pure CSS gradient/pattern) -
+
+     this should be nearly subliminal, adding texture without being
+
+     distracting or hurting readability.
+
+   - In the Investigation Workspace specifically
+
+     (app/investigations/[id]/page.tsx), when rendering multiple
+
+     EvidenceCards that share an indicator (cross-modal corroboration -
+
+     this data is already available from the risk breakdown/findings you
+
+     already render), add a subtle visual connector treatment (e.g. a thin
+
+     accent-colored line or matching indicator-colored tag) between cards
+
+     sharing that indicator - this visually reinforces the actual
+
+     cross-modal correlation thesis. Keep this SIMPLE - a shared colored
+
+     tag/badge on corroborating indicators is sufficient, don't build an
+
+     elaborate SVG connector system.
+
+
+
+4. Update apps/web/lib/tokens.ts as the single source of truth for all new
+
+   values - no component should have a hardcoded color outside this file
+
+   (same rule as the original design system).
+
+
+
+5. Update docs/design-system.md to reflect the new token values and the
+
+   design rationale.
+
+
+
+QUALITY REQUIREMENTS
+
+- Zero changes to any component's props, exported interface, or behavior -
+
+  only className/style/token values change.
+
+- Zero changes to any file under apps/api/.
+
+- All existing accessibility guarantees must hold: verify new accent color
+
+  meets WCAG AA contrast against text on both button and focus-ring use
+
+  cases - report actual contrast ratios.
+
+- prefers-reduced-motion and keyboard focus states must still work
+
+  identically to before.
+
+- Every page that currently renders (dashboard, workspace, demo picker,
+
+  login, register, history, reports) must be re-screenshotted after the
+
+  change to confirm nothing broke visually.
+
+
+
+VERIFICATION (run these and report exact output)
+
+1. `cd apps/web && npm run build` - must succeed, paste output.
+
+2. `npm run lint` - must report zero errors, paste output.
+
+3. Screenshot (or detailed description via browser tooling) of: dashboard,
+
+   investigation workspace with a completed cross-modal investigation
+
+   (to show the new corroboration-tag treatment), demo picker, login page -
+
+   before and after comparison if possible.
+
+4. Report the exact contrast ratio calculations for the new accent color
+
+   against its usage contexts (button text, focus rings, links).
+
+5. `cd apps/api && pytest -q` - confirm ZERO regressions since no backend
+
+   code should have been touched (this is a sanity check that scope was
+
+   respected).
+
+
+
+REPORT BACK TO ME, EXPLICITLY
+
+- Every token value changed, old vs new, in a table.
+
+- The display font you chose and why.
+
+- The corroboration-tag visual treatment you implemented, with a
+
+  description/screenshot of it in action on a real cross-modal
+
+  investigation.
+
+- WCAG contrast ratios for the new accent color.
+
+- Confirmation apps/api/ was not touched and all 197 backend tests still
+
+  pass unchanged.
+
+- All screenshots/descriptions from verification step 3.
+
+- Any ambiguity resolved on your own, and what you decided.
+
+
+
+WHAT MUST NOT CHANGE
+
+- No component props, interfaces, or behavior.
+
+- No backend code whatsoever.
+
+- No new components - style existing ones only, plus the one described
+
+  corroboration-tag treatment reusing existing Badge/SeverityTag components.
+
+- The 5-tier severity hue mapping and 4-tier status dot colors stay
+
   functionally the same (only severity saturation may adjust slightly).
 ```
 
@@ -15575,17 +18776,28 @@ Calculated using standard relative luminance ($L = 0.2126R + 0.7152G + 0.0722B$)
 #### User Request
 
 ```text
-pasted
-
-This is a well-executed pass — the rationale is sound throughout: the WCAG contrast math is real and shows work (6.88:1 comfortably clears AA), the scanline texture is genuinely clever (pure CSS, no asset weight, thematically appropriate for a "signal intercept" concept rather than decorative for its own sake), and the corroboration badge is exactly the kind of feature-specific visual signature I was hoping for — it makes the cross-modal correlation thesis visible in the UI itself, not just in the risk breakdown numbers. Zero backend regression, clean build/lint/typecheck. The Barlow Condensed choice for a "SIGINT terminal" feel is a smart, specific justification rather than an arbitrary swap.
-
-One real gap: I don't actually have screenshots. I explicitly asked for step 3's visual verification (dashboard, workspace, demo picker, login — before/after), and the report describes the changes in text but doesn't include the actual rendered images. Given the whole point of this exercise was "it looks too standard" — a subjective visual judgment — I can't confirm the redesign actually solves that problem without seeing it.
-
-Can you get Antigravity to actually attach/paste screenshots (not just describe them) of:
-
-The dashboard (/)
-The investigation workspace on a completed cross-modal investigation — specifically showing the new corroboration badge in action
-The demo picker (/demo)
+pasted
+
+
+
+This is a well-executed pass — the rationale is sound throughout: the WCAG contrast math is real and shows work (6.88:1 comfortably clears AA), the scanline texture is genuinely clever (pure CSS, no asset weight, thematically appropriate for a "signal intercept" concept rather than decorative for its own sake), and the corroboration badge is exactly the kind of feature-specific visual signature I was hoping for — it makes the cross-modal correlation thesis visible in the UI itself, not just in the risk breakdown numbers. Zero backend regression, clean build/lint/typecheck. The Barlow Condensed choice for a "SIGINT terminal" feel is a smart, specific justification rather than an arbitrary swap.
+
+
+
+One real gap: I don't actually have screenshots. I explicitly asked for step 3's visual verification (dashboard, workspace, demo picker, login — before/after), and the report describes the changes in text but doesn't include the actual rendered images. Given the whole point of this exercise was "it looks too standard" — a subjective visual judgment — I can't confirm the redesign actually solves that problem without seeing it.
+
+
+
+Can you get Antigravity to actually attach/paste screenshots (not just describe them) of:
+
+
+
+The dashboard (/)
+
+The investigation workspace on a completed cross-modal investigation — specifically showing the new corroboration badge in action
+
+The demo picker (/demo)
+
 Once I can actually see it, I'll give you direct feedback on whether "Signal Intercept" lands as distinctive or whether the amber/warm-black direction needs further iteration (e.g., some warm-toned dark themes can start looking slightly muddy rather than crisp if the warm shift is too aggressive — that's exactly the kind of thing I need eyes on, not just hex math, to judge).
 ```
 
@@ -15712,60 +18924,114 @@ All screenshot images have been copied into the repository under `docs/screensho
 #### User Request
 
 ```text
-ROLE
-You are producing a comprehensive, CURRENT-STATE audit of the ThreatWeave
-project for documentation purposes. Read everything fresh — do not rely on
-memory of earlier phases, since files have changed since they were built.
-
-TASKS
-
-1. Full repository tree: run a recursive directory listing (excluding
-   node_modules, venv, .git, __pycache__, .next) and present it cleanly.
-
-2. Backend structure summary: for apps/api/app/, list every module with a
-   one-line description of its actual current responsibility (read each
-   file's docstring/top-level comment, don't guess from the filename alone).
-
-3. Frontend structure summary: for apps/web/, same treatment — every
-   page, component, and lib file with a one-line real description.
-
-4. Design system audit (CRITICAL for the next step): read
-   apps/web/lib/tokens.ts and apps/web/app/globals.css in full and report:
-   - Every color token and its actual hex value currently in use.
-   - Every font family in use and where each is applied.
-   - Every spacing/radius value defined.
-   - List every component in components/ui/ with a one-line description of
-     what it renders and what props it accepts.
-   - Take screenshots (or describe in detail via browser tooling if
-     available) of: the dashboard (/), the investigation workspace
-     ([id] page with a completed investigation), the demo picker (/demo),
-     and the login page — this is the actual current visual state, not
-     what was originally speced.
-
-5. API surface summary: list every mounted route across all routers
-   (api/v1/router.py and everything it includes), with method, path, and
-   one-line purpose.
-
-6. Database schema summary: list every table (from app/models/) with its
-   columns and relationships, current as of the latest migration.
-
-7. Environment/config summary: list every setting in core/config.py with
-   its current default and whether it's required.
-
-8. Dependency summary: list apps/api/requirements.txt and
-   apps/web/package.json's key dependencies (not every transitive one) with
-   a one-line note on what each is used for in this project specifically.
-
-9. Test coverage summary: list every test file with its test count.
-
-10. Current known gaps: cross-reference docs/known-limitations.md (Phase 18)
-    and confirm it's still accurate given anything that's changed since.
-
-OUTPUT FORMAT
-Produce this as a single markdown document I can read end-to-end, organized
-under the headings above. Be exhaustive but not verbose — one line per item
-where possible, not paragraphs. This is a reference document, not prose.
-
+ROLE
+
+You are producing a comprehensive, CURRENT-STATE audit of the ThreatWeave
+
+project for documentation purposes. Read everything fresh — do not rely on
+
+memory of earlier phases, since files have changed since they were built.
+
+
+
+TASKS
+
+
+
+1. Full repository tree: run a recursive directory listing (excluding
+
+   node_modules, venv, .git, __pycache__, .next) and present it cleanly.
+
+
+
+2. Backend structure summary: for apps/api/app/, list every module with a
+
+   one-line description of its actual current responsibility (read each
+
+   file's docstring/top-level comment, don't guess from the filename alone).
+
+
+
+3. Frontend structure summary: for apps/web/, same treatment — every
+
+   page, component, and lib file with a one-line real description.
+
+
+
+4. Design system audit (CRITICAL for the next step): read
+
+   apps/web/lib/tokens.ts and apps/web/app/globals.css in full and report:
+
+   - Every color token and its actual hex value currently in use.
+
+   - Every font family in use and where each is applied.
+
+   - Every spacing/radius value defined.
+
+   - List every component in components/ui/ with a one-line description of
+
+     what it renders and what props it accepts.
+
+   - Take screenshots (or describe in detail via browser tooling if
+
+     available) of: the dashboard (/), the investigation workspace
+
+     ([id] page with a completed investigation), the demo picker (/demo),
+
+     and the login page — this is the actual current visual state, not
+
+     what was originally speced.
+
+
+
+5. API surface summary: list every mounted route across all routers
+
+   (api/v1/router.py and everything it includes), with method, path, and
+
+   one-line purpose.
+
+
+
+6. Database schema summary: list every table (from app/models/) with its
+
+   columns and relationships, current as of the latest migration.
+
+
+
+7. Environment/config summary: list every setting in core/config.py with
+
+   its current default and whether it's required.
+
+
+
+8. Dependency summary: list apps/api/requirements.txt and
+
+   apps/web/package.json's key dependencies (not every transitive one) with
+
+   a one-line note on what each is used for in this project specifically.
+
+
+
+9. Test coverage summary: list every test file with its test count.
+
+
+
+10. Current known gaps: cross-reference docs/known-limitations.md (Phase 18)
+
+    and confirm it's still accurate given anything that's changed since.
+
+
+
+OUTPUT FORMAT
+
+Produce this as a single markdown document I can read end-to-end, organized
+
+under the headings above. Be exhaustive but not verbose — one line per item
+
+where possible, not paragraphs. This is a reference document, not prose.
+
+
+
 Save it as docs/project-state-snapshot.md and report when done.
 ```
 

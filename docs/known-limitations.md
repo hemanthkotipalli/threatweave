@@ -60,6 +60,14 @@ Documenting these limitations is a deliberate engineering practice: knowing prec
 
 ---
 
+## 8. Git History Secret Scrubbing & Pre-Publication Rewrite
+* **Current Status:** The working-tree documentation (`docs/full-conversation-history.md`) has had all historical Groq API keys scrubbed and replaced with `gsk_REDACTED_FOR_SECURITY`. Real `.env` files remain untracked via `.gitignore`.
+* **Deferred Action:** Historical commits prior to Batch 4 (specifically commit `36dbf8a`) contain historical conversation transcript logs that captured legacy Groq API keys. Active keys are immediately rotated at `console.groq.com`.
+* **Engineering Decision:** A disruptive git history rewrite (`git filter-repo` or BFG Repo-Cleaner) was deliberately deferred during active private development because rewriting commit SHAs breaks existing clones, local branch tracking, and CI/CD caching for minimal operational security benefit once keys are revoked.
+* **Mandatory Pre-Public Requirement:** Prior to converting this repository from private to public or publishing to open-source hosts (e.g. GitHub public), a full git history purge (`git filter-repo --replace-text` or BFG) MUST be executed to purge historical secret artifacts from all packfiles and refs.
+
+---
+
 ## Summary Matrix
 
 | Capability Dimension | Production Ideal | ThreatWeave Current Implementation | Architectural Rationale |
@@ -70,3 +78,4 @@ Documenting these limitations is a deliberate engineering practice: knowing prec
 | **Voice Deepfake** | Neural biometrics / vocoder artifacts | Vishing script analysis + weak acoustic cues | Honest refusal to claim unproven detection capability |
 | **LLM Inference** | Dedicated enterprise LLM cluster | Groq API with deterministic heuristic fallback | Resilient operation without mandatory paid infrastructure |
 | **Scaling** | Distributed task queue (Celery/K8s) | Async FastAPI + ThreadPool worker pools | Low operational complexity for evaluation & demonstration |
+| **History Secrets** | Zero historical secrets in git log | Scrubbed in working tree; history rewrite deferred | Preserves commit DAG stability until public repo release |
