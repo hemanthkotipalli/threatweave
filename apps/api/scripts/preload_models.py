@@ -44,7 +44,21 @@ def preload_whisper():
         sys.exit(1)
 
 
+def preload_sentence_transformer():
+    log.info("Pre-loading sentence-transformers 'all-MiniLM-L6-v2' (CPU)...")
+    try:
+        from sentence_transformers import SentenceTransformer
+        model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
+        model.encode("ThreatWeave threat intelligence advisory pre-cache", convert_to_numpy=True)
+        log.info("sentence-transformers 'all-MiniLM-L6-v2' pre-loaded successfully.")
+        del model
+    except Exception as exc:  # noqa: BLE001
+        log.error("sentence-transformers pre-load FAILED: %s", exc)
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     preload_easyocr()
     preload_whisper()
+    preload_sentence_transformer()
     log.info("All model weights cached. Image is demo-ready.")
