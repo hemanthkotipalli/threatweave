@@ -3,6 +3,7 @@ import sys
 from logging.config import fileConfig
 
 from sqlalchemy import create_engine, pool
+from sqlalchemy.engine.url import make_url
 
 from alembic import context
 
@@ -55,6 +56,13 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    _db_url = make_url(settings.DATABASE_URL)
+    print(
+        f"[DB Startup Diagnostic] driver={_db_url.drivername} | user={_db_url.username} | "
+        f"host={_db_url.host} | port={_db_url.port} | db={_db_url.database}",
+        flush=True,
+    )
+
     connectable = create_engine(
         settings.DATABASE_URL,
         poolclass=pool.NullPool,
