@@ -9,6 +9,8 @@ with automatic fallback to local persistent storage (CHROMA_PATH) for offline re
 from __future__ import annotations
 
 import logging
+import threading
+import time
 from typing import Any
 
 import chromadb
@@ -22,6 +24,7 @@ COLLECTION_NAME = "advisories"
 _CLIENT_INSTANCE: ClientAPI | None = None
 _WARMUP_IN_PROGRESS: bool = False
 _RAG_READY: bool = False
+_WARMUP_LOCK = threading.Lock()
 
 
 def is_rag_ready() -> bool:
@@ -37,24 +40,63 @@ def is_rag_warming_up() -> bool:
 def warmup_rag() -> bool:
     """
     Pre-initializes ChromaDB connection and warms the advisory collection.
+    If the collection is empty (e.g. fresh ephemeral container deployment),
+    automatically invokes the existing idempotent corpus ingestion engine.
     Executed in a background thread during application startup to avoid blocking
     the FastAPI lifespan, ensuring /health is immediately responsive.
 
-    :return: True if collection is ready, False if warmup encountered an error.
+    :return: True if collection is ready and populated, False otherwise.
     """
     global _WARMUP_IN_PROGRESS, _RAG_READY
+
+    # Prevent concurrent or duplicate warmup runs within the same process
+    if not _WARMUP_LOCK.acquire(blocking=False):
+        logger.info("ChromaDB warmup/ingestion is already running in another thread; skipping concurrent call.")
+        return _RAG_READY
+
     _WARMUP_IN_PROGRESS = True
     try:
         col = get_or_create_advisory_collection()
-        _ = col.count()
+        cnt = col.count()
+
+        if cnt == 0:
+            logger.info("ChromaDB 'advisories' collection is empty. Auto-ingesting curated advisory corpus...")
+            t0 = time.perf_counter()
+            from app.rag.ingest import ingest_corpus
+
+            result = ingest_corpus()
+            duration = time.perf_counter() - t0
+
+            # Re-verify count after ingestion
+            cnt = col.count()
+            if cnt > 0:
+                logger.info(
+                    "Automatic corpus ingestion successful in %.2fs: %d chunks indexed across %d source files (status: %s)",
+                    duration,
+                    cnt,
+                    result.get("total_files", 0),
+                    result.get("status", "ok"),
+                )
+                _RAG_READY = True
+                return True
+
+            logger.error(
+                "Automatic corpus ingestion finished but 'advisories' collection remains empty (count=0). RAG marked not ready."
+            )
+            _RAG_READY = False
+            return False
+
+        logger.info("ChromaDB 'advisories' collection ready with %d existing documents", cnt)
         _RAG_READY = True
-        logger.info("ChromaDB background warmup complete: 'advisories' collection ready")
         return True
+
     except Exception as exc:  # noqa: BLE001
-        logger.warning("ChromaDB background warmup encountered an error (will retry on demand): %s", exc)
+        logger.warning("ChromaDB warmup/ingestion encountered an error (will retry on demand): %s", exc)
+        _RAG_READY = False
         return False
     finally:
         _WARMUP_IN_PROGRESS = False
+        _WARMUP_LOCK.release()
 
 
 def get_chroma_client() -> ClientAPI:
