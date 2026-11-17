@@ -11,7 +11,14 @@ Models pre-cached:
   - faster-whisper 'base' model (CTranslate2 int8 format, ~145 MB)
 """
 import logging
+import os
 import sys
+from pathlib import Path
+
+# Ensure apps/api root is on sys.path so app modules can be imported
+_API_ROOT = Path(__file__).resolve().parent.parent
+if str(_API_ROOT) not in sys.path:
+    sys.path.insert(0, str(_API_ROOT))
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 log = logging.getLogger("model-preload")
@@ -57,8 +64,36 @@ def preload_sentence_transformer():
         sys.exit(1)
 
 
+def preload_chroma_corpus():
+    """
+    Pre-indexes all 24 advisory documents into ChromaDB during Docker build.
+    This bakes the vector collection into the image layer, eliminating memory-intensive
+    runtime batch-encoding at startup and preventing Render Free 512MB OOM restarts.
+    """
+    log.info("Pre-indexing advisory corpus into ChromaDB during Docker build...")
+    try:
+        import os
+
+        # Provide fallback build-time environment variables for Settings validation
+        os.environ.setdefault("DATABASE_URL", "postgresql://build:build@localhost:5432/build")
+        os.environ.setdefault("CHROMA_PATH", "/app/chroma_db" if os.path.exists("/app") else "./chroma_db")
+        os.environ.setdefault("GROQ_API_KEY", "build_dummy_groq_key")
+        os.environ.setdefault("OMP_NUM_THREADS", "1")
+        os.environ.setdefault("MKL_NUM_THREADS", "1")
+        os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+
+        from app.rag.ingest import ingest_corpus
+
+        res = ingest_corpus()
+        log.info("ChromaDB build-time pre-index complete: %s", res)
+    except Exception as exc:  # noqa: BLE001
+        log.error("ChromaDB pre-index FAILED: %s", exc)
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     preload_easyocr()
     preload_whisper()
     preload_sentence_transformer()
-    log.info("All model weights cached. Image is demo-ready.")
+    preload_chroma_corpus()
+    log.info("All model weights and vector indices cached. Image is demo-ready.")

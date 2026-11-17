@@ -69,6 +69,12 @@ RUN useradd -m -u 1001 appuser
 
 WORKDIR /app
 
+# Set single-thread limits to keep PyTorch CPU memory usage well under Render Free 512MB
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    CHROMA_PATH=/app/chroma_db
+
 # Copy the installed venv from builder stage — this is the core of the
 # multi-stage benefit: build tools and .whl caches do NOT enter this stage.
 COPY --from=builder /venv /venv

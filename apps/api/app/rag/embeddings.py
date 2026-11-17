@@ -9,8 +9,26 @@ with lazy singleton initialization. No external API keys required.
 from __future__ import annotations
 
 import logging
+import os
 import threading
 from typing import TYPE_CHECKING
+
+# Restrict PyTorch and BLAS backends to 1 thread to avoid memory spikes on low-RAM containers
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+
+try:
+    import torch
+
+    torch.set_num_threads(1)
+    if hasattr(torch, "set_num_interop_threads"):
+        try:
+            torch.set_num_interop_threads(1)
+        except RuntimeError:
+            pass
+except ImportError:
+    pass
 
 if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer
