@@ -39,6 +39,19 @@ def _get_whisper_model() -> WhisperModel:
     return _WHISPER_MODEL
 
 
+def release_whisper_memory() -> None:
+    """
+    Explicitly releases the cached WhisperModel instance from memory.
+    """
+    global _WHISPER_MODEL
+    if _WHISPER_MODEL is not None:
+        logger.info("Releasing faster-whisper model from memory")
+        del _WHISPER_MODEL
+        _WHISPER_MODEL = None
+        import gc
+        gc.collect()
+
+
 def transcribe_audio(audio_bytes: bytes) -> tuple[str, float]:
     """
     Transcribes raw audio bytes into text and returns an estimated confidence score.
@@ -58,8 +71,8 @@ def transcribe_audio(audio_bytes: bytes) -> tuple[str, float]:
         model = _get_whisper_model()
         audio_stream = io.BytesIO(audio_bytes)
 
-        # Transcribe audio stream
-        segments, _info = model.transcribe(audio_stream, beam_size=5)
+        # Transcribe audio stream with greedy decoding (beam_size=1) for lower memory & higher throughput
+        segments, _info = model.transcribe(audio_stream, beam_size=1)
 
         segment_texts: list[str] = []
         confidences: list[float] = []
@@ -73,6 +86,10 @@ def transcribe_audio(audio_bytes: bytes) -> tuple[str, float]:
                 if logprob is not None:
                     prob = math.exp(max(logprob, -10.0))
                     confidences.append(max(0.0, min(1.0, prob)))
+
+        del audio_stream
+        import gc
+        gc.collect()
 
         transcript = " ".join(segment_texts).strip()
         if not transcript:

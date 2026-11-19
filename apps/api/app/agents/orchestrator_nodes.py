@@ -157,19 +157,46 @@ def plan_node(state: InvestigationState) -> dict[str, Any]:
                     "file_path": file_path,
                 })
 
-                # Check surrounding context
-                ocr_text, _ = extract_text(image_bytes) if image_bytes else ("", 0.0)
-                if len(ocr_text.strip()) > 15:
-                    logger.info("Surrounding OCR text detected in QR image %s (%d chars) -> also scheduling image_agent", ev_id, len(ocr_text))
-                    required_agents.append({
-                        "agent_name": "image_agent",
-                        "evidence_input_id": ev_id,
-                        "modality": "image",
-                        "content_ref": None,
-                        "file_path": file_path,
-                    })
+                # Optimized QR-vs-Image routing: avoid heavy OCR initialization for dedicated QR images
+                is_composite_document = False
+                try:
+                    import cv2
+                    import numpy as np
+                    nparr = np.frombuffer(image_bytes, np.uint8)
+                    cv_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    if cv_img is not None:
+                        det = cv2.QRCodeDetector()
+                        _, pts, _ = det.detectAndDecode(cv_img)
+                        if pts is not None and len(pts) > 0:
+                            x_min, y_min = np.min(pts[0], axis=0)
+                            x_max, y_max = np.max(pts[0], axis=0)
+                            qr_area = max(1.0, float((x_max - x_min) * (y_max - y_min)))
+                            canvas_area = max(1.0, float(cv_img.shape[0] * cv_img.shape[1]))
+                            coverage_ratio = qr_area / canvas_area
+                            # Dedicated QR images occupy >45% of the canvas.
+                            # Composite documents (flyers/notices) have low QR coverage (<45%) or large surrounding canvas
+                            if coverage_ratio < 0.45 or (canvas_area - qr_area) > 200000:
+                                is_composite_document = True
+                        else:
+                            is_composite_document = True
+                except Exception:
+                    is_composite_document = True
+
+                if is_composite_document:
+                    ocr_text, _ = extract_text(image_bytes) if image_bytes else ("", 0.0)
+                    if len(ocr_text.strip()) > 15:
+                        logger.info("Surrounding OCR text detected in composite QR image %s (%d chars) -> also scheduling image_agent", ev_id, len(ocr_text))
+                        required_agents.append({
+                            "agent_name": "image_agent",
+                            "evidence_input_id": ev_id,
+                            "modality": "image",
+                            "content_ref": None,
+                            "file_path": file_path,
+                        })
+                    else:
+                        logger.info("Composite QR image %s has minimal surrounding text -> skipping image_agent", ev_id)
                 else:
-                    logger.info("Image %s contains solely QR code with no surrounding text -> skipping image_agent", ev_id)
+                    logger.info("Image %s is a dedicated QR code image -> skipping OCR initialization and image_agent", ev_id)
             else:
                 logger.info("No QR code detected in image input %s -> scheduling image_agent", ev_id)
                 required_agents.append({

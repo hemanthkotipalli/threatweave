@@ -38,6 +38,20 @@ def _get_reader() -> easyocr.Reader:
     return _CACHED_READER
 
 
+def release_ocr_memory() -> None:
+    """
+    Explicitly releases the cached EasyOCR reader and PyTorch weight buffers
+    to prevent memory exhaustion in constrained environments.
+    """
+    global _CACHED_READER
+    if _CACHED_READER is not None:
+        logger.info("Releasing EasyOCR reader from memory")
+        del _CACHED_READER
+        _CACHED_READER = None
+        import gc
+        gc.collect()
+
+
 def extract_text(image_bytes: bytes) -> tuple[str, float]:
     """
     Extracts text and an average confidence score from image bytes.
@@ -61,9 +75,26 @@ def extract_text(image_bytes: bytes) -> tuple[str, float]:
             logger.debug("extract_text: cv2.imdecode failed to parse image bytes")
             return "", 0.0
 
+        # Cap maximum dimension to 1024px to prevent PyTorch CRAFT OOM memory spikes
+        h, w = cv_img.shape[:2]
+        max_dim = max(h, w)
+        if max_dim > 1024:
+            scale = 1024.0 / max_dim
+            new_w = max(1, int(w * scale))
+            new_h = max(1, int(h * scale))
+            cv_img = cv2.resize(cv_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+
+        import torch
+
         reader = _get_reader()
         # readtext returns list of tuples: (bbox, text, confidence)
-        results = reader.readtext(cv_img)
+        with torch.inference_mode():
+            results = reader.readtext(cv_img)
+
+        # Release intermediate image buffer and reclaim unreferenced memory
+        del cv_img, nparr
+        import gc
+        gc.collect()
 
         if not results:
             logger.debug("extract_text: no text detected in image")
