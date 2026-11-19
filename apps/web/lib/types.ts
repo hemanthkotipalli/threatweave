@@ -139,6 +139,7 @@ export interface InvestigationDetail {
   title: string;
   status: "pending" | "running" | "completed" | "failed" | string;
   created_at: string;
+  completed_at?: string | null;
   final_risk_score?: number | null;
   final_severity?: SeverityType | string | null;
   final_confidence?: number | null;
