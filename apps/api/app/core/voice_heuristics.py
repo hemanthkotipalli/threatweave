@@ -97,28 +97,55 @@ def analyze_acoustic_features(audio_bytes: bytes) -> dict[str, Any]:
         return default_result
 
     try:
-        # Attempt to read as WAV audio stream
-        stream = io.BytesIO(audio_bytes)
-        with wave.open(stream, "rb") as wf:
-            n_channels = wf.getnchannels()
-            sampwidth = wf.getsampwidth()
-            framerate = wf.getframerate()
-            n_frames = wf.getnframes()
+        samples: np.ndarray | None = None
+        framerate: int = 16000
 
-            if n_frames < framerate * 0.5:  # Less than 0.5 seconds
-                return default_result
+        # Attempt universal audio decoding (MP3, AAC, OGG, FLAC, WAV) via PyAV
+        try:
+            import av
 
-            raw_frames = wf.readframes(n_frames)
+            container = av.open(io.BytesIO(audio_bytes))
+            audio_stream = next((s for s in container.streams if s.type == "audio"), None)
+            if audio_stream is not None:
+                resampler = av.AudioResampler(format="s16", layout="mono", rate=16000)
+                chunks: list[np.ndarray] = []
+                for frame in container.decode(audio_stream):
+                    frame.pts = None
+                    resampled = resampler.resample(frame)
+                    if resampled:
+                        for rf in resampled:
+                            chunks.append(rf.to_ndarray().flatten())
+                if chunks:
+                    samples = np.concatenate(chunks).astype(np.float32)
+                    framerate = 16000
+        except Exception as av_exc:
+            logger.debug("PyAV decode failed or unavailable (%s), trying wave fallback", av_exc)
 
-        # Convert to numpy array based on sample width
-        dtype_map = {1: np.int8, 2: np.int16, 4: np.int32}
-        dtype = dtype_map.get(sampwidth, np.int16)
-        samples = np.frombuffer(raw_frames, dtype=dtype)
+        # Standard WAV fallback if PyAV was not used or failed
+        if samples is None:
+            stream = io.BytesIO(audio_bytes)
+            with wave.open(stream, "rb") as wf:
+                n_channels = wf.getnchannels()
+                sampwidth = wf.getsampwidth()
+                framerate = wf.getframerate()
+                n_frames = wf.getnframes()
 
-        if n_channels > 1:
-            samples = samples[::n_channels]  # Take first channel
+                if n_frames < framerate * 0.5:  # Less than 0.5 seconds
+                    return default_result
 
-        samples = samples.astype(np.float32)
+                raw_frames = wf.readframes(n_frames)
+
+            dtype_map = {1: np.int8, 2: np.int16, 4: np.int32}
+            dtype = dtype_map.get(sampwidth, np.int16)
+            samples = np.frombuffer(raw_frames, dtype=dtype)
+
+            if n_channels > 1:
+                samples = samples[::n_channels]  # Take first channel
+
+            samples = samples.astype(np.float32)
+
+        if samples is None or len(samples) < framerate * 0.5:
+            return default_result
 
         # Compute energy across 100ms frames
         frame_size = int(framerate * 0.1)

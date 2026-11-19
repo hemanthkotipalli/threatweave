@@ -183,9 +183,13 @@ def analyze_url(url: str) -> EvidenceItem:
         if reputation_data:
             evidence["reputation"] = reputation_data
 
-        # Build user content for LLM: the pre-computed findings, not the raw URL
+        # Build user content for LLM: structural findings and sanitized URL components
+        from urllib.parse import urlparse
+        parsed_url = urlparse(url)
         user_content = json.dumps({
             "url_structure_summary": {
+                "hostname": parsed_url.hostname or "",
+                "path": parsed_url.path or "",
                 "indicators_found": indicators,
                 "suggested_severity": suggested_severity,
                 "heuristic_details": details,
@@ -209,6 +213,20 @@ def analyze_url(url: str) -> EvidenceItem:
             finding = str(parsed.get("finding", "URL structural analysis completed."))
             reasoning = str(parsed.get("reasoning", "Analysis completed by LLM."))
             llm_confidence = parsed.get("confidence")
+            llm_severity = str(parsed.get("severity", "")).lower()
+
+            # Intelligent severity reconciliation:
+            # If structural heuristics identified 2+ corroborating flags and the LLM
+            # assesses high-confidence phishing/malicious intent, reconcile severity up to 'high'.
+            # Never elevate clean URLs or lone weak signals.
+            if (
+                llm_severity in ("high", "critical")
+                and len(indicators) >= 2
+                and suggested_severity in ("low", "medium")
+            ):
+                suggested_severity = "high"
+                logger.info("URL severity reconciled to 'high' based on corroborated structural and semantic signals.")
+
             if llm_confidence is not None:
                 # Blend: 70% heuristic baseline, 30% LLM confidence
                 confidence = round(
@@ -217,7 +235,7 @@ def analyze_url(url: str) -> EvidenceItem:
             confidence = max(0.0, min(1.0, confidence))
             status = "ok"
 
-        except (ExternalServiceError, json.JSONDecodeError, TypeError, KeyError, ValueError, RuntimeError) as llm_err:
+        except Exception as llm_err:
             logger.warning(
                 "LLM synthesis failed (%s) — using template fallback.", llm_err
             )

@@ -100,11 +100,13 @@ def compute_risk(
         avg_confidence = sum(confidences) / len(confidences)
 
     # 3. Corroboration Bonus
-    # Group findings by shared indicator strings across DIFFERENT agents
-    # For each group of 2+ agents, +0.10 per additional agent beyond first, capped at +0.25 total
+    # Group findings by shared indicator strings across DIFFERENT agents (exact + semantic category)
+    # Exact match: +0.10 per additional agent beyond first; Semantic category: +0.05 per additional agent
+    # Capped at +0.25 total
     corroboration_groups = find_corroboration(included_findings)
     raw_corroboration_bonus = sum(
-        0.10 * (len(group["agents"]) - 1) for group in corroboration_groups
+        (0.05 if group.get("is_semantic_category") else 0.10) * (len(group["agents"]) - 1)
+        for group in corroboration_groups
     )
     corroboration_bonus = min(0.25, raw_corroboration_bonus)
 

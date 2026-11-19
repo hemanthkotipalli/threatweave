@@ -65,6 +65,15 @@ _SUSPICIOUS_TLDS: frozenset[str] = frozenset({
     ".icu",
     ".pw",
     ".cc",
+    ".bid",
+    ".club",
+    ".live",
+    ".vip",
+    ".space",
+    ".buzz",
+    ".work",
+    ".cam",
+    ".rest",
 })
 
 # Commonly-impersonated brand domains in Indian banking / UPI / government
@@ -90,6 +99,9 @@ _BRAND_DOMAINS: list[str] = [
     "irctc.co.in",
     "uidai.gov.in",
     "epfindia.gov.in",
+    "airtel.in",
+    "jio.com",
+    "tneb.in",
     "paypal.com",
     "amazon.in",
     "amazon.com",
@@ -99,12 +111,13 @@ _BRAND_DOMAINS: list[str] = [
 ]
 
 # Path/query patterns that are structurally suspicious (credential harvesting
-# paths, encoded redirects, etc.)
+# paths, encoded redirects, executable downloads, etc.)
 _SUSPICIOUS_PATH_PATTERNS: list[re.Pattern[str]] = [
     re.compile(r"(?i)(login|signin|verify|update|secure|account|password|credential)"),
     re.compile(r"(?i)(paypal|amazon|apple|microsoft|google|facebook|instagram)"),
     re.compile(r"(?i)(%[0-9a-f]{2}){5,}"),   # Heavy URL encoding
     re.compile(r"(?i)(cmd=|exec=|redirect=|return=|next=)"),
+    re.compile(r"(?i)\.(apk|exe|dmg|bat|vbs|scr|iso|msi)(\?|$)"),  # Executable download lure
 ]
 
 
@@ -365,6 +378,13 @@ def lookalike_score(url: str) -> tuple[float, str]:
                     score_tok_norm = 1.0 - (dist_tok_norm / max_tok)
 
                     tok_best = min(max(score_tok, score_tok_norm), 0.95)
+                    # Detect brand prefix combosquatting (e.g. hdfc in hdfc-netbanking where brand is hdfcbank)
+                    if (
+                        brand_stem.startswith(tok)
+                        and len(tok) >= 4
+                    ) or (tok == "sbi" and brand_stem in ("sbi", "onlinesbi")):
+                        tok_best = max(tok_best, 0.92)
+
                     if tok_best > best_score:
                         best_score = tok_best
                         best_brand = brand
@@ -377,19 +397,28 @@ def lookalike_score(url: str) -> tuple[float, str]:
 
 def _has_ip_userinfo(url: str) -> bool:
     """
-    Detects URLs where an IP address is embedded in the userinfo (before @).
-    E.g.: http://192.168.1.1@paypa1-verify.tk/login
-    Attackers use this to make the URL appear to point to a trusted IP while
-    actually sending the user to a different host.
-    Returns True if urlparse reveals an IP-looking username.
+    Detects URLs where an IP address or deceptive authority is embedded in userinfo (before @).
+    E.g.: http://192.168.1.1@paypa1-verify.tk/login or http://user:pass@legit-sbi.com@attacker.ru/verify
+    Attackers use this to confuse browsers and users regarding the true destination host.
     """
     try:
         parsed = urlparse(url)
         username = parsed.username or ""
-        if not username:
-            return False
-        ipaddress.ip_address(username)
-        return True
+        netloc = (parsed.netloc or "").lower()
+        if username:
+            try:
+                ipaddress.ip_address(username)
+                return True
+            except ValueError:
+                pass
+        # Check multiple @ symbols or deceptive brand names inside userinfo
+        if netloc.count("@") >= 1:
+            userinfo_part = netloc[:netloc.rfind("@")]
+            if "@" in userinfo_part:
+                return True
+            if any(b in userinfo_part for b in ("sbi", "hdfc", "icici", "axis", "login", "verify", "secure", "bank")):
+                return True
+        return False
     except (ValueError, AttributeError):
         return False
 
@@ -472,11 +501,11 @@ def run_heuristics(url: str) -> dict:
     if lk_score >= 0.75 and lk_score < 1.0:
         indicators.append("lookalike_domain")
 
-    # Suspicious path adds structural flag when any strong indicator is present
-    # (login/verify/credential paths on an IP host or lookalike = high-risk combo)
+    # Suspicious path adds structural flag when any strong indicator or corroborating context is present
+    # (login/verify/credential/apk paths on an IP host, lookalike, bad TLD, or unencrypted HTTP = high-risk combo)
     if (
         suspicious_path
-        and ("ip_address_url" in indicators or "lookalike_domain" in indicators)
+        and ("ip_address_url" in indicators or "lookalike_domain" in indicators or bad_tld or not https_ok)
         and "suspicious_url_structure" not in indicators
     ):
         indicators.append("suspicious_url_structure")
@@ -497,7 +526,11 @@ def run_heuristics(url: str) -> dict:
         or flag_count >= 4
     ):
         severity = "critical"
-    elif flag_count >= 3 and has_strong or flag_count >= 2 and "ip_address_url" in indicators:
+    elif (
+        (flag_count >= 3 and has_strong)
+        or (flag_count >= 2 and "ip_address_url" in indicators)
+        or ("lookalike_domain" in indicators and flag_count >= 2)
+    ):
         severity = "high"
     elif flag_count >= 2:
         severity = "medium"

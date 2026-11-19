@@ -301,7 +301,7 @@ def analyze_voice(audio_bytes: bytes) -> EvidenceItem:
                 confidence = max(0.0, min(1.0, confidence))
                 status = "ok"
 
-            except (ExternalServiceError, json.JSONDecodeError, TypeError, KeyError, ValueError, RuntimeError) as llm_err:
+            except Exception as llm_err:
                 logger.warning("LLM synthesis failed for Voice Agent (%s) — using fallback template", llm_err)
                 finding, reasoning = _build_fallback_finding(indicators, final_severity, transcript)
                 status = "degraded_fallback"

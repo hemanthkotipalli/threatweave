@@ -156,6 +156,43 @@ class TestTextAgentFallbackPath:
         assert result.status == "degraded_fallback"
         assert result.severity in ("info", "low")
 
+    def test_fallback_indian_scam_power_cut_phishing(self) -> None:
+        """
+        Tests fallback detection of an Indian electricity disconnection scam message.
+        """
+        scam_text = (
+            "Dear customer electricity power will be disconnected tonight at 9.30 PM from BESCOM office. "
+            "Please immediately contact our officer and update your kyc: 9876543210"
+        )
+        with patch(
+            "app.agents.text_agent.call_llm",
+            side_effect=ExternalServiceError(message="API unavailable", code="timeout")
+        ):
+            result = analyze_text(scam_text)
+
+        assert isinstance(result, EvidenceItem)
+        assert result.status == "degraded_fallback"
+        assert "urgency_language" in result.indicators
+        assert "impersonation_claim" in result.indicators
+        assert "credential_request" in result.indicators
+        assert result.severity in ("high", "critical")
+
+    def test_fallback_isolated_word_avoids_high_severity(self) -> None:
+        """
+        Tests that an isolated single financial or urgency word without corroboration
+        does not jump to high or critical severity.
+        """
+        isolated_text = "Here are my bank details for the split bill."
+        with patch(
+            "app.agents.text_agent.call_llm",
+            side_effect=ExternalServiceError(message="API unavailable", code="timeout")
+        ):
+            result = analyze_text(isolated_text)
+
+        assert isinstance(result, EvidenceItem)
+        assert result.status == "degraded_fallback"
+        assert result.severity in ("low", "medium")
+
 
 class TestTextAgentSafetyNet:
     """Tests the absolute safety net: analyze_text must never raise."""

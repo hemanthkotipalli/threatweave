@@ -119,6 +119,28 @@ class TestVoiceHeuristics:
         assert res["confidence_contribution"] == 0.0
         assert res["is_monotone_cadence"] is False
 
+    def test_acoustic_features_on_non_wav_container(self):
+        """Acoustic feature analysis must decode non-WAV formats (FLAC/OGG/MP3) via PyAV."""
+        import av
+
+        bio = io.BytesIO()
+        container = av.open(bio, mode="w", format="flac")
+        stream = container.add_stream("flac", rate=16000)
+        t = np.linspace(0, 2.0, 32000)
+        samples = (np.sin(2 * np.pi * 440 * t) * 8000).astype(np.int16)
+        frame = av.AudioFrame.from_ndarray(samples.reshape(1, -1), format="s16", layout="mono")
+        frame.rate = 16000
+        for packet in stream.encode(frame):
+            container.mux(packet)
+        for packet in stream.encode(None):
+            container.mux(packet)
+        container.close()
+
+        flac_bytes = bio.getvalue()
+        acoustic = analyze_acoustic_features(flac_bytes)
+        assert acoustic["is_monotone_cadence"] is True
+        assert acoustic["indicator"] == "ai_voice_indicator_weak"
+
 
 class TestSttEngine:
     def test_stt_transcribes_valid_audio(self):
@@ -271,13 +293,14 @@ class TestVoiceAgentTempfileCleanup:
         by the try/finally cleanup block, and voice_agent safely returns failed status.
         """
         tone_bytes = _create_synthetic_tone_wav(duration_sec=1.0)
+        temp_dir = tempfile.gettempdir()
+        existing_wavs = set(os.listdir(temp_dir))
         captured_temp_files: list[str] = []
 
         def crashing_stt(audio_bytes: bytes):
-            # Inspect the temp directory for any .wav files created by temporary_audio_file
-            temp_dir = tempfile.gettempdir()
+            # Inspect the temp directory for any new .wav files created by temporary_audio_file
             for fname in os.listdir(temp_dir):
-                if fname.endswith(".wav"):
+                if fname.endswith(".wav") and fname not in existing_wavs:
                     full_path = os.path.join(temp_dir, fname)
                     if full_path not in captured_temp_files:
                         captured_temp_files.append(full_path)

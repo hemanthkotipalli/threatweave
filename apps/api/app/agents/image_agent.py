@@ -280,7 +280,7 @@ def analyze_image(image_bytes: bytes) -> EvidenceItem:
                 confidence = round(0.7 * confidence + 0.3 * float(llm_conf), 4)
             confidence = max(0.0, min(1.0, confidence))
             status = "ok"
-        except (ExternalServiceError, json.JSONDecodeError, TypeError, KeyError, ValueError) as llm_err:
+        except Exception as llm_err:
             logger.warning("LLM synthesis failed for Image Agent (%s) — using fallback template", llm_err)
             finding, reasoning = _build_fallback_finding(indicators, final_severity, extracted_text)
             status = "degraded_fallback"

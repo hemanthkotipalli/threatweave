@@ -82,6 +82,16 @@ class TestImageHeuristics:
         text = "Meeting scheduled tomorrow with Ramesh Kumar at office."
         assert has_payment_confirmation_pattern(text) is False
 
+    def test_genuine_retail_tax_invoice_not_flagged_as_fake_payment(self):
+        """Standard supermarket retail tax invoice should not be flagged as fake payment proof."""
+        invoice_text = "Tax Invoice #8831. Store: Daily Needs Supermarket. Subtotal: Rs. 450. Total Paid: Rs. 450. GSTIN: 29ABCDE1234F1Z5."
+        assert has_payment_confirmation_pattern(invoice_text) is False
+
+    def test_doctored_invoice_with_urgency_flagged_as_fake_payment(self):
+        """Invoice accompanied by urgent threats or coercion should still be flagged."""
+        fraud_text = "Tax Invoice #8831. Paid: Rs. 450. URGENT: Account suspended immediately."
+        assert has_payment_confirmation_pattern(fraud_text) is True
+
     def test_impersonation_positive(self):
         text = "SBI Warning: Your account is suspended immediately. Update KYC."
         assert has_impersonation_claim(text) is True

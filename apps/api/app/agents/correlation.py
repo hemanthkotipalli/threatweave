@@ -63,15 +63,21 @@ def find_corroboration(findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     Groups findings by shared indicator strings across DIFFERENT agents.
     Exact string match against core/indicators.py's vocabulary.
+    Also identifies semantic cross-agent corroboration across modality-specific
+    indicators sharing identical risk categories (e.g. payment_fraud, social_engineering)
+    when no direct exact match is already present between those agents.
 
     - Excludes findings with status == 'failed'.
     - Dedupes indicators WITHIN a single agent's own finding first.
-    - Only includes indicator groups where 2+ distinct agents share the indicator.
+    - Only includes indicator groups where 2+ distinct agents share the indicator or category.
 
     :param findings: List of raw EvidenceItem dicts.
     :return: List of {"indicator": str, "agents": list[str]} sorted by indicator name.
     """
     indicator_to_agents: dict[str, set[str]] = {}
+    agent_categories: dict[str, set[str]] = {}
+    agent_severities: dict[str, str] = {}
+    exact_corroborated_pairs_per_cat: dict[str, set[tuple[str, str]]] = {}
 
     for item in findings:
         if item.get("status") == "failed":
@@ -80,6 +86,9 @@ def find_corroboration(findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
         agent = item.get("agent")
         if not agent:
             continue
+
+        sev = str(item.get("severity", "medium")).lower()
+        agent_severities[agent] = sev
 
         raw_indicators = item.get("indicators", [])
         if isinstance(raw_indicators, dict):
@@ -92,14 +101,59 @@ def find_corroboration(findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
         for ind in unique_agent_indicators:
             indicator_to_agents.setdefault(ind, set()).add(agent)
+            cat = INDICATOR_CATEGORIES.get(ind)
+            if cat:
+                agent_categories.setdefault(cat, set()).add(agent)
 
-    # Filter to indicators shared by 2+ distinct agents
+    # 1. Exact direct indicator matches (shared by 2+ distinct agents)
     corroboration_groups: list[dict[str, Any]] = []
     for ind, agents in sorted(indicator_to_agents.items()):
         if len(agents) >= 2:
+            agent_list = sorted(agents)
             corroboration_groups.append({
                 "indicator": ind,
-                "agents": sorted(agents),
+                "agents": agent_list,
+            })
+            cat = INDICATOR_CATEGORIES.get(ind)
+            if cat:
+                for i in range(len(agent_list)):
+                    for j in range(i + 1, len(agent_list)):
+                        exact_corroborated_pairs_per_cat.setdefault(cat, set()).add((agent_list[i], agent_list[j]))
+
+    # 2. Category-level semantic corroboration
+    # Only applies when 2+ agents share indicators within a high-signal category
+    # (e.g. payment_fraud, social_engineering), have NOT already corroborated on an exact indicator,
+    # and do NOT have a severity divergence conflict on that category.
+    for cat in sorted(agent_categories.keys()):
+        if cat in ("anomaly",):
+            continue
+        agents_in_cat = agent_categories[cat]
+        if len(agents_in_cat) < 2:
+            continue
+
+        sorted_agents = sorted(agents_in_cat)
+        has_uncovered_pair = False
+        covered_pairs = exact_corroborated_pairs_per_cat.get(cat, set())
+        for i in range(len(sorted_agents)):
+            for j in range(i + 1, len(sorted_agents)):
+                pair = (sorted_agents[i], sorted_agents[j])
+                sev_i = agent_severities.get(sorted_agents[i], "medium")
+                sev_j = agent_severities.get(sorted_agents[j], "medium")
+                is_conflict = (
+                    (sev_i in ("info", "low") and sev_j in ("high", "critical"))
+                    or (sev_i in ("high", "critical") and sev_j in ("info", "low"))
+                )
+                if pair not in covered_pairs and not is_conflict:
+                    has_uncovered_pair = True
+                    break
+            if has_uncovered_pair:
+                break
+
+        if has_uncovered_pair:
+            corroboration_groups.append({
+                "indicator": f"category:{cat}",
+                "agents": sorted_agents,
+                "is_semantic_category": True,
             })
 
     return corroboration_groups

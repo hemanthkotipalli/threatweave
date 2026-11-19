@@ -125,6 +125,52 @@ class TestQrAgentUpiAnalysis:
         assert "upi_details" in result.evidence
         assert result.evidence["upi_details"]["pa"] == "scammer8831@fakebank"
 
+    def test_missing_payee_with_high_amount_flags_suspicious(self):
+        """
+        A QR encoding a UPI payment with NO payee name parameter (headless)
+        but requesting a high commercial amount (>= 2000 INR).
+        Must be flagged as suspicious.
+        """
+        upi_payload = "upi://pay?pa=unknown881@ybl&am=5000&cu=INR"
+        qr_bytes = _create_qr_image_bytes(upi_payload)
+
+        result = analyze_qr(qr_bytes)
+
+        assert result.agent == "qr_agent"
+        assert "qr_payment_request" in result.indicators
+        assert "qr_upi_deeplink_suspicious" in result.indicators
+        assert result.severity in ("high", "critical")
+
+    def test_missing_payee_with_deceptive_transaction_note_flags_suspicious(self):
+        """
+        A QR with missing payee name, but deceptive transaction note claiming a refund.
+        Must be flagged as suspicious.
+        """
+        upi_payload = "upi://pay?pa=collector99@paytm&tn=ElectricityRefundApprovalEnterPIN&cu=INR"
+        qr_bytes = _create_qr_image_bytes(upi_payload)
+
+        result = analyze_qr(qr_bytes)
+
+        assert result.agent == "qr_agent"
+        assert "qr_payment_request" in result.indicators
+        assert "qr_upi_deeplink_suspicious" in result.indicators
+        assert result.severity in ("high", "critical")
+
+    def test_missing_payee_with_small_clean_amount_treated_as_uncertainty(self):
+        """
+        A benign personal QR without payee name and with a nominal amount.
+        Must NOT be classified as high/critical fraud (treated as moderate uncertainty).
+        """
+        upi_payload = "upi://pay?pa=teastall@okicici&am=20&cu=INR"
+        qr_bytes = _create_qr_image_bytes(upi_payload)
+
+        result = analyze_qr(qr_bytes)
+
+        assert result.agent == "qr_agent"
+        assert "qr_payment_request" in result.indicators
+        assert "qr_upi_deeplink_suspicious" not in result.indicators
+        assert result.severity in ("low", "medium")
+
     def test_legitimate_upi_deep_link_consistent_identity(self):
         """
         A legitimate UPI QR code where payee name closely matches VPA username.
@@ -139,7 +185,53 @@ class TestQrAgentUpiAnalysis:
         assert result.modality == "qr"
         assert "qr_payment_request" in result.indicators
         assert "qr_upi_deeplink_suspicious" not in result.indicators
-        assert result.severity in ("info", "low")
+        assert result.severity == "low"
+
+    def test_missing_payee_with_high_amount_flags_suspicious(self):
+        """
+        A QR encoding a UPI payment with NO payee name parameter (headless)
+        but requesting a high commercial amount (>= 2000 INR).
+        Must be flagged as suspicious.
+        """
+        upi_payload = "upi://pay?pa=unknown881@ybl&am=5000&cu=INR"
+        qr_bytes = _create_qr_image_bytes(upi_payload)
+
+        result = analyze_qr(qr_bytes)
+
+        assert result.agent == "qr_agent"
+        assert "qr_payment_request" in result.indicators
+        assert "qr_upi_deeplink_suspicious" in result.indicators
+        assert result.severity in ("high", "critical")
+
+    def test_missing_payee_with_deceptive_transaction_note_flags_suspicious(self):
+        """
+        A QR with missing payee name, but deceptive transaction note claiming a refund.
+        Must be flagged as suspicious.
+        """
+        upi_payload = "upi://pay?pa=collector99@paytm&tn=ElectricityRefundApprovalEnterPIN&cu=INR"
+        qr_bytes = _create_qr_image_bytes(upi_payload)
+
+        result = analyze_qr(qr_bytes)
+
+        assert result.agent == "qr_agent"
+        assert "qr_payment_request" in result.indicators
+        assert "qr_upi_deeplink_suspicious" in result.indicators
+        assert result.severity in ("high", "critical")
+
+    def test_missing_payee_with_small_clean_amount_treated_as_uncertainty(self):
+        """
+        A benign personal QR without payee name and with a nominal amount.
+        Must NOT be classified as high/critical fraud (treated as moderate uncertainty).
+        """
+        upi_payload = "upi://pay?pa=teastall@okicici&am=20&cu=INR"
+        qr_bytes = _create_qr_image_bytes(upi_payload)
+
+        result = analyze_qr(qr_bytes)
+
+        assert result.agent == "qr_agent"
+        assert "qr_payment_request" in result.indicators
+        assert "qr_upi_deeplink_suspicious" not in result.indicators
+        assert result.severity in ("low", "medium")
 
 
 class TestQrAgentTextDelegation:

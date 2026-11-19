@@ -84,7 +84,7 @@ def analyze_text(content: str) -> EvidenceItem:
             timestamp=timestamp
         )
 
-    except (ExternalServiceError, json.JSONDecodeError, TypeError, KeyError) as exc:
+    except Exception as exc:
         logger.warning(f"Primary LLM path failed ({exc!s}). Initiating heuristic fallback path.")
         
         # Fallback heuristic path
@@ -95,7 +95,11 @@ def analyze_text(content: str) -> EvidenceItem:
             heuristics = {
                 "urgency_language": [
                     r"\bact now\b", r"\bverify immediately\b", r"\baction required\b", 
-                    r"\burgent\b", r"\bsuspended\b", r"\bterminate\b", r"\bexpire\b", r"\bcritical warning\b"
+                    r"\burgent\b", r"\bsuspended\b", r"\bterminate\b", r"\bexpire\b",
+                    r"\bcritical warning\b", r"power cut", r"power will be disconnected",
+                    r"disconnected tonight", r"immediate disconnection",
+                    r"within \d+ (?:hours?|mins?|minutes?)", r"last notice", r"final notice",
+                    r"electricity.*disconnected",
                 ],
                 "credential_request": [
                     r"enter your password", r"enter your pin", r"enter your login",
@@ -105,33 +109,46 @@ def analyze_text(content: str) -> EvidenceItem:
                     r"\bcredentials\b", r"login details", r"password reset",
                     r"security code", r"one.time.code", r"authentication code",
                     r"provide your password", r"submit your password",
+                    r"\bkyc\b", r"\bpan card\b", r"\baadhaar\b", r"\botp\b",
+                    r"share.*(?:otp|pin|password)", r"update.*kyc", r"link.*aadhaar",
+                    r"submit.*(?:documents?|details?)",
                 ],
                 "impersonation_claim": [
                     r"support team", r"security department", r"\bhelpdesk\b", 
                     r"\badministrator\b", r"\bsystem admin\b", r"customer service", 
-                    r"microsoft support", r"bank representative"
+                    r"microsoft support", r"bank representative",
+                    r"\bbescom\b", r"\byono\b", r"electricity board", r"power corporation",
+                    r"\bcibil\b", r"\bnarcotics\b", r"\btrai\b", r"\bmha\b",
+                    r"police department", r"digital arrest", r"customs officer",
+                    r"fedex parcel", r"income tax", r"telecom department",
                 ],
                 "financial_manipulation": [
                     r"transfer fund", r"bank details", r"wire transfer", 
-                    r"cash prize", r"million dollars", r"\blottery\b", r"unclaimed money"
+                    r"cash prize", r"million dollars", r"\blottery\b", r"unclaimed money",
+                    r"\bkbc\b", r"part.?time job", r"youtube like", r"daily earnings",
+                    r"task earnings", r"work from home.*earn", r"investment return",
+                    r"bonus credit", r"cashback reward", r"crypto profit",
                 ],
                 "suspicious_link_mention": [
                     r"click this link", r"visit URL", r"login here", 
-                    r"click below", r"link below", r"https?://"
+                    r"click below", r"link below", r"https?://",
+                    r"download apk", r"install app", r"update your app", r"visit link",
                 ],
                 "generic_greeting": [
                     r"dear customer", r"valued client", r"dear user", 
-                    r"dear member", r"dear account holder"
+                    r"dear member", r"dear account holder",
                 ],
                 "spelling_grammar_anomaly": [
-                    r"\bcongratulatons\b", r"\bbeneficary\b", r"\binvalide\b"
+                    r"\bcongratulatons\b", r"\bbeneficary\b", r"\binvalide\b",
                 ],
                 "payment_request": [
                     r"pay immediately", r"overdue invoice", r"make payment", 
-                    r"outstanding balance", r"wire the money"
+                    r"outstanding balance", r"wire the money",
+                    r"pay bill", r"unpaid electricity", r"bill pending",
+                    r"penalty fee", r"clear your dues",
                 ],
                 "unusual_sender_pattern": [
-                    r"do-not-reply", r"\bnoreply\b", r"alert-security", r"system-mailer"
+                    r"do-not-reply", r"\bnoreply\b", r"alert-security", r"system-mailer",
                 ]
             }
 
@@ -146,17 +163,34 @@ def analyze_text(content: str) -> EvidenceItem:
             num_matches = len(matched_indicators)
             confidence = min(0.6, 0.2 + (0.1 * num_matches))
             
-            # Determine severity
+            # Determine severity with contextual combination requirements:
+            # Prevents isolated single words from prematurely escalating to high severity.
+            has_credential = "credential_request" in matched_indicators
+            has_financial = "financial_manipulation" in matched_indicators
+            has_urgency = "urgency_language" in matched_indicators
+            has_impersonation = "impersonation_claim" in matched_indicators
+            has_payment = "payment_request" in matched_indicators
+            has_link = "suspicious_link_mention" in matched_indicators
+
             severity = "info"
-            if num_matches > 0:
-                if any(x in matched_indicators for x in ("credential_request", "financial_manipulation")):
+            if num_matches >= 4:
+                severity = "critical"
+            elif num_matches >= 2:
+                if has_credential and (has_urgency or has_impersonation or has_link):
                     severity = "high"
-                elif any(x in matched_indicators for x in ("urgency_language", "payment_request")):
+                elif has_financial and (has_urgency or has_impersonation or has_payment or has_link):
+                    severity = "high"
+                elif has_impersonation and (has_urgency or has_payment):
+                    severity = "high"
+                elif has_urgency or has_payment or has_credential or has_financial:
                     severity = "medium"
                 else:
                     severity = "low"
-            if num_matches >= 4:
-                severity = "critical"
+            elif num_matches == 1:
+                if has_credential or has_financial or has_urgency or has_payment:
+                    severity = "medium"
+                else:
+                    severity = "low"
 
             finding = f"Heuristic analysis detected {num_matches} social engineering indicators." if num_matches > 0 else "No threat indicators detected via heuristics."
             reasoning = f"Primary service was offline or failed to respond. Fallback matches: {', '.join(matched_indicators)}."

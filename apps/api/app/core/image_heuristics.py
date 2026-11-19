@@ -61,17 +61,31 @@ _VPA_REGEX = re.compile(
 )
 
 
+# Legitimate retail purchase invoices and merchant billing checkout patterns
+_RETAIL_INVOICE_PATTERN = re.compile(
+    r"(?:tax\s*invoice|invoice\s*(?:no|#|num)|subtotal|gstin|vat\s*reg|bill\s*to|shipping\s*address|cashier|table\s*(?:no|#)|item\s*qty|order\s*summary|store\s*receipt|supermarket)",
+    re.IGNORECASE,
+)
+
+
 def has_payment_confirmation_pattern(text: str) -> bool:
     """
     Detects whether the OCR text resembles a payment receipt, transfer confirmation,
     or credited funds screenshot (e.g. fake Paytm / GPay / banking payment proofs).
 
     Requires BOTH a currency/amount pattern AND a completion status keyword.
+    Safely disambiguates genuine retail/merchant invoices from fabricated P2P payment proofs.
     """
     if not text or not isinstance(text, str):
         return False
 
     try:
+        # Disambiguate: standard retail invoices or merchant checkout receipts without threats are legitimate
+        if _RETAIL_INVOICE_PATTERN.search(text):
+            has_threat = bool(_URGENCY_SIGNALS.search(text) or _URL_REGEX.search(text))
+            if not has_threat:
+                return False
+
         has_currency = bool(_CURRENCY_PATTERN.search(text))
         has_status = bool(_PAYMENT_STATUS_PATTERN.search(text))
 

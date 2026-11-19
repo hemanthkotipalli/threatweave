@@ -125,36 +125,56 @@ def _analyze_upi_payload(payload: str, timestamp: datetime) -> EvidenceItem:
     indicators: list[str] = ["qr_payment_request"]
 
     # Compute similarity between claimed payee name and actual VPA handle
-    vpa_sim = _compute_vpa_similarity(pn, pa)
+    vpa_sim = _compute_vpa_similarity(pn, pa) if (pn and pa) else 1.0
     vpa_local = pa.split("@")[0].lower() if "@" in pa else pa.lower()
     pn_lower = pn.lower()
+    tn_lower = tn.lower()
 
-    # Check for deceptive corporate / authority terms in payee name
+    # Check for deceptive corporate / authority terms in payee name, VPA handle, or transaction note
     claimed_official = any(term in pn_lower for term in _DECEPTIVE_TERMS)
     vpa_has_official = any(term in vpa_local for term in _DECEPTIVE_TERMS)
     has_authority_impersonation = claimed_official and not vpa_has_official
 
-    # Amount heuristic: flag high prefilled amounts or suspicious amounts
+    # Detect deceptive language in transaction note (reverse-charge collect lures)
+    tn_deceptive = any(term in tn_lower for term in _DECEPTIVE_TERMS) or any(
+        term in tn_lower for term in ("pin", "enter pin", "otp", "approved", "claim", "refund", "cashback")
+    )
+
+    # Amount heuristic: flag high prefilled amounts or suspicious combinations
     suspicious_amount = False
     try:
         if am:
             val = float(am)
-            if val >= 10000.0 or (val >= 2000.0 and vpa_sim < 0.4):
+            if val >= 10000.0 or (val >= 2000.0 and (vpa_sim < 0.4 or not pn)):
                 suspicious_amount = True
     except ValueError:
         pass
 
-    # Flag suspicious if payee name has low resemblance or authority impersonation
-    if pn and pa and (vpa_sim < 0.4 or has_authority_impersonation or (suspicious_amount and vpa_sim < 0.6)):
-        indicators.append("qr_upi_deeplink_suspicious")
+    # Evaluate suspicion holistically: missing payee name is treated as uncertainty,
+    # and only escalated to suspicious if corroborated by high amounts or deceptive notes.
+    has_missing_payee = not bool(pn)
+    is_suspicious_upi = False
+
+    if pn and pa:
+        if vpa_sim < 0.4 or has_authority_impersonation or (suspicious_amount and vpa_sim < 0.6) or tn_deceptive:
+            is_suspicious_upi = True
+    elif not pn and pa:
+        if suspicious_amount or tn_deceptive or vpa_has_official:
+            is_suspicious_upi = True
 
     # Severity evaluation
-    if "qr_upi_deeplink_suspicious" in indicators:
-        severity = "critical" if (has_authority_impersonation and suspicious_amount) else "high"
+    if is_suspicious_upi:
+        indicators.append("qr_upi_deeplink_suspicious")
+        severity = "critical" if (has_authority_impersonation or tn_deceptive) and suspicious_amount else "high"
         confidence = 0.88
     else:
-        severity = "low"
-        confidence = 0.70
+        # Missing payee with commercial amount creates moderate uncertainty without proving fraud
+        if has_missing_payee and am:
+            severity = "medium"
+            confidence = 0.55
+        else:
+            severity = "low"
+            confidence = 0.70
 
     details = {
         "pa": pa,
@@ -164,6 +184,8 @@ def _analyze_upi_payload(payload: str, timestamp: datetime) -> EvidenceItem:
         "vpa_payee_similarity": round(vpa_sim, 4),
         "claimed_official_role": claimed_official,
         "suspicious_amount": suspicious_amount,
+        "has_missing_payee": has_missing_payee,
+        "tn_deceptive": tn_deceptive,
     }
 
     finding: str

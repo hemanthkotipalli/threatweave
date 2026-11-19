@@ -24,6 +24,24 @@ class TestCorrelationDirect:
         assert groups[0]["indicator"] == "credential_request"
         assert sorted(groups[0]["agents"]) == ["image_agent", "text_agent"]
 
+    def test_semantic_category_corroboration_across_modality_indicators(self):
+        """
+        Two distinct agents producing modality-specific indicators in the same category
+        (e.g., text_agent: payment_request, qr_agent: qr_payment_request in 'payment_fraud')
+        without exact indicator string match -> detected as category-level corroboration.
+        """
+        findings = [
+            {"agent": "text_agent", "severity": "medium", "indicators": ["payment_request"], "status": "ok"},
+            {"agent": "qr_agent", "severity": "medium", "indicators": ["qr_payment_request"], "status": "ok"},
+        ]
+
+        groups = find_corroboration(findings)
+
+        assert len(groups) == 1
+        assert groups[0]["indicator"] == "category:payment_fraud"
+        assert groups[0]["is_semantic_category"] is True
+        assert sorted(groups[0]["agents"]) == ["qr_agent", "text_agent"]
+
     def test_intra_agent_duplicate_indicators_do_not_count_as_corroboration(self):
         """Single agent with duplicate indicators in its own list -> 0 corroboration."""
         findings = [
