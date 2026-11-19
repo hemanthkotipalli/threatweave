@@ -145,7 +145,7 @@ export default function InvestigationWorkspacePage() {
         if (data.status === "completed" || data.status === "failed") {
           setIsAnalyzing(false);
           stopPolling();
-        } else if (pollCountRef.current >= 30) {
+        } else if (pollCountRef.current >= 60) {
           stopPolling();
           setIsAnalyzing(false);
           setPollTimeoutReached(true);
@@ -164,7 +164,7 @@ export default function InvestigationWorkspacePage() {
           return;
         }
 
-        if (pollCountRef.current >= 30) {
+        if (pollCountRef.current >= 60) {
           stopPolling();
           setIsAnalyzing(false);
           setPollTimeoutReached(true);
@@ -215,16 +215,137 @@ export default function InvestigationWorkspacePage() {
     setError(null);
     setIsAnalyzing(true);
     setPollTimeoutReached(false);
+    startPolling();
 
     try {
       await analyzeInvestigation(id);
-      startPolling();
+      await fetchInvestigation(false);
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError("Failed to trigger swarm analysis.");
+        // 1. Definitively rejected client or authorization errors
+        if (
+          err.status === 400 ||
+          err.status === 401 ||
+          err.status === 403 ||
+          err.status === 404 ||
+          err.status === 422
+        ) {
+          setError(
+            err.message || `Swarm analysis request was rejected by server (${err.status}).`
+          );
+          setIsAnalyzing(false);
+          stopPolling();
+          return;
+        }
+
+        // 2. Server failure (HTTP 500+) or upstream gateway timeout
+        if (err.status >= 500) {
+          try {
+            const data = await getInvestigation(id);
+            setInvestigation(data);
+
+            // State 1: Active background execution confirmed
+            if (data.status === "running") {
+              // Backend accepted the task and is actively executing in background.
+              // Preserve concurrent polling, maintain isAnalyzing=true, avoid false failure.
+              return;
+            }
+
+            // State 2: Investigation successfully completed
+            if (data.status === "completed") {
+              setIsAnalyzing(false);
+              stopPolling();
+              return;
+            }
+
+            // State 3: Explicit failure recorded by backend consensus
+            if (data.status === "failed") {
+              setError(
+                err.message ||
+                  "Swarm analysis encountered an unrecoverable failure during execution."
+              );
+              setIsAnalyzing(false);
+              stopPolling();
+              return;
+            }
+
+            // State 4: Investigation remained in pending state (never initiated)
+            if (data.status === "pending") {
+              setError(
+                "Server error occurred and swarm analysis could not be confirmed as started. Please retry."
+              );
+              setIsAnalyzing(false);
+              stopPolling();
+              return;
+            }
+          } catch {
+            // State 5: Status verification unavailable; fall through to server error display
+          }
+
+          setError(err.message || `Server error during swarm analysis (${err.status}).`);
+          setIsAnalyzing(false);
+          stopPolling();
+          return;
+        }
+
+        // 3. Ambiguous network interruption (status 0 / NETWORK_ERROR)
+        // Check if backend successfully ingested and started executing the swarm
+        try {
+          const currentData = await getInvestigation(id);
+          setInvestigation(currentData);
+
+          // State 1: Active background execution confirmed
+          if (currentData.status === "running") {
+            // Backend is actively processing; preserve concurrent polling without false failure
+            return;
+          }
+
+          // State 2: Investigation completed
+          if (currentData.status === "completed") {
+            setIsAnalyzing(false);
+            stopPolling();
+            return;
+          }
+
+          // State 3: Investigation failed
+          if (currentData.status === "failed") {
+            setError(
+              err.message ||
+                "Swarm analysis encountered an unrecoverable failure during execution."
+            );
+            setIsAnalyzing(false);
+            stopPolling();
+            return;
+          }
+
+          // State 4: Investigation never started
+          if (currentData.status === "pending") {
+            setError(
+              "Network connection was interrupted before swarm analysis could be initiated."
+            );
+            setIsAnalyzing(false);
+            stopPolling();
+            return;
+          }
+        } catch {
+          // State 5: Status verification could not reach server
+        }
+
+        setError(
+          err.message ||
+            "Network interruption occurred while connecting to analysis service."
+        );
+        setIsAnalyzing(false);
+        stopPolling();
+        return;
       }
+
+      // 4. Any unexpected non-ApiError exception
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred while initiating swarm analysis."
+      );
       setIsAnalyzing(false);
       stopPolling();
     }
@@ -426,7 +547,7 @@ export default function InvestigationWorkspacePage() {
                 </span>
               </div>
               <span className="text-soc-text-secondary shrink-0 ml-2">
-                Attempt {pollCount}/30
+                Attempt {pollCount}/60
               </span>
             </div>
           )}

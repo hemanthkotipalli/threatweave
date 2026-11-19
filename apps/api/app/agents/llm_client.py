@@ -35,6 +35,15 @@ def _is_rate_limit_error(exc: Exception) -> bool:
     )
 
 
+def _is_unrecoverable_rate_limit(exc: Exception) -> bool:
+    """
+    Checks whether a 429 represents daily token quota exhaustion (TPD)
+    or multi-minute quotas that cannot be resolved via short retries.
+    """
+    msg = str(exc).lower()
+    return "tokens per day" in msg or "tpd" in msg or "daily" in msg
+
+
 def call_llm(system_prompt: str, user_content: str, timeout: int | None = None) -> str:
     """
     Calls the Groq inference API using the official Groq Python SDK.
@@ -107,7 +116,7 @@ def call_llm(system_prompt: str, user_content: str, timeout: int | None = None) 
             message = getattr(ae, "message", str(ae))
 
             # Only retry if HTTP 429 rate limit and retry budget remains
-            if _is_rate_limit_error(ae) and attempt <= _MAX_RETRIES:
+            if _is_rate_limit_error(ae) and not _is_unrecoverable_rate_limit(ae) and attempt <= _MAX_RETRIES:
                 raw_delay = min(_BASE_DELAY * (_BACKOFF_FACTOR ** (attempt - 1)), _MAX_DELAY)
                 jitter = random.uniform(-_JITTER_RATIO * raw_delay, _JITTER_RATIO * raw_delay)
                 sleep_time = max(0.1, raw_delay + jitter)
