@@ -14,6 +14,7 @@ import {
   Activity,
   Cpu,
   Sparkles,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -97,6 +98,10 @@ export default function Dashboard() {
           <Button variant="secondary" size="sm" onClick={fetchRecent} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 mr-1.5 ${isLoading ? "animate-spin" : ""}`} />
             Refresh
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => router.push("/analytics")}>
+            <BarChart3 className="h-4 w-4 mr-1.5 text-accent-primary" />
+            Analytics
           </Button>
           <Button variant="secondary" size="sm" onClick={() => router.push("/demo")}>
             <Sparkles className="h-4 w-4 mr-1.5 text-accent-primary" />

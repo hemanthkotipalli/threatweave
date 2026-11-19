@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -129,6 +130,15 @@ function InvestigationsListContent() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => router.push("/analytics")}
+          >
+            <BarChart3 className="h-4 w-4 mr-1.5 text-accent-primary" />
+            Analytics
+          </Button>
+
           <Button
             variant="secondary"
             size="sm"
