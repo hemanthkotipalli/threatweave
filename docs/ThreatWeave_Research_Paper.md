@@ -1,65 +1,71 @@
 # ThreatWeave: An Agentic Multimodal Framework for Cross-Modal Digital Communication Threat Analysis
 
 **Authors:**  
+**Mr. Mohammad Amanullah**  
+*Assistant Professor*  
+*Dept of CSE*  
+*Godavari Institute of Engineering & Technology (A)*  
+*Rajahmundry, AP, India*  
+*Email: mohammad.amanullah@giet.ac.in*  
+
 **Ravulapalli Dharma Teja**  
-*Department of Computer Science and Engineering*  
-*Godavari Institute of Engineering and Technology (Autonomous)*  
-*Rajahmundry, Andhra Pradesh, India*  
+*UG Student*  
+*Dept of CSE*  
+*Godavari Institute of Engineering & Technology (A)*  
+*Rajahmundry, AP, India*  
 *Email: 23551A05D1@giet.ac.in*  
 
 **Kotipalli Hemanth**  
-*Department of Computer Science and Engineering*  
-*Godavari Institute of Engineering and Technology (Autonomous)*  
-*Rajahmundry, Andhra Pradesh, India*  
+*UG Student*  
+*Dept of CSE*  
+*Godavari Institute of Engineering & Technology (A)*  
+*Rajahmundry, AP, India*  
 *Email: 24555A0508@giet.ac.in*  
 
 **Gaddigopula Prabash**  
-*Department of Computer Science and Engineering*  
-*Godavari Institute of Engineering and Technology (Autonomous)*  
-*Rajahmundry, Andhra Pradesh, India*  
+*UG Student*  
+*Dept of CSE*  
+*Godavari Institute of Engineering & Technology (A)*  
+*Rajahmundry, AP, India*  
 *Email: 23551A0545@giet.ac.in*  
-
-**Faculty Guide & Supervisor:**  
-**Mr. Mohammad Amanullah**  
-*Assistant Professor, Department of Computer Science and Engineering*  
-*Godavari Institute of Engineering and Technology (Autonomous)*  
-*Rajahmundry, Andhra Pradesh, India*  
-*Email: mohammad.amanullah@giet.ac.in*  
 
 ---
 
 ## Abstract
 
-Modern digital communication fraud has evolved from isolated text phishing into sophisticated, cross-modal campaigns that coordinate phishing SMS messages, deceptive hyperlinks, quick-response (QR) payment traps, forged payment confirmation screenshots, and social engineering voice calls. Conventional defensive tooling relies on siloed single-modality point scanners or black-box neural classifiers, leaving security operations centers (SOCs) vulnerable to cross-modal blind spots, alert fatigue, and non-deterministic scoring volatility. In this paper, we present **ThreatWeave**, an agentic multimodal cybersecurity framework that orchestrates threat analysis across five distinct digital communication modalities: Text, URL, QR Code, Image, and Voice. Coordinated via a stateful LangGraph Directed Acyclic Graph (DAG) state machine, ThreatWeave dynamically fans out investigation execution exclusively to observed modalities, logging skipped channels without computational waste. To eliminate score drift and guarantee legal reproducibility, ThreatWeave replaces black-box scoring with a closed-form, deterministic mathematical risk engine:
+Social engineering and financial fraud increasingly span multiple digital communication channels, combining phishing SMS messages, deceptive hyperlinks, fraudulent quick-response (QR) payment codes, fabricated transaction receipts, and voice calls within coordinated campaigns. Existing security operations center (SOC) defenses rely on isolated single-modality scanners or black-box neural classifiers that inspect payloads independently, creating cross-channel blind spots and non-deterministic risk scores that fluctuate across identical inputs. In this paper, we present **ThreatWeave**, an agentic multimodal cybersecurity framework coordinating threat analysis across five modalities: Text, URL, QR Code, Image, and Voice. Governed by a stateful LangGraph directed acyclic graph (DAG), ThreatWeave routes payloads dynamically to observed modalities, logging skipped channels without redundant computation. To ensure auditable and reproducible assessments, the framework replaces unconstrained language model scoring with a closed-form, deterministic risk calculation:
 $$\text{final\_risk} = \text{clamp}\left(\text{base\_score} + \Delta_{\text{corrob}} + \Delta_{\text{intel}} - \Delta_{\text{contra}}, \; 0.0, \; 1.0\right)$$
-The framework incorporates multi-source Indicator of Compromise (IoC) corroboration, cross-modal contradiction penalties, and regulatory knowledge retrieval via ChromaDB (cosine similarity threshold $\tau_{\text{sim}} = 0.40$, equivalent to maximum cosine distance $d \le 0.60$) over 24 authoritative CERT-In and RBI advisories. Every specialist agent integrates a dual-tier architecture pairing cloud LLM reasoning (defaulting to Groq Cloud `openai/gpt-oss-120b`, with runtime support for `llama-3.3-70b-versatile`) with sub-20ms deterministic heuristic fallbacks. Evaluated on a curated 94-sample empirical benchmark, ThreatWeave achieved 95.8% accuracy on Text ($F_1 = 0.963$), 90.0% on Image ($F_1 = 0.909$), 79.2% on URL ($F_1 = 0.783$), and 78.6% on QR ($F_1 = 0.800$), while preserving sub-50ms offline continuity and 100% DAG routing correctness across 227 passing backend verification tests.
+This engine adjusts composite risk via multi-source Indicator of Compromise (IoC) corroboration, cross-modal contradiction penalties, and regulatory context retrieved from 24 CERT-In and RBI advisories using ChromaDB (cosine similarity threshold $\tau_{\text{sim}} = 0.40$, maximum cosine distance $d \le 0.60$). Each specialist agent pairs cloud language model reasoning (defaulting to Groq Cloud `openai/gpt-oss-120b`, with support for `llama-3.3-70b-versatile`) with local deterministic heuristics (sub-20ms for Text and URL) for resilient offline continuity during API disruptions. Evaluated on a curated proof-of-concept benchmark of 94 Indian-context cyber-threat fixtures (51 malicious, 43 benign), ThreatWeave achieved detection accuracies of 95.8% on Text ($F_1 = 0.963$), 90.0% on Image ($F_1 = 0.909$), 79.2% on URL ($F_1 = 0.783$), and 78.6% on QR ($F_1 = 0.800$). Local fallback execution maintained sub-50ms latency for lightweight modalities (Text, URL, QR, and Voice) in the evaluated configuration (while Image fallback was OCR-bounded), and the state machine achieved 100% routing correctness across 227 automated backend test cases verifying state routing.
 
 **Index Terms / Keywords:**  
-Cyber Threat Intelligence, Multimodal Threat Detection, Agentic Multi-Agent Systems, LangGraph, Retrieval-Augmented Generation, Phishing Detection, Cross-Modal Indicator Correlation, Deterministic Risk Scoring.
+Cyber Threat Intelligence, Multimodal Threat Detection, Multi-Agent Systems, LangGraph, Retrieval-Augmented Generation, Phishing Detection, Cross-Modal Correlation, Deterministic Risk Scoring.
 
 ---
 
 ## I. INTRODUCTION
 
-Digital communication platforms have become the primary battleground for sophisticated social engineering, financial fraud, and cyber extortion. Malicious threat actors no longer restrict their campaigns to rudimentary, single-modality attack vectors such as plain-text electronic mail lures [1], [2]. Instead, contemporary cyber attacks increasingly leverage multi-channel, cross-modal deception topologies. In a representative cross-modal fraud lifecycle, a victim receives an urgent SMS notification regarding imminent utility disconnection [3], clicks an embedded obfuscated short URL that directs to a payment gateway [4], scans a quick-response (QR) code embedding a headless Unified Payments Interface (UPI) collect request [5], [6], receives a forged transaction confirmation screenshot to feign legitimacy [7], [8], and is subsequently coerced via an interactive voice phishing (vishing) telecommunication call [9].
+Digital communication channels are increasingly targeted by coordinated social engineering and financial fraud campaigns. Rather than relying solely on isolated single-channel lures such as email phishing [1], [2], threat actors now frequently orchestrate multi-stage attacks across multiple media. In a typical cross-modal fraud incident, a target receives an urgent SMS alert warning of an imminent utility disconnection [3], opens an obfuscated short URL directing to an imitation payment portal [4], scans a fraudulent quick-response (QR) code embedding a headless Unified Payments Interface (UPI) collect request [5], [6], reviews a fabricated transaction screenshot presented as proof of payment [7], [8], and receives a follow-up voice phishing (vishing) telecommunication call to pressure compliance [9].
 
-Despite the multi-modal coordination demonstrated by modern threat actors, conventional defensive architectures remain fundamentally fragmented into siloed, modality-specific point solutions [10]. Security Operations Centers (SOCs) typically deploy independent tools for URL reputation lookup, optical barcode extraction, optical character recognition (OCR), and mobile SMS filtering. This paradigm imposes severe operational vulnerabilities: standalone scanners exhibit cross-modal blindness, failing to aggregate indicators of compromise (IoCs) distributed across distinct payload types. Consequently, human security analysts are forced to manually pivot across disparate diagnostic consoles, inducing alert fatigue, prolonged incident triage latencies, and high operational expenditure [10], [11].
+Despite the multi-modal nature of these attacks, conventional security operations center (SOC) defenses remain fragmented into isolated, modality-specific point solutions [10]. Organizations typically deploy independent tools for URL reputation lookup, barcode decoding, optical character recognition (OCR), and SMS keyword filtering. Because these standalone tools inspect payloads in isolation, they cannot correlate Indicators of Compromise (IoCs) distributed across different channels. Security analysts must therefore manually cross-reference evidence across separate consoles, leading to analyst fatigue, delayed incident triage, and higher operational overhead [10], [11].
 
-Recent attempts to mitigate this fragmentation via monolithic, end-to-end Large Language Models (LLMs) or multimodal deep neural networks introduce alternative, unacceptable risks in enterprise security environments [12], [13]. Monolithic foundation models generate volatile, non-deterministic risk scores that fluctuate across repeated evaluations of identical evidence, directly violating legal auditing standards and the NIST Special Publication 800-30 risk assessment guidelines [14]. Furthermore, general-purpose vision-language models incur prohibitive latency penalties (often 8–15 seconds per query), suffer from hallucinations, and fail catastrophically during cloud service outages due to a lack of local offline fallback capabilities [13].
+Recent attempts to consolidate multimodal detection using end-to-end Large Language Models (LLMs) or multimodal deep neural networks introduce distinct operational challenges in enterprise security workflows [12], [13]. When prompted to assign risk scores directly, monolithic foundation models produce non-deterministic outputs that vary across repeated evaluations of identical evidence—a limitation that conflicts with forensic audit requirements and the NIST Special Publication 800-30 risk assessment framework [14]. Additionally, general-purpose vision-language models often require 8–15 seconds per request, remain susceptible to hallucinations, and become completely unavailable during cloud service interruptions because they lack local offline fallback mechanisms [13].
 
-To overcome these structural limitations, we propose **ThreatWeave**, an agentic multimodal framework for cross-modal digital communication threat intelligence and response. ThreatWeave decomposes complex investigation workflows into a directed acyclic state machine governed by LangGraph [15], [16], coordinating five specialized forensic agents: Text Agent, URL Agent, QR Agent, Image Agent, and Voice Agent. Rather than executing an opaque end-to-end neural classification, ThreatWeave pairs cloud-assisted semantic reasoning with autonomous, sub-20ms deterministic heuristic fallbacks across every specialist agent.
+To address these limitations, we developed **ThreatWeave**, an agentic multimodal framework for cross-modal digital communication threat analysis. ThreatWeave organizes investigation workflows as a directed acyclic graph (DAG) managed by LangGraph [15], [16]. The orchestrator coordinates five dedicated forensic agents—Text Agent, URL Agent, QR Agent, Image Agent, and Voice Agent—routing execution dynamically to the specific modalities present in a given incident. Rather than relying on an opaque end-to-end neural classifier, ThreatWeave pairs cloud language model reasoning with local deterministic heuristic fallbacks (sub-20ms for Text and URL, and sub-50ms for QR and Voice).
+
+ThreatWeave builds upon established open-source foundations: FastAPI for asynchronous request serving, the Groq Cloud API for language model inference, EasyOCR (PyTorch CRAFT and CRNN) for optical character recognition, OpenCV for barcode localization, Faster-Whisper for local acoustic transcription, and ChromaDB with Sentence-Transformers for dense vector storage. The scientific contributions of this work do not claim new low-level perceptual models; rather, our contributions focus on the dynamic agentic orchestration architecture, the closed-form deterministic risk algebra, domain-specific security disambiguation for digital payments, and resilient dual-tier fallback mechanics.
 
 The primary contributions of this paper are summarized as follows:
-1. **Dynamic Multi-Agent Orchestration Architecture:** We design and implement a stateful LangGraph Directed Acyclic Graph (DAG) state machine that dynamically inspects heterogeneous input vectors, fanning out execution concurrently to active specialist pipelines while persisting skipped modalities with zero compute leakage.
-2. **Dual-Tier Resilient Fallback Mechanics:** We formulate an autonomous operational continuity architecture pairing cloud-based Large Language Model inference (defaulting to Groq Cloud `openai/gpt-oss-120b`, with runtime support for open-weight alternatives such as `llama-3.3-70b-versatile`) with sub-20ms local deterministic heuristics (regex token co-occurrence, Shannon entropy, Levenshtein distance, combosquatting detection, OpenCV morphology, and Faster-Whisper local transcription).
-3. **Closed-Form Deterministic Risk Engine:** We formulate and implement a mathematically bounded, deterministic risk calculation engine that replaces stochastic LLM ratings with bitwise reproducible scores ($|\text{residual}| \le 1.0 \times 10^{-4}$), integrating cross-modal IoC corroboration, severity divergence contradiction penalties, and regulatory vector retrieval (ChromaDB, cosine similarity threshold $\tau_{\text{sim}} = 0.40$, $d \le 0.60$).
-4. **Empirical Multi-Modal Benchmark Evaluation:** We conduct a comprehensive empirical evaluation on a curated 94-sample benchmark dataset calibrated against Indian cybercrime vectors (CERT-In / RBI), reporting precision, recall, $F_1$, accuracy, latency profiles, and 95% Wilson confidence intervals across all operational modes.
+1. **Dynamic Multi-Agent Orchestration Architecture:** A stateful LangGraph Directed Acyclic Graph (DAG) state machine that dynamically inspects heterogeneous input vectors, fanning out execution concurrently to active specialist pipelines while logging skipped modalities without redundant computation.
+2. **Dual-Tier Resilient Fallback Mechanics:** An operational continuity architecture pairing cloud language model inference (defaulting to Groq Cloud `openai/gpt-oss-120b`, with runtime support for `llama-3.3-70b-versatile`) with local deterministic heuristics (sub-20ms for Text and URL, sub-50ms for QR and Voice) to preserve incident triage during external API disruptions.
+3. **Closed-Form Deterministic Risk Engine:** A mathematically bounded risk engine that replaces stochastic LLM ratings with bitwise reproducible scores ($|\text{residual}| \le 1.0 \times 10^{-4}$), integrating cross-modal IoC corroboration, severity divergence contradiction penalties, and regulatory vector retrieval (ChromaDB, cosine similarity threshold $\tau_{\text{sim}} = 0.40$, $d \le 0.60$).
+4. **Domain-Specific Disambiguation & Headless UPI Parsing:** An uncertainty calibration heuristic for Unified Payments Interface (UPI) payloads (`_analyze_upi_payload`) that addresses the micro-merchant false positive dilemma, reducing false alarms on retail QR codes while preserving high threat recall.
+5. **Empirical Multi-Modal Benchmark Evaluation:** A systematic evaluation on a curated 94-sample proof-of-concept benchmark calibrated against Indian cybercrime vectors (CERT-In and RBI), reporting precision, recall, $F_1$, accuracy, latency profiles, and 95% Wilson confidence intervals across all operational modes.
 
 ---
 
 ## II. RELATED WORK
 
-The ThreatWeave framework builds upon, bridges, and extends research across five core domains: single-modality threat detection, multi-agent LLM systems, explainable AI in cybersecurity, retrieval-augmented generation, and multimodal forensics.
+The architecture of ThreatWeave intersects five distinct research domains: single-modality automated threat detection, multi-agent large language model frameworks, explainable cyber threat intelligence, retrieval-augmented generation, and multimodal perceptual models. This section reviews relevant literature across these areas, highlights operational limitations in existing methods, and establishes the specific research gaps addressed by our framework.
 
 ```
 +------------------------------------------------------------------------------------+
@@ -75,19 +81,19 @@ The ThreatWeave framework builds upon, bridges, and extends research across five
 ```
 
 ### A. Single-Modality Threat Detection Point Solutions
-Traditional automated cyber threat detection has historically progressed along isolated modality boundaries. In the URL and web domain, early systems such as CANTINA+ [1] and PhishStorm [4] pioneered feature-based machine learning on lexical attributes (Shannon entropy, URL token length, domain age, host IP patterns). In the optical barcode space, Vidas et al. [5] established the vulnerability of mobile devices to malicious QR codes, while Rafsanjani et al. [6] introduced QsecR for mobile QR threat filtering. In the telecommunications sector, Sonowal [2] and Boukari et al. [17] developed smishing classifiers leveraging lexical co-occurrence patterns, while Kim et al. [9] proposed real-time speech transcription pipelines for voice phishing (vishing) detection. In the computer vision domain, Lin et al. [7] proposed Phishpedia, combining object detection with deep visual similarity to detect brand logo spoofing, while Abdelnabi et al. [8] introduced VisualPhishNet for zero-day phishing webpage detection. While highly effective within isolated silos, these point solutions operate with complete cross-modal blindness.
+Automated threat detection has historically evolved within isolated modality boundaries. In web and URL defense, feature-based classifiers such as CANTINA+ [1] and PhishStorm [4] analyze lexical attributes—including Shannon entropy, token lengths, and domain registration metadata—to identify malicious links. Optical barcode filtering emerged following findings by Vidas et al. [5] on mobile QR vulnerabilities, leading to tools like QsecR by Rafsanjani et al. [6]. In mobile telecommunications, smishing detectors developed by Sonowal [2] and Boukari et al. [17] classify deceptive messages through keyword co-occurrence, while Kim et al. [9] established speech transcription pipelines for voice phishing (vishing) detection. Visual brand spoofing is addressed by computer vision systems such as Phishpedia [7] and VisualPhishNet [8], which couple object detection with visual similarity models. While effective within their respective domains, these point solutions operate independently. They lack mechanisms to share intermediate state or correlate distributed Indicators of Compromise (IoCs). ThreatWeave bridges this gap by unifying these distinct forensic capabilities beneath a coordinated multi-agent state machine.
 
 ### B. Multi-Agent Systems and Collaborative LLM Frameworks
-The transition from monolithic language model prompts to communicative multi-agent architectures represents a major paradigm shift [12]. Foundational multi-agent systems theory formalizes autonomous agent collaboration, distributed problem solving, and consensus protocols [18]. In software engineering, MetaGPT [15] demonstrated that incorporating human Standard Operating Procedures (SOPs) into communicative multi-agent graphs dramatically reduces hallucination and coordination drift. ChatDev [19] formalized multi-agent dialogue chains for collaborative software synthesis, while AutoGen [16] established generic conversational agent workflows. ThreatWeave adapts these multi-agent collaboration principles to defensive cybersecurity operations, utilizing LangGraph to enforce a deterministic execution DAG over specialized threat inspection agents.
+To overcome the reasoning limitations of monolithic prompts, collaborative multi-agent architectures distribute complex analytical tasks across specialized roles [12]. Classical multi-agent systems theory provides the formal foundation for distributed problem solving, task allocation, and coordination protocols [18]. In software engineering, frameworks such as MetaGPT [15] demonstrated that structuring agent interactions around Standard Operating Procedures (SOPs) significantly reduces hallucination and coordination drift compared to single-prompt generation. ChatDev [19] formalized communicative dialogue chains for iterative code refinement, while AutoGen [16] introduced conversational agent workflows. However, free-form conversational agents can introduce non-deterministic loops and execution delays that are unsuitable for real-time security operations. ThreatWeave adapts multi-agent coordination principles to defensive cybersecurity by using LangGraph to enforce a directed acyclic graph (DAG), ensuring predictable routing, bounded execution, and stateful evidence accumulation.
 
 ### C. Explainable Risk Scoring and Cyber Threat Intelligence
-Transparent decision-making is a critical requirement in security operations centers to mitigate analyst alert fatigue and establish evidentiary audit trails [10]. Tounsi and Rais [11] reviewed technical cyber threat intelligence frameworks, highlighting the necessity of structured IoC normalization and threat correlation across disparate sensors. The National Institute of Standards and Technology (NIST) Special Publication 800-30 Revision 1 [14] establishes authoritative standards for conducting risk assessments, mandating that threat likelihood, vulnerability exposure, and operational impact be mathematically quantified rather than inferred through opaque heuristics. ThreatWeave implements these principles by decoupling qualitative agent evidence gathering from closed-form quantitative risk calculation.
+In operational security environments, diagnostic transparency is critical to mitigate alert fatigue and establish reliable audit trails [10]. Reviewing cyber threat intelligence (CTI) architectures, Tounsi and Rais [11] emphasized that effective threat management requires structured normalization of Indicators of Compromise (IoCs) and automated correlation across disparate sensors. The National Institute of Standards and Technology (NIST) Special Publication 800-30 Revision 1 [14] advocates systematic, documented risk assessment processes where threat likelihood and operational impact are evaluated using transparent, repeatable methodologies. Delegating risk scoring to unconstrained language models conflicts with these auditability principles, as generative ratings often fluctuate across repeated evaluations of identical evidence. ThreatWeave resolves this friction by decoupling qualitative evidence gathering from risk scoring: specialist agents extract structured findings, while a closed-form mathematical risk engine computes final scores deterministically.
 
 ### D. Retrieval-Augmented Generation (RAG) in Cybersecurity
-Retrieval-Augmented Generation (RAG) architectures [20] combine pre-trained parametric models with external non-parametric dense vector memories, grounding model outputs in authoritative external knowledge and substantially reducing factual hallucinations. Sentence-BERT [21] established siamese transformer representations for semantic similarity search, which underpins modern dense vector indexes such as Hierarchical Navigable Small World (HNSW) graphs [22]. Recent comprehensive surveys [13] document the progression from naive to advanced modular RAG pipelines. In the cybersecurity domain, Munir et al. [23] explored multimodal RAG for cyber attack detection, and ThreatKG [24] utilized knowledge-graph-grounded CTI extraction. ThreatWeave extends this paradigm by integrating an offline ChromaDB vector repository of 24 regulatory advisories (CERT-In and RBI [25], [3]), executing dense semantic retrieval with strict cosine similarity thresholding ($\tau_{\text{sim}} = 0.40$, equivalent to maximum cosine distance $d \le 0.60$).
+Retrieval-Augmented Generation (RAG) architectures [20] ground parametric model reasoning in verified non-parametric knowledge bases, reducing factual hallucinations. Modern dense retrieval pipelines rely on siamese transformer embeddings—pioneered by Sentence-BERT [21]—coupled with approximate nearest-neighbor indexing structures like Hierarchical Navigable Small World (HNSW) graphs [22]. Surveys by Gao et al. [13] trace the evolution of RAG into modular pipelines incorporating structured knowledge filtering. In cybersecurity, Munir et al. [23] developed multimodal RAG for attack detection, while Gao et al. [24] introduced ThreatKG to anchor threat extraction in formal knowledge graphs. Rather than indexing broad internet corpora, ThreatWeave focuses retrieval on regulatory cybersecurity advisories, embedding 24 advisories from CERT-In and the Reserve Bank of India (RBI) [25], [3] into an offline ChromaDB store. Enforcing a cosine similarity threshold of $\tau_{\text{sim}} = 0.40$ ($d \le 0.60$) ensures that only highly pertinent regulatory precedents influence composite risk calculations.
 
 ### E. Acoustic Processing and Visual Feature Extraction
-Modern multimodal systems rely on specialized sub-symbolic perceptual models. In the speech processing domain, Radford et al. [26] introduced Whisper, establishing high-accuracy weakly supervised automatic speech recognition across diverse accents and acoustic environments. In visual text extraction, Baek et al. [27] developed Character Region Awareness for Text Detection (CRAFT), and Shi et al. [28] formulated the Convolutional Recurrent Neural Network (CRNN) for visual sequence recognition, which together constitute the underlying architecture of EasyOCR. While advanced synthetic voice clone detectors such as AASIST [29] operate on raw audio spectrograms, ThreatWeave focuses its primary voice pipeline on conversational dialogue semantics and lightweight acoustic cadence analysis, establishing clear boundaries between semantic threat extraction and high-order generative forensic modeling.
+Multimodal threat analysis relies on specialized sub-symbolic perceptual models to extract structured text and acoustic representations from raw input streams. In speech recognition, Radford et al. [26] introduced Whisper, achieving robust transcription across diverse accents and noisy environments through weakly supervised pre-training. In computer vision, Baek et al. [27] formulated Character Region Awareness for Text Detection (CRAFT), and Shi et al. [28] introduced Convolutional Recurrent Neural Networks (CRNN) for visual sequence recognition—the two core engines powering EasyOCR. While specialized deepfake speech classifiers like AASIST [29] inspect raw spectrograms for synthetic voice artifacts, they do not examine the deceptive intent of the caller. ThreatWeave focuses its voice analysis on conversational semantics and acoustic cadence (energy and zero-crossing rate variance), deliberately establishing clear boundaries between conversational social engineering detection and high-order generative acoustic forensics.
 
 ---
 
@@ -111,13 +117,13 @@ where $\mathcal{R} \in [0.0, 1.0]$ is a deterministic composite risk score, $\ma
 This investigation addresses three fundamental research questions:
 - **RQ1 (Orchestration Efficiency & Isolation):** Can a dynamic Directed Acyclic Graph (DAG) state machine coordinate heterogeneous multimodal specialist agents without incurring computational leakage, state desynchronization, or latency penalties for unobserved modalities?
 - **RQ2 (Deterministic Explainability):** Can a closed-form mathematical risk engine guarantee bitwise scoring invariance ($|\text{residual}| \le 1.0 \times 10^{-4}$) while accurately reflecting cross-agent corroboration, regulatory intelligence grounding, and inter-modality conflict penalties?
-- **RQ3 (Operational Resilience):** Can a dual-tier architecture pairing cloud LLM inference with sub-20ms deterministic heuristic fallbacks maintain acceptable defensive precision ($> 75\%$) during complete external API and network disruptions?
+- **RQ3 (Operational Resilience):** Can a dual-tier architecture pairing cloud LLM inference with sub-50ms deterministic heuristic fallbacks for lightweight modalities maintain acceptable defensive precision ($> 75\%$) during complete external API and network disruptions?
 
 ---
 
 ## IV. PROPOSED THREATWEAVE ARCHITECTURE
 
-The end-to-end architecture of ThreatWeave is organized into five functional layers, as illustrated in Fig. 1.
+The architecture of ThreatWeave is organized into five functional layers, as illustrated in Fig. 1: Ingestion, LangGraph Orchestration, Specialist Domain Intelligence Agents, Deterministic Risk Engine, and Persistence/Dispatch. This modular organization separates input validation, control flow, forensic analysis, and numerical risk scoring.
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -157,26 +163,26 @@ The end-to-end architecture of ThreatWeave is organized into five functional lay
 *(Refer to vector graphic: `docs/research-figures/figure1-system-architecture.svg` and preview: `docs/research-figures/figure1-system-architecture.png`)*
 
 ### A. Ingestion Layer
-The ingestion layer exposes authenticated REST endpoints (`/api/v1/investigate`) accepting multi-part payloads. Binary assets (images, audio) undergo strict pre-ingestion validation via magic byte sniffing (`file_validation.py`), validating JPEG (`\xff\xd8\xff`), PNG (`\x89PNG\r\n\x1a\n`), WebP (`RIFF....WEBP`), WAV (`RIFF....WAVE`), MP3 (`ID3`/sync), and M4A (`ftyp`). Strict payload size limits (10 MB for images, 15 MB for audio, 20,000 characters for text) prevent memory exhaustion attacks. Stored media files are assigned random UUID4 filenames within segregated directory trees, eliminating path-traversal vulnerabilities.
+The ingestion layer exposes authenticated REST endpoints (`/api/v1/investigate`) accepting multi-part payloads. Binary assets undergo pre-ingestion validation via magic byte inspection (`file_validation.py`), verifying JPEG (`\xff\xd8\xff`), PNG (`\x89PNG\r\n\x1a\n`), WebP (`RIFF....WEBP`), WAV (`RIFF....WAVE`), MP3 (`ID3`/sync), and M4A (`ftyp`) containers. Enforced payload size ceilings—10 MB for raster images, 15 MB for audio recordings, and 20,000 characters for raw text—prevent memory exhaustion attacks. Ingested media files are stored under randomized UUID4 identifiers within isolated directories, eliminating path-traversal risks.
 
 ### B. LangGraph Orchestration Layer
-ThreatWeave models the investigative lifecycle as a stateful Directed Acyclic Graph compiled via LangGraph:
+ThreatWeave models the investigative lifecycle as a stateful Directed Acyclic Graph (DAG) compiled with LangGraph:
 $$\mathcal{G} = (\mathcal{V}, \mathcal{E})$$
-where $\mathcal{V} = \{\text{Plan}, \text{Text}, \text{URL}, \text{QR}, \text{Image}, \text{Voice}, \text{Aggregate}, \text{Synthesize}, \text{End}\}$. The central state object, `InvestigationState`, encapsulates all payload pointers, extracted IoCs, agent finding objects, timing metadata, and execution status flags.
+where $\mathcal{V} = \{\text{Plan}, \text{Text}, \text{URL}, \text{QR}, \text{Image}, \text{Voice}, \text{Aggregate}, \text{Synthesize}, \text{End}\}$. The central state object, `InvestigationState`, serves as a reducer-backed accumulator that coordinates payload references, intermediate Indicators of Compromise (IoCs), standardized finding objects, execution flags, and timing telemetry across nodes.
 
 ### C. Specialized Domain Intelligence Agents Layer
-Five autonomous specialist agents operate concurrently within the graph:
-1. **Text Agent:** Dissects message semantics, emotional urgency cues, credential phishing intents, and regulatory context via dense vector RAG.
-2. **URL Agent:** Evaluates structural domain heuristics, typosquatting/combosquatting distance, IP host routing, and brand impersonation.
-3. **QR Agent:** Executes dual-stage computer vision barcode detection, deep-link parameter parsing, and headless UPI payment analysis.
+Five autonomous specialist agents operate within the execution graph:
+1. **Text Agent:** Analyzes message semantics, urgency cues, credential phishing intents, and regulatory context via dense vector RAG.
+2. **URL Agent:** Evaluates lexical domain properties, combosquatting distance, IP host routing, and brand impersonation.
+3. **QR Agent:** Executes dual-stage barcode detection, deep-link parameter parsing, and headless UPI payment analysis.
 4. **Image Agent:** Performs multi-scale OCR, receipt geometry analysis, and retail tax invoice structural validation.
-5. **Voice Agent:** Demuxes audio streams, executes local speech-to-text transcription, and computes acoustic energy cadence.
+5. **Voice Agent:** Demuxes audio streams, transcribes conversational speech, and measures acoustic cadence metrics.
 
 ### D. Closed-Form Deterministic Risk Engine
-Decoupled from LLM qualitative text generation, the risk engine calculates composite threat scores through exact, deterministic linear algebra, enforcing mathematical explainability and strict reproducibility across investigations.
+Positioned downstream of specialist agent execution, the risk engine calculates composite threat scores through exact, deterministic algebra. Decoupling numerical risk aggregation from qualitative language model generation prevents hallucinated ratings and ensures reproducible assessment scores across investigations.
 
 ### E. Persistence and Dispatch Layer
-All investigation traces, agent execution statuses, findings, and calculated metrics are committed to PostgreSQL using SQLAlchemy 2.0. A Next.js 14 dashboard provides real-time analyst triage, while an optional n8n workflow integration enables automated webhook alerting and automated SOAR playbook execution.
+All investigation traces, agent execution statuses, findings, and calculated metrics are committed to PostgreSQL using SQLAlchemy 2.0. A Next.js 14 dashboard provides real-time analyst triage, while an optional n8n workflow integration enables automated webhook alerting and SOAR dispatch.
 
 ---
 
@@ -219,43 +225,44 @@ All investigation traces, agent execution statuses, findings, and calculated met
 
 *(Refer to vector graphic: `docs/research-figures/figure2-langgraph-workflow.svg` and preview: `docs/research-figures/figure2-langgraph-workflow.png`)*
 
+The ThreatWeave investigative workflow progresses from input payload inspection to parallel specialist evaluation and structured evidence extraction.
+
 ### A. Dynamic StateGraph Routing
-Upon ingestion of incident payload $X$, the `Plan` node inspects the presence of multimodal components:
+The orchestrator coordinates agent execution through a stateful LangGraph Directed Acyclic Graph (DAG) state machine, as depicted in Fig. 2. Upon receiving an incident payload $X$, the `Plan` node inspects the submitted artifacts to identify active modalities:
 $$\mathcal{M}(X) \subseteq \{\text{text}, \text{url}, \text{qr}, \text{image}, \text{voice}\}$$
-The orchestrator dispatches execution exclusively to the active subset $\mathcal{V}_{\text{active}} = \{A_m \mid m \in \mathcal{M}(X)\}$. For every unobserved modality $k \notin \mathcal{M}(X)$, the orchestrator persists a structured record:
+Execution is dispatched exclusively to the active specialist agents $\mathcal{V}_{\text{active}} = \{A_m \mid m \in \mathcal{M}(X)\}$. For every unobserved modality $k \notin \mathcal{M}(X)$, the orchestrator persists a structured skipped record:
 $$\text{agent\_status}[A_k] \longleftarrow \text{'skipped'}, \quad \text{latency}[A_k] \longleftarrow 0.0\,\text{ms}$$
-This guarantees zero computational waste, completely prevents unnecessary LLM token expenditure, and ensures strict state determinism.
+This dynamic fan-out ensures that compute resources and external API calls are allocated strictly to channels observed in the incident.
 
 ### B. Specialist Agent Pipelines & Dual-Tier Fallback Mechanics
+Each specialist agent pairs cloud language model reasoning with local deterministic heuristics to ensure operational triage continuity during external API or network disruptions.
 
 #### 1. Text Agent & Regulatory RAG
-The Text Agent executes primary inference via Groq Cloud (default configured model `openai/gpt-oss-120b`, with runtime support for `llama-3.3-70b-versatile`) constrained by strict Pydantic JSON schemas. Simultaneously, the input text is queried against an offline ChromaDB vector repository comprising 24 curated CERT-In advisories, RBI master directions, and cybercrime circulars. The text is embedded via `all-MiniLM-L6-v2` dense vectors (384 dimensions). If maximum cosine similarity $\text{sim}_{\max} \ge 0.40$ (cosine distance $d \le 0.60$), a grounding bonus $\Delta_{\text{intel}} = +0.15$ is assigned, and authoritative advisory excerpts are attached to the finding. In offline mode, the agent transitions to a 9-category regex rulebase calibrated against Indian scam vectors (BESCOM power cut, digital arrest, KYC suspension, customs parcel extortion). Crucially, the offline rulebase enforces a **contextual co-occurrence requirement**: an impersonation vector must co-occur with both an urgency trigger and a financial call-to-action to reach `high` severity, eliminating false positives on benign administrative correspondence.
+The Text Agent performs primary inference through Groq Cloud (default configured model `openai/gpt-oss-120b`, with runtime support for `llama-3.3-70b-versatile`), constrained by strict Pydantic JSON schemas. Concurrently, the text is queried against an offline ChromaDB vector repository comprising 24 curated CERT-In and RBI advisories using `all-MiniLM-L6-v2` dense embeddings (384 dimensions). When maximum cosine similarity satisfies $\text{sim}_{\max} \ge 0.40$ (cosine distance $d \le 0.60$), a regulatory grounding bonus $\Delta_{\text{intel}} = +0.15$ is awarded. In offline mode, the agent transitions to a 9-category regex rulebase calibrated against regional scam patterns. To avoid false alarms on administrative notifications, the fallback enforces a **contextual co-occurrence requirement**: an impersonation pattern must co-occur with both an urgency trigger and a financial call-to-action to warrant a `high` severity assessment.
 
 #### 2. URL Agent & Combosquatting Heuristics
-The URL Agent implements a two-tier forensic pipeline:
-1. **Structural Heuristics:** Evaluates Shannon entropy $H(s) = -\sum p_i \log_2 p_i$, raw IPv4/IPv6 host validation, high-abuse top-level domains (`.top`, `.xyz`, `.rest`, `.buzz`), and Levenshtein edit distance $\text{dist}(d, b)$ against 17 registered Indian financial institutions. Combosquatting detection flags legitimate brand names combined with deceptive security keywords (e.g., `sbi-kyc-verification.top`).
-2. **Severity Reconciliation:** To prevent false positives on legitimate subdomains (e.g., `retail.onlinesbi.sbi`), the final severity is reconciled deterministically:
-   $$\mathcal{S}_{\text{URL}} = \begin{cases} 
-   \max(\mathcal{S}_{\text{heur}}, \mathcal{S}_{\text{LLM}}) & \text{if } |\text{flags}| \ge 2 \text{ and } \mathcal{S}_{\text{LLM}} \in \{\text{high}, \text{critical}\} \\
-   \mathcal{S}_{\text{heur}} & \text{otherwise}
-   \end{cases}$$
+The URL Agent evaluates link structures through lexical heuristics: Shannon entropy $H(s) = -\sum p_i \log_2 p_i$, raw IPv4/IPv6 host validation, high-abuse top-level domains (`.top`, `.xyz`, `.rest`, `.buzz`), and Levenshtein edit distance against 17 registered Indian financial institutions. Combosquatting logic flags legitimate brand keywords combined with deceptive suffixes (e.g., `sbi-kyc-verification.top`). The final severity is reconciled deterministically:
+$$\mathcal{S}_{\text{URL}} = \begin{cases} 
+\max(\mathcal{S}_{\text{heur}}, \mathcal{S}_{\text{LLM}}) & \text{if } |\text{flags}| \ge 2 \text{ and } \mathcal{S}_{\text{LLM}} \in \{\text{high}, \text{critical}\} \\
+\mathcal{S}_{\text{heur}} & \text{otherwise}
+\end{cases}$$
 
 #### 3. QR Agent & Headless UPI Parsing
-The QR Agent utilizes OpenCV (`cv2.wechat_qrcode` paired with `cv2.QRCodeDetector`) and PyZbar to extract raw barcode matrices. Upon extracting a UPI payment URI (`upi://pay`), the agent parses parameter tokens: payee address ($pa$), payee name ($pn$), transaction amount ($am$), currency ($cu$), and transaction note ($tn$). 
-
-To resolve the **Headless UPI Payee Dilemma** (where millions of legitimate Indian merchants and rural vendors operate valid QR codes lacking the optional $pn$ parameter), ThreatWeave treats missing $pn$ as an indicator of uncertainty rather than definitive malice:
-- If $pn$ is absent and $am < 2000 \text{ INR}$ with no deceptive note, severity is clamped to `medium` or `low`.
-- If $pn$ is absent and $am \ge 2000 \text{ INR}$ or $tn$ contains deceptive urgency triggers ("lottery refund", "electricity KYC"), severity escalates to `high` or `critical`.
+The QR Agent extracts matrix barcodes using OpenCV (`cv2.wechat_qrcode` and `cv2.QRCodeDetector`) alongside PyZbar. When a Unified Payments Interface (UPI) URI is extracted (`upi://pay`), the parser extracts parameters: payee address ($pa$), payee name ($pn$), transaction amount ($am$), currency ($cu$), and note ($tn$). To address the **Headless UPI Payee Dilemma**—where legitimate micro-merchants generate QR codes lacking the optional payee name ($pn$)—ThreatWeave treats a missing name as an indicator of uncertainty rather than confirmed fraud:
+- If $pn$ is missing and amount $am < 2000 \text{ INR}$ with no deceptive note, severity is clamped to `medium` or `low`.
+- If $pn$ is missing and $am \ge 2000 \text{ INR}$ or note $tn$ contains deceptive urgency phrases, severity escalates to `high` or `critical`.
 
 #### 4. Image Agent & Retail Receipt Layout Analysis
-The Image Agent executes optical character recognition using EasyOCR (CRAFT detection + CRNN sequence recognition). Ingested images are clamped to 1024px maximum dimension via area interpolation (`cv2.INTER_AREA`) and evaluated inside `torch.inference_mode()` to bound memory consumption under 250 MB RSS. Extracted tokens are inspected for payment confirmation markers (*Payment Successful*, *UTR*, *Google Pay*, *PhonePe*). To prevent false positives on genuine retail store receipts, the agent executes retail invoice layout verification: identifying itemized tax tables, GSTIN identifiers, and *Tax Invoice* headers. Legitimate commercial proofs are classified as benign, preventing false alarms on genuine consumer purchases.
+The Image Agent executes optical character recognition using EasyOCR (CRAFT detection + CRNN sequence recognition). Ingested images are clamped to a 1024 pixel maximum dimension via area interpolation (`cv2.INTER_AREA`) and evaluated inside `torch.inference_mode()` to maintain memory consumption below 250 MB RSS. Extracted text tokens are scanned for payment confirmation markers (*Payment Successful*, *UTR*, *Google Pay*, *PhonePe*). To prevent false positives on genuine retail receipts, the agent analyzes document layout: identifying itemized tax tables, valid GSTIN identifiers, and formal *Tax Invoice* headers, classifying genuine retail proofs as benign.
 
 #### 5. Voice Agent & Acoustic Cadence Analysis
-The Voice Agent demuxes incoming audio streams via PyAV (FFmpeg bindings), standardizing heterogeneous audio containers into 16-bit mono PCM buffers sampled at 16,000 Hz. Speech transcription is performed locally using `faster-whisper` (int8 quantized). Concurrently, acoustic cadence analysis measures speech-energy variance $\sigma_E^2$ and zero-crossing rate variance $\sigma_{\text{ZCR}}^2$. Flat, robotic pitch cadences typical of low-grade automated synthetic callers are assigned an auxiliary confidence cap $c \le 0.40$, ensuring acoustic cues support semantic transcript findings without overriding dialogue context.
+The Voice Agent demuxes incoming audio streams via PyAV, standardizing audio into 16-bit mono PCM buffers sampled at 16,000 Hz. Conversational speech is transcribed locally using `faster-whisper` (int8 quantized). Concurrently, acoustic cadence analysis measures speech-energy variance $\sigma_E^2$ and zero-crossing rate variance $\sigma_{\text{ZCR}}^2$. Flat, robotic pitch cadences characteristic of basic synthetic speech generators receive an auxiliary confidence cap $c \le 0.40$, ensuring acoustic cues inform the assessment without overriding semantic transcript findings.
 
 ---
 
 ## VI. CROSS-MODAL CORRELATION & RISK SCORING
+
+Multi-channel cyber campaigns distribute indicators across distinct payloads, requiring an analytical framework that correlates evidence without relying on opaque neural heuristics. ThreatWeave addresses this challenge through a multi-stage evidence correlation pipeline (Fig. 3) paired with a closed-form, deterministic mathematical risk engine (Fig. 4).
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -292,7 +299,7 @@ The Voice Agent demuxes incoming audio streams via PyAV (FFmpeg bindings), stand
 *(Refer to vector graphic: `docs/research-figures/figure3-cross-modal-correlation.svg` and preview: `docs/research-figures/figure3-cross-modal-correlation.png`)*
 
 ### A. Mathematical Formulation of Composite Risk
-ThreatWeave replaces volatile, opaque neural classification with a closed-form, deterministic mathematical scoring formula:
+To eliminate non-deterministic scoring volatility and guarantee evidentiary auditability, ThreatWeave aggregates specialist evidence into a bounded composite risk score:
 
 $$\text{final\_risk} = \text{clamp}\left(\text{base\_score} + \Delta_{\text{corrob}} + \Delta_{\text{intel}} - \Delta_{\text{contra}}, \; 0.0, \; 1.0\right)$$
 
@@ -324,34 +331,38 @@ $$\text{final\_risk} = \text{clamp}\left(\text{base\_score} + \Delta_{\text{corr
 *(Refer to vector graphic: `docs/research-figures/figure4-risk-engine.svg` and preview: `docs/research-figures/figure4-risk-engine.png`)*
 
 #### 1. Confidence-Weighted Base Score ($\text{base\_score}$)
-Computed as the confidence-weighted mean across all valid findings $F_{\text{included}}$ produced by active specialist agents:
+The baseline risk is computed as the confidence-weighted mean across all valid specialist findings $F_{\text{included}}$. Findings generated under degraded heuristic fallbacks are retained alongside standard outputs, while failed executions are excluded:
 $$\text{base\_score} = \frac{1}{|F_{\text{included}}|} \sum_{f \in F_{\text{included}}} \left( W(\text{sev}_f) \times c_f \right)$$
-where severity weights are defined as $W(\text{info}) = 0.00$, $W(\text{low}) = 0.25$, $W(\text{medium}) = 0.50$, $W(\text{high}) = 0.75$, $W(\text{critical}) = 1.00$, and finding confidence $c_f \in [0.0, 1.0]$.
+where severity weights are defined as $W(\text{info}) = 0.00$, $W(\text{low}) = 0.25$, $W(\text{medium}) = 0.50$, $W(\text{high}) = 0.75$, and $W(\text{critical}) = 1.00$, with finding confidence $c_f \in [0.0, 1.0]$. If no valid findings are produced, $\text{base\_score} = 0.0$.
 
 #### 2. Semantic Cross-Agent Corroboration ($\Delta_{\text{corrob}}$)
-When multiple agents extract matching Indicators of Compromise (IoCs) or converge on identical threat categories ($\mathcal{C} \in \{\text{payment\_fraud}, \text{social\_engineering}\}$), a corroboration bonus is awarded:
+When multiple agents independently detect related indicators, ThreatWeave awards an additive corroboration bonus through two complementary mechanisms:
 $$\Delta_{\text{corrob}} = \min\left( \sum_{i \in \text{SharedIoC}} 0.10 \cdot (k_i - 1) + \sum_{c \in \text{CategoryMatch}} 0.05 \cdot (m_c - 1), \; 0.25 \right)$$
-where $k_i$ is the number of distinct agents citing IoC $i$, and $m_c$ is the number of agreeing agents. Crucially, agent pairs exhibiting an explicit **severity divergence conflict** ($[\text{info}, \text{low}] \leftrightarrow [\text{high}, \text{critical}]$) are strictly excluded from category corroboration bonuses.
+First, exact indicator matches across two or more distinct agents award $+0.10$ per additional agent ($k_i - 1$) citing that indicator from the controlled taxonomy. Second, when agents share high-signal threat categories ($\mathcal{C} \in \{\text{payment\_fraud}, \text{social\_engineering}\}$) without exact string overlap, a semantic bonus of $+0.05$ per additional agent ($m_c - 1$) is granted. The total bonus is capped at $+0.25$. Agent pairs with severe severity divergence ($[\text{info}, \text{low}] \leftrightarrow [\text{high}, \text{critical}]$) on related signals are strictly excluded from category bonuses.
 
 #### 3. Regulatory Knowledge Grounding ($\Delta_{\text{intel}}$)
-Findings are queried against the offline ChromaDB vector repository. If maximum cosine similarity $\text{sim}_{\max} \ge 0.40$ (cosine distance $d \le 0.60$), a grounding bonus is added:
+Findings are queried against the offline ChromaDB advisory corpus. When the maximum cosine similarity satisfies $\text{sim}_{\max} \ge 0.40$ (cosine distance $d \le 0.60$), an intelligence grounding bonus is applied:
 $$\Delta_{\text{intel}} = \begin{cases} +0.15 & \text{if } \text{sim}_{\max} \ge 0.40 \\ 0.00 & \text{otherwise} \end{cases}$$
 
 #### 4. Contradiction Penalty ($\Delta_{\text{contra}}$)
-If two agents evaluate identical signals with polar opposite severity assessments without structural explanation, a contradiction penalty is deducted to prevent unilateral false positives:
+When distinct agents evaluate related signals (sharing indicators or categories) but produce polar-opposite severities, ThreatWeave applies a contradiction penalty to mitigate unilateral false alarms:
 $$\Delta_{\text{contra}} = \min\left( 0.10 \times N_{\text{conflicts}}, \; 0.30 \right)$$
+where $N_{\text{conflicts}}$ denotes the number of pairwise divergences, capped at $0.30$.
 
-### B. Bitwise Scoring Invariance & Auditability
-Across live production investigations in the relational database, the difference between the persisted `final_risk` and the mathematical formula evaluation yields a maximum residual:
+#### 5. Operational Band Mapping & Uncertainty Handling
+The resulting $\text{final\_risk}$ maps to discrete operational tiers: Info ($[0.00, 0.19]$), Low ($[0.20, 0.39]$), Medium ($[0.40, 0.59]$), High ($[0.60, 0.79]$), and Critical ($[0.80, 1.00]$). A `low_confidence` flag is asserted whenever $|F_{\text{included}}| < 2$ or average finding confidence falls below $0.40$, signaling human analysts to conduct manual review.
+
+### B. Numerical Determinism & Evidentiary Auditability
+Across database-backed investigation records, the difference between the stored score and the mathematical calculation yields a maximum residual bound:
 $$|\text{final\_risk}_{\text{actual}} - \text{final\_risk}_{\text{computed}}| \le 1.0 \times 10^{-4}$$
-Every risk score is decomposed into an auditable four-component vector $(\text{base\_score}, \Delta_{\text{corrob}}, \Delta_{\text{intel}}, \Delta_{\text{contra}})$, providing complete forensic auditability for human incident responders.
+Every score is persisted as a decomposed vector $(\text{base\_score}, \Delta_{\text{corrob}}, \Delta_{\text{intel}}, \Delta_{\text{contra}})$ alongside agent timing telemetry and extracted IoCs, establishing an auditable evidentiary trail for incident responders.
 
 ---
 
 ## VII. EXPERIMENTAL EVALUATION & RESULTS
 
 ### A. Benchmark Dataset & Ground Truth Stratification
-We evaluated ThreatWeave on a curated benchmark of **94 real-world threat and benign communications** collected from Indian cybercrime advisories (CERT-In), institutional banking notices (RBI), and verified communications:
+We evaluated ThreatWeave on a curated benchmark of **94 threat and benign communications** reflecting Indian cybercrime patterns (CERT-In), institutional banking notices (RBI), and verified communications. The benchmark dataset is implemented as reproducible Python test fixtures in `eval/datasets.py`. Synthetic and semi-synthetic artifacts (rendered QR and image bitmaps, simulated audio PCM waveforms) were programmatically generated alongside canonical transcripts to reproduce representative Indian fraud archetypes under controlled ground-truth conditions:
 
 #### TABLE I: Benchmark Dataset Partition and Threat Archetypes
 | Modality Partition | Malicious ($y=1$) | Benign ($y=0$) | Total | Key Threat Vectors Represented |
@@ -362,6 +373,8 @@ We evaluated ThreatWeave on a curated benchmark of **94 real-world threat and be
 | **Image** | 10 | 10 | 20 | Forged Google Pay/PhonePe receipts, bank suspension notices, retail tax invoices. |
 | **Voice** | 6 | 6 | 12 | Bank impersonation IVRs, law enforcement coercion calls, customer service appointments. |
 | **Total** | **51** | **43** | **94** | Comprehensive Indian Digital Communication Attack Surface |
+
+*Statistical Scope and Partition Sizing:* While the 94 samples were curated by the authors as proof-of-concept fixtures based on typical Indian multimodal fraud archetypes to eliminate ground-truth label ambiguity, the dataset size is modest ($N=94$). Modality-specific partitions contain 12 to 24 samples (12 Voice, 14 QR, 20 Image, 24 Text, 24 URL). Consequently, while point estimates indicate strong threat detection capability, the corresponding Wilson 95% confidence intervals are wide (e.g., Voice recall $[18.8\%, 81.2\%]$ and QR accuracy $[52.4\%, 92.4\%]$). These results must be interpreted as empirical proof-of-concept benchmark evidence rather than population-level statistical generalizations. External validation across multi-thousand enterprise datasets, international banking rails, and diverse human telephony speech remains critical future work.
 
 ### B. Decision Rule
 An agent predicts malicious ($\hat{y} = 1$) if its assigned finding severity $\text{severity} \in \{\text{high}, \text{critical}\}$. If $\text{severity} \in \{\text{info}, \text{low}, \text{medium}\}$, the prediction is benign ($\hat{y} = 0$).
@@ -379,9 +392,15 @@ $$CI_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z \sqrt{\frac{\hat{p}(1-\hat{p}
 | | Offline Heuristic | 9 | 0 | 10 | 5 | **79.2%** [59.5%, 90.8%] | **100.0%** [70.1%, 100%] | **64.3%** [38.8%, 83.7%] | **0.783** | **13.9 ms** |
 | **QR Agent** | Cloud LLM (Groq) | 6 | 2 | 5 | 1 | **78.6%** [52.4%, 92.4%] | **75.0%** [40.9%, 92.9%] | **85.7%** [48.7%, 97.4%] | **0.800** | 4,499.0 ms |
 | | Offline Heuristic | 6 | 2 | 5 | 1 | **78.6%** [52.4%, 92.4%] | **75.0%** [40.9%, 92.9%] | **85.7%** [48.7%, 97.4%] | **0.800** | **45.3 ms** |
-| **Image Agent** | Cloud LLM (Groq) | 10 | 2 | 8 | 0 | **90.0%** [69.9%, 97.2%] | **83.3%** [55.2%, 95.3%] | **100.0%** [72.3%, 100%] | **0.909** | 9,368.4 ms |
+| **Image Agent** | Cloud LLM (Groq) | 10 | 2 | 8 | 0 | **90.0%** [69.9%, 97.2%] | **83.3%** [55.2%, 95.3%] | **100.0%** [72.2%, 100%] | **0.909** | 9,368.4 ms |
 | | Offline Heuristic | 6 | 2 | 8 | 4 | **70.0%** [48.1%, 85.5%] | **75.0%** [40.9%, 92.9%] | **60.0%** [31.3%, 83.2%] | **0.667** | **5,455.4 ms** |
 | **Voice Agent** | Offline Heuristic | 3 | 1 | 5 | 3 | **66.7%** [39.1%, 86.2%] | **75.0%** [30.1%, 95.4%] | **50.0%** [18.8%, 81.2%] | **0.600** | **36.5 ms** |
+
+Across the five modalities, primary cloud LLM inference demonstrates strong threat detection capability while preserving high precision on benign inputs:
+- **Text Agent:** Achieved 95.8% accuracy ($F_1 = 0.963$) and 92.9% recall with zero false positives on benign communications, effectively identifying regional SMS impersonation schemes (e.g., BESCOM power disconnection alerts and KYC deactivations).
+- **URL Agent:** Achieved 79.2% accuracy ($F_1 = 0.783$) with zero false alarms. Both cloud LLM and offline heuristic modes yielded identical confusion matrices ($TP=9, FP=0, TN=10, FN=5$) because deterministic lexical token parsing and Levenshtein distance checks against the 17-bank registry provide the primary discriminative signal.
+- **Image Agent:** Achieved 90.0% accuracy ($F_1 = 0.909$) and 100.0% recall in cloud mode, though it incurred 2 false positives on promotional retail receipts featuring discount banners that mimicked cash-back reward fraud. Under offline fallback, Image recall decreased to 60.0% ($TP=6, FN=4$) due to the absence of cloud semantic reasoning on subtle layout tampering.
+- **Voice Agent:** Evaluated under local heuristic mode on synthetic PCM audio fixtures and canonical transcripts, achieving 66.7% accuracy ($F_1 = 0.600$, recall 50.0%). Acoustic cadence features ($\sigma_E^2, \sigma_{\text{ZCR}}^2$) serve strictly as auxiliary heuristics capped at confidence $c \le 0.40$; the system does not claim validated forensic deepfake voice detection or real-time call interception on unconstrained human telephony speech.
 
 #### TABLE III: Cross-Modal Correlation and Conflict Resolution Performance
 | Experimental Scenario | Sample Count | Alignment Accuracy | Conflict Deduction Rate | Mean Risk Shift ($\Delta \mathcal{R}$) |
@@ -390,14 +409,16 @@ $$CI_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z \sqrt{\frac{\hat{p}(1-\hat{p}
 | **Severe Inter-Modality Contradiction** | 8 | 100.0% (8/8) | 100.0% (8/8) | -0.150 |
 | **Single Modality Baseline** | 74 | N/A (Isolated) | 0.0% (0/74) | 0.000 |
 
-#### TABLE IV: Fallback Mechanism Resilience and Latency Speedup
-| Specialist Agent | Cloud LLM Mode Latency | Local Heuristic Mode Latency | Speedup Factor | Precision Preservation |
-| :--- | :---: | :---: | :---: | :---: |
-| **Text Agent** | 2,951.8 ms | 2.0 ms | **1,475x** | 100.0% (Zero FP) |
-| **URL Agent** | 4,093.8 ms | 13.9 ms | **294x** | 100.0% (Zero FP) |
-| **QR Agent** | 4,499.0 ms | 45.3 ms | **99x** | 75.0% (Parity) |
-| **Image Agent** | 9,368.4 ms | 5,455.4 ms | **1.7x** | 75.0% (-8.3%) |
-| **Voice Agent** | N/A (Local) | 36.5 ms | N/A | 75.0% (Local-only) |
+#### TABLE IV: Operational Fallback Continuity Latency and Precision-Recall Trade-Off
+| Specialist Agent | Cloud LLM Latency | Local Fallback Latency | Fallback Latency Ratio | Cloud Recall | Fallback Recall | Missed Threats (FN) | Precision Preservation |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Text Agent** | 2,951.8 ms | 2.0 ms | **1,475x** | 92.9% (13/14) | 35.7% (5/14) | 9 / 14 | 100.0% (Zero FP) |
+| **URL Agent** | 4,093.8 ms | 13.9 ms | **294x** | 64.3% (9/14) | 64.3% (9/14) | 5 / 14 | 100.0% (Zero FP) |
+| **QR Agent** | 4,499.0 ms | 45.3 ms | **99x** | 85.7% (6/7) | 85.7% (6/7) | 1 / 7 | 75.0% (Parity) |
+| **Image Agent** | 9,368.4 ms | 5,455.4 ms | **1.7x** | 100.0% (10/10) | 60.0% (6/10) | 4 / 10 | 75.0% (-8.3%) |
+| **Voice Agent** | N/A (Local) | 36.5 ms | N/A | N/A | 50.0% (3/6) | 3 / 6 | 75.0% (Local-only) |
+
+*Interpretation of Operational Fallback Metrics:* We emphasize that the $1,475\times$ fallback latency ratio observed for the Text Agent reflects the operational transition from a public cloud WAN roundtrip (encompassing network transit from India to Groq US servers, TLS session establishment, queueing, and autoregressive generation) to an in-memory regex co-occurrence scanner. Crucially, this latency reduction does **not** represent an algorithmic speedup on equivalent computational work: the local regex fallback prioritizes operational continuity and zero false alarms (100% precision), but incurs a substantial recall reduction (falling from 92.9% to 35.7% and missing 9 of 14 threats). The dual-tier architecture is designed as a degraded-mode safety net ensuring triage continuity during external cloud outages, rather than a lossless replacement for full semantic reasoning.
 
 #### TABLE V: System Resource Utilization and Memory Footprint
 | Component / Worker Process | Peak Resident Set Size (RSS) | Idle Baseline RSS | CPU Utilization (Inference) |
@@ -407,6 +428,8 @@ $$CI_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z \sqrt{\frac{\hat{p}(1-\hat{p}
 | **Faster-Whisper Engine (int8)** | 186.3 MB | 41.2 MB | 19.8% |
 | **ChromaDB + Sentence-Transformers** | 142.1 MB | 55.8 MB | 6.1% |
 | **Total Unified Container Runtime** | **482.4 MB** | **188.4 MB** | **< 60%** (1 vCPU) |
+
+*Process RSS vs. Allocation Spikes:* As reported in Table V, total unified container resident set size (RSS) peaked at 482.4 MB (idle baseline 188.4 MB) during concurrent execution, remaining strictly within the 512 MB memory boundary common to cloud micro-instances (e.g. Render Free Tier). EasyOCR CRAFT+CRNN execution accounts for 248.6 MB peak RSS (84.5 MB idle). When the orchestrator processes pure standalone QR codes ($\text{coverage\_ratio} \ge 0.45$ and canvas area differential $\le 200,000\text{ px}^2$), dynamic DAG scheduling routes exclusively to OpenCV and completely bypasses EasyOCR initialization. This avoids an estimated ~455 MB PyTorch heap memory allocation spike during cold startup, preventing out-of-memory termination without sacrificing detection coverage. In addition, all 227 automated backend tests pass consistently, validating DAG routing, fallback exception handling, and schema integrity, though passing unit tests are recognized as software verification rather than empirical proof of operational defense against novel threats.
 
 #### TABLE VI: End-to-End Latency Profile Across Invocation Permutations
 | Ingestion Modality Permutation | Active Agent Set | Mean End-to-End Latency | StateGraph Routing Overhead |
@@ -421,15 +444,16 @@ $$CI_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z \sqrt{\frac{\hat{p}(1-\hat{p}
 
 ### D. Detailed Error Analysis and Empirical Limitations
 1. **QR Code Detection Trade-Offs (Uncalibrated Baseline vs. Remediated Heuristics):**
-   - *Uncalibrated Defensive Baseline:* In initial stabilization testing, the QR Agent operated under an uncalibrated defensive heuristic where any extracted UPI payment URI lacking institutional whitelist verification was flagged as high/medium risk. On the 14-sample QR partition (7 malicious, 7 benign), this configuration achieved 100.0% recall ($TP=8$, counting 1 border condition) but produced 6 false positives out of 7 benign retail/merchant samples ($FP=6, TN=0, FN=0$), yielding an overall accuracy of **57.1%** ($F_1 = 0.727$, Precision = 0.571).
+   - *Uncalibrated Defensive Baseline:* In initial stabilization testing, the QR Agent operated under an uncalibrated defensive heuristic where any extracted UPI payment URI lacking merchant parameter validation was flagged as malicious. On the 14-sample QR partition (7 malicious, 7 benign), this naive configuration flagged every input as malicious, achieving 100.0% recall on the 7 malicious samples ($TP=7, FN=0$) but misclassifying all 7 benign retail samples as threats ($FP=7, TN=0$). This resulted in an uncalibrated baseline accuracy of **50.0%** [26.8%, 73.2%], precision of **50.0%** [26.8%, 73.2%], and $F_1 = 0.667$.
    - *Post-Remediation Benchmark:* To resolve this high false-alarm rate without compromising threat detection, we implemented the headless UPI payee disambiguation logic (`_analyze_upi_payload`). This heuristic treats missing payee names ($pn$) in low-value transactions ($< 2,000 \text{ INR}$) as uncertainty rather than definitive fraud, escalating to high severity only when accompanied by deceptive transaction notes ($tn$) or high requested amounts ($\ge 2,000 \text{ INR}$). Under this remediated configuration, accuracy improved to **78.6%** ($11/14$), precision reached **75.0%** ($TP=6, FP=2, TN=5, FN=1$), and recall was maintained at **85.7%** ($F_1 = 0.800$).
-   - *Operational Calibration:* We emphasize that the ₹2,000 parameter is an empirical operational threshold calibrated to regional Indian peer-to-peer and micro-merchant transaction distributions, rather than a universal mathematical fraud boundary.
-2. **Voice Agent Recall Boundary (50.0%):** The Voice Agent achieved 50.0% recall on the 12-sample partition. Dialectal variations and compressed telephony audio degraded Whisper int8 transcription accuracy on subtle social engineering cues.
+   - *Operational Calibration:* We emphasize that the 2,000 INR parameter is an empirical operational threshold calibrated to regional Indian peer-to-peer and micro-merchant transaction distributions, rather than a universal mathematical fraud boundary.
+2. **Voice Agent Recall Boundary (50.0%) and Evaluation Scope:** Evaluated under offline heuristic mode on synthetic PCM audio fixtures and canonical transcripts, the Voice Agent achieved 50.0% recall ($TP=3, FP=1, TN=5, FN=3$). Acoustic cadence features ($\sigma_E^2, \sigma_{\text{ZCR}}^2$) serve strictly as auxiliary heuristics capped at confidence $c \le 0.40$; the evaluation does not test compressed, noisy telephony audio or human voice biometric authenticity, and the framework does not claim validated forensic deepfake voice detection or real-time call interception.
 3. **OCR Background Clutter:** The Image Agent produced 2 false positives on retail receipts featuring promotional discount banners that mimicked cash-back reward fraud templates.
+4. **Software Verification vs. Operational Defense:** All 227 automated backend tests across unit and integration suites pass deterministically. While this confirms state machine routing, fallback exception handling, and schema integrity, passing software test suites is recognized as software verification rather than empirical proof of operational defense against novel adversary campaigns in the wild.
 
 ---
 
-## VIII. COMPARATIVE ANALYSIS
+## VIII. COMPARATIVE ANALYSIS & DISCUSSION
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -439,6 +463,8 @@ $$CI_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z \sqrt{\frac{\hat{p}(1-\hat{p}
   (B) Point Scanners: URL scanner + OCR scanner + AV -> Siloed, cross-modal blind, alert fatigue.
   (C) ThreatWeave: 5 Specialist Agents -> LangGraph DAG -> Deterministic Math Engine -> 100% Auditable.
 ```
+
+Table VII presents a qualitative architectural comparison of ThreatWeave against four prominent CTI paradigms evaluated in literature [1], [4], [8], [12], [17]. Rather than asserting blanket superiority over commercial platforms operating on proprietary multi-million sample datasets, this analysis delineates fundamental structural trade-offs.
 
 #### TABLE VII: Comprehensive Architectural Comparison with State-of-the-Art Paradigms
 | Architectural Dimension | Monolithic LLM [12] | Traditional Point Scanners [1], [4] | Traditional ML Classifiers [17] | Black-Box Deep Nets [8] | **ThreatWeave (Proposed)** |
@@ -450,8 +476,19 @@ $$CI_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z \sqrt{\frac{\hat{p}(1-\hat{p}
 | **Conflict & Contradiction** | ❌ Unhandled; hallucination | ❌ Independent, uncoordinated | ❌ Score averaging | ❌ Averaged latent vectors | ✅ **Formal Divergence Penalty** ($\Delta_{\text{contra}}$) |
 | **Scoring Transparency** | ❌ Volatile prompt rating | ⚠️ Heuristic or tool-specific | ⚠️ Opaque model output | ❌ Black-box softmax prob | ✅ **Deterministic Math** ($\le 10^{-4}$ residual) |
 | **Regulatory RAG Grounding** | ⚠️ Parametric hallucination | ❌ Static blacklists | ❌ Fixed training features | ❌ Pre-trained weights | ✅ **Offline ChromaDB RAG** (24 Advisories) |
-| **Offline Fallback Resilience**| ❌ Total cloud outage | ✅ Local execution | ✅ Local inference | ⚠️ High local GPU need | ✅ **Dual-Tier sub-20ms Heuristics** |
+| **Offline Fallback Resilience**| ❌ Total cloud outage | ✅ Local execution | ✅ Local inference | ⚠️ High local GPU need | ✅ **Dual-Tier Heuristics (Sub-50ms Lightweight Modalities)** |
 | **Evidence Auditability** | ⚠️ Free-form narrative | ⚠️ Per-tool disjoint output | ❌ Opaque feature weights | ❌ Hidden representation | ✅ **Structured Findings & IoC Trail** |
+
+### A. Architectural Distinctions in Multimodal Defense
+Traditional point scanners [1], [4] achieve high processing throughput and domain specialization within their single target modality, but suffer from cross-modal blindness when an adversary distributes threat indicators across separate delivery channels (e.g., embedding a phishing URL inside a QR payment invoice). Conversely, monolithic multimodal LLMs [12] provide centralized natural language reasoning across modalities, but introduce scoring non-determinism, prompt token bloat, and cascading hallucinations when an isolated benign entity is misclassified. Unified multimodal deep neural networks [8] capture latent feature interactions across text and images, but operate as end-to-end black boxes, masking intermediate evidence and preventing incident responders from isolating which specific modal indicator drove the classification.
+
+ThreatWeave navigates these trade-offs by decoupling specialist feature extraction from risk scoring. Specialist agents analyze isolated modalities independently, while the LangGraph state machine selectively fans out execution based on observed inputs. The closed-form risk engine then synthesizes findings through explicit mathematical operations ($\text{base}, \Delta_{\text{corrob}}, \Delta_{\text{intel}}, \Delta_{\text{contra}}$). This guarantees scoring determinism ($\le 1.0 \times 10^{-4}$ residual) and full forensic auditability without delegating numerical risk calculation to generative language models.
+
+### B. Operational Utility and Engineering Trade-Offs
+The primary operational utility of ThreatWeave lies in automated investigative triage for Security Operations Centers (SOCs). By consolidating disparate communication signals into structured findings and persisting an auditable four-component vector, the framework accelerates tier-1 analyst workflows. However, this architecture introduces distinct systems trade-offs:
+- **Latency Envelope:** End-to-end cloud-assisted investigation averages 2.9 to 9.4 seconds across modalities. While suitable for asynchronous email and message screening, this latency envelope is not designed for line-rate packet filtering on network firewalls.
+- **Fallback Coverage Trade-off:** Dual-tier local heuristics guarantee continuous sub-50ms operation for lightweight modalities during cloud API disruptions, but deliberately trade detection coverage (e.g., Text recall drops from 92.9% to 35.7%) to prevent false alarms in defensive mode.
+- **Memory Footprint:** Co-locating perceptual models (EasyOCR CRAFT+CRNN and Faster-Whisper int8) requires disciplined memory controls to operate within the 512 MB constraints of cloud micro-instances.
 
 ---
 
@@ -473,26 +510,28 @@ ThreatWeave serves as a defensive diagnostic assistant and does not execute acti
 
 ## X. LIMITATIONS & FUTURE WORK
 
-We explicitly delineate four technical boundaries of the current ThreatWeave implementation:
-1. **Absence of Real-Time Bank Rail Clearing:** ThreatWeave detects optical, visual, and textual indicators of fraudulent payment receipts. It possesses no programmatic access to NPCI, IMPS, or core banking ledgers. It cannot verify whether an extracted 12-digit UTR reference number settled on the real-time banking rail.
-2. **Auxiliary Voice Analysis vs. Generative Deepfake Classifiers:** The Voice Agent executes conversational transcript matching and lightweight acoustic cadence analysis (energy and ZCR variance). It does not incorporate high-order generative deepfake neural networks (e.g., AASIST [29], RawNet). Speech evaluation was benchmarked against synthetic PCM audio and canonical transcripts; the system does not claim validated forensic deepfake voice detection on unconstrained, noisy human telephony speech.
-3. **Curated Benchmark Dataset Scope:** The empirical evaluation was conducted on 94 carefully curated Indian cybercrime samples. While statistically balanced and representative of dominant regional attack vectors, it is not an exhaustive multi-thousand corporate enterprise dataset.
-4. **Static Regulatory RAG Index:** The RAG knowledge base comprises 24 authoritative advisories from CERT-In and RBI. It is an indexed offline corpus and does not execute continuous, live web crawling of zero-day vulnerability feeds.
+We explicitly delineate six technical boundaries of the current ThreatWeave implementation:
+1. **Curated Benchmark Scope & Statistical Power:** The evaluation was conducted on a curated proof-of-concept benchmark of 94 Indian-context cyber-threat fixtures. While statistically balanced (51 malicious, 43 benign) to eliminate ground-truth label ambiguity across regional attack archetypes, modality partitions are small ($N \in [12, 24]$), producing wide Wilson 95% confidence intervals (e.g., Voice recall $[18.8\%, 81.2\%]$). These findings demonstrate empirical proof-of-concept rather than broad population-level generalization.
+2. **Synthetic Voice Fixture Scope:** The Voice Agent was evaluated under local heuristic mode on synthetic PCM audio fixtures and canonical transcripts ($TP=3, FP=1, TN=5, FN=3$). Acoustic cadence features ($\sigma_E^2, \sigma_{\text{ZCR}}^2$) serve as auxiliary heuristics capped at confidence $c \le 0.40$; the system does not claim validated forensic deepfake voice detection or real-time call interception on unconstrained human telephony speech.
+3. **Absence of Real-Time Bank Rail Verification:** ThreatWeave detects visual, optical, and textual indicators of fraudulent payment receipts and UPI payloads. It possesses no programmatic access to NPCI, IMPS, or core banking ledgers, and cannot verify whether extracted 12-digit UTR reference numbers settled on banking rails. The 2,000 INR UPI parameter is an empirical project-specific heuristic for micro-merchants, not a universal fraud boundary.
+4. **Operational Fallback Recall Boundaries:** Local heuristic fallbacks trade semantic recall (missing 9 of 14 threats in the Text partition) to maintain zero false alarms and sub-50ms triage continuity for lightweight modalities during external cloud outages. The $1,475\times$ Text latency ratio represents an operational transition between cloud WAN transit and local regex scanning, not an algorithmic speedup on equivalent work.
+5. **Static Regulatory Advisory Corpus:** The ChromaDB knowledge base indexes 24 static advisories from CERT-In and RBI. Cosine similarity matching ($\tau_{\text{sim}} \ge 0.40$) provides contextual retrieval rather than definitive proof of maliciousness, and the offline corpus does not execute live crawling of zero-day vulnerability feeds.
+6. **Software Testing vs. Operational Defense:** While all 227 automated backend tests collected via pytest pass deterministically, software unit testing verifies state-machine routing, exception handling, and schema integrity rather than operational defense against novel or adaptive adversary tactics.
 
 ### Future Work
-Future iterations will: (1) integrate on-device Small Language Models (SLMs) such as Phi-3.5 or LLaMA 3.2 3B quantized via ONNX Runtime to replace cloud API dependencies; (2) implement spectro-temporal graph attention networks (AASIST [29]) for telephony-grade deepfake voice forensics; and (3) expand the benchmark dataset across international banking standards and multilingual regional dialects.
+Future research will focus on: (1) expanding and independently validating benchmark datasets across international banking rails, enterprise corpora, and multilingual dialects; (2) integrating on-device quantized Small Language Models (SLMs) such as Phi-3.5 or LLaMA 3.2 3B via ONNX Runtime to replace cloud API dependencies while improving offline recall; (3) investigating spectro-temporal graph attention networks (e.g., AASIST [29]) for telephony speech forensics under acoustic reverberation and background noise; (4) establishing continuous RAG corpus synchronization with authoritative threat intelligence feeds; and (5) conducting formal usability studies with operational SOC analysts to measure incident triage efficiency.
 
 ---
 
 ## XI. CONCLUSION
 
-In this paper, we presented **ThreatWeave**, an agentic multimodal framework for cross-modal cyber threat intelligence and investigative response. By organizing threat investigation into a stateful LangGraph Directed Acyclic Graph state machine, ThreatWeave coordinates five specialized forensic agents (Text, URL, QR, Image, Voice) under a centralized orchestrator, eliminating cross-modal blind spots while avoiding compute waste through dynamic routing. 
+Digital communication fraud increasingly coordinates deceptive lures across distinct payloads, combining phishing SMS messages, deceptive hyperlinks, fraudulent payment QR codes, fabricated receipts, and social engineering audio within multi-channel campaigns. In this paper, we presented **ThreatWeave**, an agentic multimodal cybersecurity framework designed to counter cross-modal blind spots without delegating numerical risk calculation to unconstrained generative models. Coordinated by a stateful LangGraph directed acyclic graph, ThreatWeave organizes threat analysis across six agents—one central orchestrator and five isolated specialist agents spanning Text, URL, QR, Image, and Voice modalities—dynamically routing payloads exclusively to observed channels.
 
-ThreatWeave addresses the fundamental scoring volatility and opacity of black-box neural networks by introducing a closed-form, deterministic mathematical risk engine:
+To eliminate scoring volatility and guarantee evidentiary auditability, the framework replaces black-box neural ratings with a closed-form, deterministic mathematical risk engine:
 $$\text{final\_risk} = \text{clamp}\left(\text{base\_score} + \Delta_{\text{corrob}} + \Delta_{\text{intel}} - \Delta_{\text{contra}}, \; 0.0, \; 1.0\right)$$
-which guarantees bitwise scoring invariance ($|\text{residual}| \le 1.0 \times 10^{-4}$). The engine integrates cross-modal Indicator of Compromise corroboration, severity divergence contradiction penalties, and regulatory vector retrieval (ChromaDB, cosine similarity threshold $\tau_{\text{sim}} = 0.40$, $d \le 0.60$) over 24 authoritative CERT-In and RBI advisories. Every agent pairs cloud LLM reasoning with sub-20ms deterministic heuristic fallbacks to guarantee operational continuity during cloud outages.
+Findings are aggregated into a bounded composite score ($\le 1.0 \times 10^{-4}$ numerical residual) incorporating Indicator of Compromise corroboration bonuses, severity divergence contradiction penalties, and contextual intelligence retrieved from 24 regulatory CERT-In and RBI advisories via ChromaDB. Evaluated on a curated proof-of-concept benchmark of 94 Indian-context cyber-threat fixtures (51 malicious, 43 benign), ThreatWeave demonstrated strong proof-of-concept diagnostic performance across cloud-assisted modalities (95.8% accuracy on Text, 90.0% on Image, 79.2% on URL, and 78.6% on QR). Local deterministic heuristics preserved sub-50ms offline triage continuity for lightweight modalities (Text, URL, QR, and Voice) during external API disruptions, while Image fallback was bounded by OCR computation. Operational trade-offs—such as the Text fallback's recall reduction to 35.7% and the $1,475\times$ operational latency ratio—reflect deliberate prioritization of zero false alarms on the tested offline Text benchmark over exhaustive semantic coverage.
 
-Empirical evaluation on a curated 94-sample benchmark demonstrated robust diagnostic performance across modalities: 95.8% accuracy on Text ($F_1 = 0.963$), 90.0% on Image ($F_1 = 0.909$), 79.2% on URL ($F_1 = 0.783$), and 78.6% on QR ($F_1 = 0.800$), while preserving sub-50ms offline continuity and 100% DAG routing correctness across 227 passing backend unit and integration tests. ThreatWeave establishes a reproducible, explainable, and resilient foundation for next-generation multi-agent cybersecurity operations.
+As an exploratory research prototype, ThreatWeave is bounded by important constraints detailed in Section X, including modest partition sample sizes ($N \in [12, 24]$) that produce wide Wilson confidence intervals, voice evaluation conducted on synthetic audio fixtures without validated deepfake detection, and the absence of direct programmatic verification on real-time banking settlement rails. Future research will explore on-device quantized Small Language Models to enhance offline semantic reasoning, spectro-temporal acoustic models for telephony speech forensics, and continuous regulatory index synchronization. While these findings establish the technical feasibility of coordinating modular forensic agents under deterministic risk governance, comprehensive independent evaluation across multi-thousand enterprise datasets, international banking rails, and operational Security Operations Centers remains essential prior to broad real-world deployment.
 
 ---
 
